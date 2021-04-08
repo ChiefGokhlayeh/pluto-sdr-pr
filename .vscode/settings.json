@@ -1,0 +1,9 @@
+{
+    "python.pythonPath": "/usr/local/bin/python",
+    "cSpell.words": [
+        "Baulig",
+        "Bradfisch",
+        "devcontainer",
+        "dockerfilelint"
+    ],
+}

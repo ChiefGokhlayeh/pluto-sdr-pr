@@ -1,0 +1,35 @@
+repos:
+    - repo: https://github.com/pre-commit/pre-commit-hooks
+      rev: v3.3.0
+      hooks:
+          - id: check-added-large-files
+          - id: check-merge-conflict
+          - id: check-toml
+          - id: check-yaml
+          - id: detect-private-key
+          - id: end-of-file-fixer
+          - id: forbid-new-submodules
+          - id: trailing-whitespace
+    - repo: https://github.com/doublify/pre-commit-rust
+      rev: v1.0
+      hooks:
+          - id: cargo-check
+          - id: fmt
+    - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
+      rev: v0.1.0
+      hooks:
+          - id: dockerfilelint
+    - repo: https://github.com/igorshubovych/markdownlint-cli
+      rev: v0.24.0
+      hooks:
+          - id: markdownlint
+    - repo: https://github.com/prettier/pre-commit
+      rev: main
+      hooks:
+          - id: prettier
+            args:
+                - --config-precedence=file-override
+    - repo: meta
+      hooks:
+          - id: check-hooks-apply
+          - id: check-useless-excludes

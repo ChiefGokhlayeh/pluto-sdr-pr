@@ -1,0 +1,9 @@
+ipykernel
+joblib
+jupyter
+matplotlib
+nose
+numpy
+pre-commit
+scipy
+sympy

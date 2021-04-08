@@ -1,0 +1,16 @@
+{
+    "trailingComma": "none",
+    "tabWidth": 4,
+    "semi": false,
+    "overrides": [
+        {
+            "files": "{**/.vscode/*.json,**/.devcontainer/*.json}",
+            "options": {
+                "parser": "json5",
+                "quoteProps": "preserve",
+                "singleQuote": false,
+                "trailingComma": "all"
+            }
+        }
+    ]
+}
