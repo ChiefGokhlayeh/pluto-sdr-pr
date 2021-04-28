@@ -1,0 +1,13 @@
+{
+    "version": "0.1",
+    "language": "de,en",
+    "dictionaryDefinitions": [
+        {
+            "name": "rtl-sdr-pr",
+            "description": "Custom words used in \"RTL-SDR: Passive Radar\" project",
+            "path": "resources/project.dict"
+        }
+    ],
+    "dictionaries": ["companies", "jupyter", "rtl-sdr-pr", "softwareTerms"],
+    "enabledLanguageIds": ["dockerfile", "jupyter", "softwareTerms"]
+}
