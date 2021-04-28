@@ -1,4 +1,4 @@
-name: self-check
+name: quality-check
 
 on: [push, pull_request]
 
