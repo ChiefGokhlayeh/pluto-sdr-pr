@@ -1,4 +1,4 @@
-# RTL-SDR: Passive Radar
+# RTL-SDR: Passive Radar [![self-check](https://github.com/ChiefGokhlayeh/rtl-sdr-pr/workflows/self-check/badge.svg)](https://github.com/ChiefGokhlayeh/rtl-sdr-pr/actions?query=workflow%3Aself-check)
 
 Student project aiming to implement [passive radar](https://en.wikipedia.org/wiki/Passive_radar) functionality, using cheap **RTL-SDR receivers** and public **5G Broadcast** radio signals as illuminators of opportunity.
 
