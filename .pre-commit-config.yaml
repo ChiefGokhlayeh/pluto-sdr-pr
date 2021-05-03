@@ -8,6 +8,7 @@ repos:
           - id: check-yaml
           - id: detect-private-key
           - id: end-of-file-fixer
+            exclude: '.*\.ipynb'
           - id: forbid-new-submodules
           - id: trailing-whitespace
     - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
