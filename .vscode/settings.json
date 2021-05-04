@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "/home/vscode/.cache/pypoetry/virtualenvs/rtl-sdr-pr-CaI3Gfn_-py3.9/bin/python",
+    "python.pythonPath": "python",
     "python.formatting.provider": "black",
     "python.linting.pylintEnabled": false,
     "python.linting.flake8Enabled": true,
