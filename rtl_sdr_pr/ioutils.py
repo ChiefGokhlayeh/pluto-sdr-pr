@@ -9,14 +9,33 @@ IQ_STRUCT = struct.Struct("ff")
 def read_samples(
     fid: typing.BinaryIO, num_samples: int, offset: typing.Optional[int] = 0
 ) -> npt.ArrayLike:
-    """
-    Read specified number of samples from IO-like.
+    """Read specified number of IQ samples from IO-like.
 
-    :param fid: IO-like from which to read.
-    :param num_samples: Number of samples to read.
-    :param offset: Offset (in samples) to skip before reading.
-    :returns An array-like with the given numer of samples or less if EOF
-    reached.
+    Parameters
+    ----------
+    fid : typing.BinaryIO
+        IO-like from which to read
+    num_samples : int
+        Number of samples to read.
+    offset : typing.Optional[int], optional
+        Offset (in samples) to skip before reading, by default 0.
+
+    Returns
+    -------
+    np.ndarray
+        A 1-D array with the given number of complex IQ samples or less if EOF
+        reached.
+
+    Examples
+    --------
+    Read 100 complex IQ samples from a file.
+    >>> file_path = 'tests/data/200samples_625000000_2880000.raw'
+    >>> with open(file_path, 'rb') as fid:
+    ...     samples = read_samples(fid, 100)
+    >>> len(samples)
+    100
+    >>> type(samples[0])
+    <class 'numpy.complex64'>
     """
 
     if offset:
