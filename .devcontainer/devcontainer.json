@@ -22,7 +22,7 @@
         "python.linting.flake8Enabled": true,
         "python.linting.pylintEnabled": false,
         "python.pythonPath": "./.venv/bin/python",
-        "terminal.integrated.shell.linux": "/bin/zsh",
+        "terminal.integrated.defaultProfile.linux": "/bin/zsh",
     },
 
     // Add the IDs of extensions you want installed when the container is created.
@@ -36,6 +36,7 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-toolsai.jupyter",
+        "njpwerner.autodocstring",
         "streetsidesoftware.code-spell-checker-german",
         "streetsidesoftware.code-spell-checker",
     ],
