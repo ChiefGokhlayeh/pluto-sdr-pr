@@ -1,8 +1,7 @@
+abatilo
 arange
 asarray
 autodocstring
-ms-azuretools
-ms-toolsai
 Baulig
 Bradfisch
 bungcip
@@ -16,12 +15,15 @@ gitlens
 ioutils
 ipynb
 matmul
+ms-azuretools
+ms-toolsai
 nbstripout
 ndarray
 njpwerner
 numpy
 pylance
-struct
-zfunc
 pylint
+pytest
+struct
 venv
+zfunc
