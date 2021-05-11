@@ -1,6 +1,6 @@
 # RTL-SDR: Passive Radar
 
-[![quality-check](https://github.com/ChiefGokhlayeh/rtl-sdr-pr/actions/workflows/quality-check.yml/badge.svg)](https://github.com/ChiefGokhlayeh/rtl-sdr-pr/actions/workflows/quality-check.yml)
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ChiefGokhlayeh/rtl-sdr-pr/main.svg)](https://results.pre-commit.ci/latest/github/ChiefGokhlayeh/rtl-sdr-pr/main)
 [![pytest](https://github.com/ChiefGokhlayeh/rtl-sdr-pr/actions/workflows/pytest.yml/badge.svg)](https://github.com/ChiefGokhlayeh/rtl-sdr-pr/actions/workflows/pytest.yml)
 
 Student project aiming to implement [passive radar](https://en.wikipedia.org/wiki/Passive_radar) functionality, using cheap **RTL-SDR receivers** and public **5G Broadcast** radio signals as illuminators of opportunity.
