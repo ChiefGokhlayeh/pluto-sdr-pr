@@ -1,14 +1,10 @@
-import struct
 import numpy as np
-import numpy.typing as npt
 import typing
-
-IQ_STRUCT = struct.Struct("ff")
 
 
 def read_samples(
     fid: typing.BinaryIO, num_samples: int, offset: typing.Optional[int] = 0
-) -> npt.ArrayLike:
+) -> np.ndarray:
     """Read specified number of IQ samples from IO-like.
 
     Parameters
@@ -38,14 +34,10 @@ def read_samples(
     <class 'numpy.complex64'>
     """
 
-    if offset:
-        fid.seek(offset * IQ_STRUCT.size)
-    gen_n = (
-        complex(iq[0], iq[1])
-        for iq in IQ_STRUCT.iter_unpack(fid.read(IQ_STRUCT.size * num_samples))
+    iq_as_i64 = np.fromfile(
+        fid, dtype=np.int64, count=num_samples, offset=offset
     )
-    n = np.fromiter(gen_n, np.complex64)
-    return n
+    return iq_as_i64.view(np.complex64)
 
 
 if __name__ == "__main__":
