@@ -45,15 +45,24 @@ def read_samples(
 
 def read_sdriq_samples(
     fid: typing.BinaryIO, num_samples: int, offset: typing.Optional[int] = 0
-):
-    """
-    Read specified number of samples from sdriq file.
+) -> typing.Tuple[np.ndarray, typing.Dict[str, int]]:
+    """Read specified number of IQ samples from IO-like including `.sdriq`
+    header.
 
-    :param fid: IO-like from which to read.
-    :param num_samples: Number of samples to read.
-    :param offset: Offset (in samples) to skip before reading.
-    :returns An array-like with the given number of samples or less if EOF
-    reached.
+    Parameters
+    ----------
+    fid : typing.BinaryIO
+        IO-like from which to read
+    num_samples : int
+        Number of samples to read.
+    offset : typing.Optional[int], optional
+        Offset (in samples) to skip before reading, by default 0.
+
+    Returns
+    -------
+    tuple[np.ndarray, dict[str, int]]
+        A 1-D array with the given number of complex IQ samples or less if EOF
+        reached and a dictionary containing information from `.sdriq` header.
     """
 
     header = np.fromfile(fid, dtype=np.uint8, count=32)
