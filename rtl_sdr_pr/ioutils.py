@@ -15,7 +15,7 @@ def read_samples(
     :param fid: IO-like from which to read.
     :param num_samples: Number of samples to read.
     :param offset: Offset (in samples) to skip before reading.
-    :returns An array-like with the given numer of samples or less if EOF
+    :returns An array-like with the given number of samples or less if EOF
     reached.
     """
 
@@ -38,7 +38,7 @@ def read_sdriq_samples(
     :param fid: IO-like from which to read.
     :param num_samples: Number of samples to read.
     :param offset: Offset (in samples) to skip before reading.
-    :returns An array-like with the given numer of samples or less if EOF
+    :returns An array-like with the given number of samples or less if EOF
     reached.
     """
 
@@ -49,9 +49,15 @@ def read_sdriq_samples(
         center_frequency,
         start_time_stamp,
         sample_size,
-        filler,
-        crc32,
+        _,  # filler
+        _,  # crc
     ) = struct.unpack("<IQQIII", header.tobytes())
+
+    header_dict = {
+        "sample_rate": sample_rate,
+        "center_frequency": center_frequency,
+        "start_time_stamp": start_time_stamp,
+    }
 
     if sample_size == 16:
         config = {"dtype": np.int16, "scale": 0xFFFF}
@@ -69,7 +75,7 @@ def read_sdriq_samples(
     float_data = data.astype(np.float32) / config["scale"]
     n = float_data[0::2] + 1j * float_data[1::2]
 
-    return n
+    return n, header_dict
 
 
 if __name__ == "__main__":
