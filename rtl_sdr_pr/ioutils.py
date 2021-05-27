@@ -78,7 +78,7 @@ def read_sdriq_samples(
     elif sample_size == 24:
         config = {"dtype": np.int32, "scale": 0xFFFFFF}
     else:
-        raise Exception(f"Sample rate {sample_size} is not supported")
+        raise Exception(f"Sample size {sample_size} is not supported")
 
     data = np.fromfile(
         fid,
