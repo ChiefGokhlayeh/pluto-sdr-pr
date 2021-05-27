@@ -1,0 +1,28 @@
+name: pytest
+
+on: [push, pull_request]
+
+jobs:
+    pytest:
+        strategy:
+            fail-fast: false
+            matrix:
+                python-version: [3.9]
+                poetry-version: [1.0, 1.1.6]
+                os: [ubuntu-20.04]
+        runs-on: ${{ matrix.os }}
+        steps:
+            - name: Set up Git repository
+              uses: actions/checkout@v2
+            - name: Set up Python environment
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install poetry
+              uses: abatilo/actions-poetry@v2.1.2
+              with:
+                  poetry-version: ${{ matrix.poetry-version }}
+            - name: Install venv via poetry
+              run: poetry install --no-root
+            - name: Run tests via pytest
+              run: poetry run pytest --strict-config

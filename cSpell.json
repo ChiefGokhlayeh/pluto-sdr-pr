@@ -8,6 +8,14 @@
             "path": "resources/project.dict"
         }
     ],
-    "dictionaries": ["companies", "jupyter", "rtl-sdr-pr", "softwareTerms"],
-    "enabledLanguageIds": ["dockerfile", "jupyter", "softwareTerms"]
+    "dictionaries": [
+        "dockerfile",
+        "jupyter",
+        "markdown",
+        "python",
+        "rtl-sdr-pr",
+        "toml",
+        "yml",
+        "json"
+    ]
 }

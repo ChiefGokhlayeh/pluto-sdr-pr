@@ -22,7 +22,7 @@
         "python.linting.flake8Enabled": true,
         "python.linting.pylintEnabled": false,
         "python.pythonPath": "./.venv/bin/python",
-        "terminal.integrated.shell.linux": "/bin/zsh",
+        "terminal.integrated.defaultProfile.linux": "/bin/zsh",
     },
 
     // Add the IDs of extensions you want installed when the container is created.
@@ -36,12 +36,13 @@
         "ms-python.python",
         "ms-python.vscode-pylance",
         "ms-toolsai.jupyter",
+        "njpwerner.autodocstring",
         "streetsidesoftware.code-spell-checker-german",
         "streetsidesoftware.code-spell-checker",
     ],
 
     // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "mkdir -p ~/.zfunc && poetry completions zsh > ~/.zfunc/_poetry && poetry install --no-root --no-interaction && poetry run pre-commit install",
+    "postCreateCommand": "mkdir -p ~/.zfunc && poetry completions zsh > ~/.zfunc/_poetry && poetry install --no-root --no-interaction && poetry run pre-commit install && poetry run nbstripout --install",
 
     // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
     "remoteUser": "vscode",
