@@ -2,6 +2,8 @@ import numpy as np
 import struct
 import typing
 
+SDRIQ_IQ_STRUCT = struct.Struct("<IQQIII")  # cSpell:disable-line
+
 
 def read_samples(
     fid: typing.BinaryIO, num_samples: int, offset: typing.Optional[int] = 0
@@ -63,7 +65,7 @@ def read_sdriq_samples(
         sample_size,
         _,  # filler
         _,  # crc
-    ) = struct.unpack("<IQQIII", header.tobytes())
+    ) = SDRIQ_IQ_STRUCT.unpack(header.tobytes())
 
     header_dict = {
         "sample_rate": sample_rate,
@@ -81,7 +83,7 @@ def read_sdriq_samples(
     data = np.fromfile(
         fid,
         dtype=config["dtype"],
-        offset=32 + offset * 2,
+        offset=SDRIQ_IQ_STRUCT.size + offset * 2,
         count=num_samples * 2,
     )
     float_data = data.astype(np.float32) / config["scale"]
