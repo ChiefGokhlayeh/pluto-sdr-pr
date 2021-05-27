@@ -1,6 +1,7 @@
 abatilo
 arange
 asarray
+astype
 autodocstring
 Baulig
 Bradfisch
@@ -29,7 +30,9 @@ pylance
 pylint
 pytest
 scipy
+sdriq
 struct
 surv_cmplx_conj
+tobytes
 venv
 zfunc
