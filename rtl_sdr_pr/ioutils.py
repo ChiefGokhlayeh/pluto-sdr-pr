@@ -71,6 +71,7 @@ def read_sdriq_samples(
         "sample_rate": sample_rate,
         "center_frequency": center_frequency,
         "start_time_stamp": start_time_stamp,
+        "sample_size": sample_size,
     }
 
     if sample_size == 16:
