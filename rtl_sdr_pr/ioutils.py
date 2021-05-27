@@ -63,6 +63,25 @@ def read_sdriq_samples(
     tuple[np.ndarray, dict[str, int]]
         A 1-D array with the given number of complex IQ samples or less if EOF
         reached and a dictionary containing information from `.sdriq` header.
+
+    Examples
+    --------
+    Read 100 complex IQ samples from a file.
+    >>> file_path = 'tests/data/header-only.sdriq'
+    >>> with open(file_path, 'rb') as fid:
+    ...     samples, header = read_sdriq_samples(fid, 100)
+    >>> len(samples)
+    0
+    >>> type(samples.dtype)
+    <class 'numpy.dtype[complex128]'>
+    >>> header["sample_rate"]
+    5000000
+    >>> header["center_frequency"]
+    626000000
+    >>> header["start_time_stamp"]
+    1621794907
+    >>> header["sample_size"]
+    24
     """
 
     header = np.fromfile(fid, dtype=np.uint8, count=32)
