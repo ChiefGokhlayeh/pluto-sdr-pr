@@ -61,7 +61,10 @@ def read_sdriq_samples(
         raise Exception(f"Sample rate {sample_size} is not supported")
 
     data = np.fromfile(
-        fid, dtype=config["dtype"], offset=32 + offset * 2, count=num_samples * 2
+        fid,
+        dtype=config["dtype"],
+        offset=32 + offset * 2,
+        count=num_samples * 2,
     )
     float_data = data.astype(np.float32) / config["scale"]
     n = float_data[0::2] + 1j * float_data[1::2]
