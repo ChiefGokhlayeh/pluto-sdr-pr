@@ -23,6 +23,7 @@ black = "^21.7b0"
 rope = "^0.19.0"
 flake8 = "^3.9.2"
 nbstripout = "^0.5.0"
+poetry2conda = "^0.3.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -30,3 +31,9 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.black]
 line-length = 80
+
+[tool.poetry2conda]
+name = "rtl-sdr-pr"
+
+[tool.poetry2conda.dependencies]
+numpy = { channel = "conda-forge" }
