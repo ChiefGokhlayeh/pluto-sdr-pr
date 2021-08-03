@@ -14,7 +14,7 @@ jupyter = "^1.0.0"
 matplotlib = "^3.4.2"
 nose = "^1.3.7"
 numpy = "^1.21.1"
-scipy = "^1.7.0"
+scipy = "^1.7.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2"
