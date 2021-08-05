@@ -1,0 +1,18 @@
+[project]
+name = "rtl-sdr-pr"
+version = "0.1.0"
+description = "Turning cheap RTL-SDR receivers into passive radar sensors"
+readme = "README.md"
+requires-python = ">=3.7"
+license = { file = "LICENSE" }
+authors = [{ name = "Andreas Baulig" }, { name = "Wolfgang Bradfisch" }]
+classifiers = [
+    "Programming Language :: Python",
+    "License :: OSI Approved :: MIT License",
+]
+
+[project.urls]
+repository = "https://github.com/ChiefGokhlayeh/rtl-sdr-pr"
+
+[tool.black]
+line-length = 80
