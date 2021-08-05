@@ -3,9 +3,16 @@
 ARG VARIANT="3"
 FROM mcr.microsoft.com/vscode/devcontainers/python:0-${VARIANT}
 
-ARG INSTALL_NODE="true"
-ARG NODE_VERSION="lts/*"
-RUN if [ "${INSTALL_NODE}" = "true" ]; then su vscode -c "umask 0002 && . /usr/local/share/nvm/nvm.sh && nvm install ${NODE_VERSION} 2>&1"; fi
+# Should be created by preceding base-image
+ARG USERNAME="vscode"
+ARG MAMBAFORGE_VERSION="latest"
+ARG MAMBAFORGE_PREFIX="/opt/mambaforge"
+RUN curl -SL "https://github.com/conda-forge/miniforge/releases/${MAMBAFORGE_VERSION}/download/Mambaforge-"$(uname)"-"$(uname -m)".sh" -o /tmp/mambaforge.sh \
+    && bash /tmp/mambaforge.sh -b -p "${MAMBAFORGE_PREFIX}" \
+    && "${MAMBAFORGE_PREFIX}/bin/mamba" init bash zsh \
+    && chown -R "${USERNAME}" "${MAMBAFORGE_PREFIX}" \
+    && rm -f /tmp/mambaforge.sh
 
-ARG POETRY_VERSION="1.1.6"
-RUN pip3 install "poetry==$POETRY_VERSION"
+USER "${USERNAME}"
+ENV PATH="${MAMBAFORGE_PREFIX}/bin:${PATH}"
+RUN "${MAMBAFORGE_PREFIX}/bin/mamba" init bash zsh

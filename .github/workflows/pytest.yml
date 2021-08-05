@@ -4,25 +4,24 @@ on: [push, pull_request]
 
 jobs:
     pytest:
-        strategy:
-            fail-fast: false
-            matrix:
-                python-version: [3.9]
-                poetry-version: [1.0, 1.1.6]
-                os: [ubuntu-20.04]
-        runs-on: ${{ matrix.os }}
+        runs-on: ubuntu-20.04
         steps:
             - name: Set up Git repository
               uses: actions/checkout@v2
+            - name: Cache conda
+              uses: actions/cache@v2
+              env:
+                  # Increase this value to reset cache if environment.yml has not changed
+                  CACHE_NUMBER: 0
+              with:
+                  path: ~/conda_pkgs_dir
+                  key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{hashFiles('environment.yml') }}
             - name: Set up Python environment
-              uses: actions/setup-python@v2
+              uses: conda-incubator/setup-miniconda@v2
               with:
-                  python-version: ${{ matrix.python-version }}
-            - name: Install poetry
-              uses: abatilo/actions-poetry@v2.1.2
-              with:
-                  poetry-version: ${{ matrix.poetry-version }}
-            - name: Install venv via poetry
-              run: poetry install --no-root
+                  miniconda-version: "latest"
+                  activate-environment: rtl-sdr-pr
+                  environment-file: environment.yml
+                  use-only-tar-bz2: true
             - name: Run tests via pytest
-              run: poetry run pytest --strict-config
+              run: conda run -n rtl-sdr-pr pytest --strict-config

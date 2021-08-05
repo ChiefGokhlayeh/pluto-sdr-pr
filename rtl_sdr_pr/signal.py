@@ -173,9 +173,7 @@ _generate_z_sequence._CACHE = {
 }
 
 
-def _generate_m_sequence(
-    n: int, m_generator: collections.abc.Callable[[int], int]
-):
+def _generate_m_sequence(n: int, m_generator: collections.abc.Callable):
     return 1 - 2 * m_generator(n)
 
 
