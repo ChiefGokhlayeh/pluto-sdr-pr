@@ -3,8 +3,8 @@
     "language": "de,en",
     "dictionaryDefinitions": [
         {
-            "name": "rtl-sdr-pr",
-            "description": "Custom words used in \"RTL-SDR: Passive Radar\" project",
+            "name": "pluto-sdr-pr",
+            "description": "Custom words used in \"Pluto-SDR: Passive Radar\" project",
             "path": "resources/project.dict"
         }
     ],
@@ -13,7 +13,7 @@
         "jupyter",
         "markdown",
         "python",
-        "rtl-sdr-pr",
+        "pluto-sdr-pr",
         "yml",
         "json"
     ]

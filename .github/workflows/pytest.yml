@@ -20,8 +20,8 @@ jobs:
               uses: conda-incubator/setup-miniconda@v2
               with:
                   miniconda-version: "latest"
-                  activate-environment: rtl-sdr-pr
+                  activate-environment: pluto-sdr-pr
                   environment-file: environment.yml
                   use-only-tar-bz2: true
             - name: Run tests via pytest
-              run: conda run -n rtl-sdr-pr pytest --strict-config
+              run: conda run -n pluto-sdr-pr pytest --strict-config

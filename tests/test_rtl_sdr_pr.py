@@ -1,4 +1,4 @@
-from rtl_sdr_pr import __version__
+from pluto_sdr_pr import __version__
 
 
 def test_version():
