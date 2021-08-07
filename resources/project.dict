@@ -9,6 +9,9 @@ Bradfisch
 bungcip
 conda
 conda_pkgs_dir
+cupy
+curr
+cusignal
 davidanson
 decorrelate
 devcontainer
@@ -25,14 +28,18 @@ ftype
 gitlens
 ifft
 ioutils
+ipykernel
+ipympl
 ipynb
 isclose
 mambaforge
 matmul
+matplotlib
 miniconda
 ms-azuretools
 ms-toolsai
 nbstripout
+nbytes
 ndarray
 njpwerner
 noqa
@@ -43,6 +50,7 @@ OFDM
 pylance
 pylint
 pytest
+rapidsai
 scipy
 sdriq
 struct
