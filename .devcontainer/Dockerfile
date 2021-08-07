@@ -22,7 +22,7 @@ USER root
 ARG CUDA_VERSION="11-4"
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \
-    sed \
+    ffmpeg \
     software-properties-common \
     vim \
     && . /etc/os-release \
