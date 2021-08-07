@@ -17,6 +17,7 @@
 
     // Set *default* container specific settings.json values on container create.
     "settings": {
+        "jupyter.notebookFileRoot": "${workspaceFolder}",
         "python.formatting.provider": "black",
         "python.languageServer": "Pylance",
         "python.linting.enabled": true,
