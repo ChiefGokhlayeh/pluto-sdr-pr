@@ -188,7 +188,7 @@ class SdriqSampleIO(SampleIO):
     def __init__(self, fid: typing.Union[str, typing.BinaryIO]) -> None:
         super().__init__()
 
-        if fid is str:
+        if type(fid) is str:
             self._fid = open(fid)
         else:
             self._fid = fid
