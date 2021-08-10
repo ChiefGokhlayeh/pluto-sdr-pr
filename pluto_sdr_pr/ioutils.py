@@ -213,7 +213,7 @@ class SdriqSampleIO(SampleIO):
         else:
             raise Exception(f"Sample size {self.sample_size} is not supported")
 
-        self._start = datetime.datetime.fromtimestamp(
+        self._start = datetime.datetime.utcfromtimestamp(
             self._start_time_stamp
             * (1 if self._start_time_stamp > 2 ^ 32 else 1000)
         )
