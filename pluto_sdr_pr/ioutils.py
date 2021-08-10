@@ -1,11 +1,13 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod, abstractproperty
 
+import binascii
 import datetime
 import io
-import numpy as np
 import struct
 import typing
+from abc import ABC, abstractmethod, abstractproperty
+
+import numpy as np
 
 SDRIQ_IQ_STRUCT = struct.Struct("<IQQIII")  # cSpell:disable-line
 
@@ -164,6 +166,26 @@ class SampleIO(ABC):
         pass
 
 
+class CRCError(Exception):
+    def __init__(
+        self,
+        message: str,
+        expected_crc: typing.Optional[int] = None,
+        calculated_crc: typing.Optional[int] = None,
+    ) -> None:
+        super().__init__(message)
+        self._expected_crc = expected_crc
+        self._calculated_crc = calculated_crc
+
+    @property
+    def expected_crc(self) -> typing.Optional[int]:
+        return self._expected_crc
+
+    @property
+    def calculated_crc(self) -> typing.Optional[int]:
+        return self._calculated_crc
+
+
 class SdriqSampleIO(SampleIO):
     """Represents an `.sdriq` stream of samples.
 
@@ -185,7 +207,9 @@ class SdriqSampleIO(SampleIO):
     True
     """
 
-    def __init__(self, fid: typing.Union[str, typing.BinaryIO]) -> None:
+    def __init__(
+        self, fid: typing.Union[str, typing.BinaryIO], ignore_crc: bool = False
+    ) -> None:
         super().__init__()
 
         if type(fid) is str:
@@ -205,6 +229,13 @@ class SdriqSampleIO(SampleIO):
             _,  # filler
             self.crc,  # crc
         ) = SDRIQ_IQ_STRUCT.unpack(header.tobytes())
+
+        if not ignore_crc:
+            calc_crc32 = binascii.crc32(header[: SDRIQ_IQ_STRUCT.size - 4])
+            if calc_crc32 != self.crc:
+                raise CRCError(
+                    f"CRC check of {str(fid)} failed!", self.crc, calc_crc32
+                )
 
         if self._pcm_sample_size == 16:
             self._pcm_dtype = np.dtype(np.int16)
