@@ -16,3 +16,6 @@ repository = "https://github.com/ChiefGokhlayeh/pluto-sdr-pr"
 
 [tool.black]
 line-length = 80
+
+[tool.pyright]
+include = ["pluto_sdr_pr", "notebooks", "tests"]
