@@ -213,7 +213,7 @@ class SdriqSampleIO(SampleIO):
         super().__init__()
 
         if type(fid) is str:
-            self._fid = open(fid)
+            self._fid = open(fid, "rb")
         else:
             self._fid = fid
 
