@@ -245,9 +245,11 @@ class SdriqSampleIO(SampleIO):
             raise Exception(f"Sample size {self.sample_size} is not supported")
 
         self._start = datetime.datetime.utcfromtimestamp(
-            self._start_time_stamp
-            * (1 if self._start_time_stamp > 2 ^ 32 else 1000)
+            self._start_time_stamp / 1000
         )
+
+    def __str__(self) -> str:
+        return f"<{__class__.__name__}: {self._fid.name}>"
 
     @property
     def sample_rate(self) -> int:
