@@ -7,17 +7,259 @@ Implementation based on 3GPP TS 36.211 version 16.4.0 Release 16 as described in
 ETSI TS 136 211 V16.4.0 (2021-02).
 """
 import collections
+from io import SEEK_CUR
+import logging
+from enum import Enum, auto
+from functools import cache
+from typing import List, Tuple
 
 import numpy as np
-
 from numpy.typing import ArrayLike
-from typing import Optional, Tuple
+from scipy import signal
+
+from .ioutils import SampleIO
+
+LOGGER = logging.getLogger(__name__)
+
+try:
+    from cupy import asarray as cupy_asarray
+    from cupy import correlate as cupy_correlate
+
+    NO_CUPY = False
+
+    cupy_asarray(np.array([1, 2, 3])).get()  # Check GPU hardware availability
+
+    def correlate(a: np.ndarray, b: np.ndarray, mode: str):
+        return cupy_correlate(cupy_asarray(a), cupy_asarray(b), mode=mode).get()
+
+
+except Exception as e:
+    LOGGER.warning("Failed to import CUPY! Fallback to SciPy.", exc_info=e)
+
+    from scipy.signal import correlate as scipy_correlate
+
+    NO_CUPY = True
+
+    def correlate(a: np.ndarray, b: np.ndarray, mode: str):
+        return scipy_correlate(a, b, mode=mode, method="fft")
+
 
 ROOTS = np.array([25, 29, 34])
 
 PSS_SEQUENCE_LENGTH = 62
 SSS_SEQUENCE_LENGTH = 62
 CELL_ID_GROUPS = 168
+
+
+class CyclicPrefixMode(Enum):
+    NORMAL = auto()
+    EXTENDED = auto()
+
+    def get_lengths(
+        self,
+        num_fft_bins: int,
+        num_sc_rb: int = 0,
+    ) -> np.ndarray:
+        if self is CyclicPrefixMode.NORMAL:
+            cyc_pref = np.tile(np.array([160, 144, 144, 144, 144, 144, 144]), 2)
+        elif self is CyclicPrefixMode.EXTENDED:
+            if num_sc_rb <= 0:
+                raise ValueError(
+                    "For CyclicPrefixMode.EXTENDED num_sc_rb must be a positive"
+                    " integer."
+                )
+            if num_sc_rb == 12:
+                return np.full((6,), 512)
+            elif num_sc_rb == 24:
+                return np.full((3,), 1024)
+            elif num_sc_rb == 72:
+                return np.full((1,), 3072)
+            elif num_sc_rb == 144:
+                return np.full((1,), 6144)
+            elif num_sc_rb == 486:
+                return np.full((1,), 9216)
+            else:
+                raise ValueError(
+                    "Unrecognized number of sub-carriers per resource"
+                    f" block, num_sc_rb={num_sc_rb}"
+                )
+        else:
+            raise Exception("Unknown cyclic prefix mode.")
+
+        return (cyc_pref / np.sum(cyc_pref) * num_fft_bins).astype(int)
+
+
+class ENodeB:
+    T_S = 1 / (15000 * 2048)
+    T_FRAME = T_S * 307200
+
+    @classmethod
+    def bandwidth_to_num_resource_blocks(cls, channel_bandwidth: int):
+        return int(0.9 * channel_bandwidth / 180e3)
+
+    def __init__(
+        self,
+        num_resource_blocks: int,
+        cyclic_prefix_mode: CyclicPrefixMode = CyclicPrefixMode.NORMAL,
+        num_sc_per_resource_block: int = 12,
+        num_slots_per_symbol: int = 7,
+        num_slots_per_subframe: int = 2,
+        num_pss_rb: int = 6,
+        num_sss_rb: int = 6,
+        pss_symbol_idx_in_slot: int = 6,
+        sss_symbol_idx_in_slot: int = 4,
+        sss_subframe_index: int = 0,
+        num_subframes_per_frame=10,
+        num_frames_per_second=100,
+    ) -> None:
+        self._num_resource_blocks = num_resource_blocks
+        self._cyclic_prefix_mode = cyclic_prefix_mode
+        self._num_sc_per_resource_block = num_sc_per_resource_block
+        self._num_symbols_per_slot = num_slots_per_symbol
+        self._num_slots_per_subframe = num_slots_per_subframe
+        self._num_pss_rb = num_pss_rb
+        self._num_sss_rb = num_sss_rb
+        self._pss_symbol_idx_in_slot = pss_symbol_idx_in_slot
+        self._sss_symbol_idx_in_slot = sss_symbol_idx_in_slot
+        self._sss_subframe_index = sss_subframe_index
+        self._num_subframes_per_frame = num_subframes_per_frame
+        self._num_frames_per_second = num_frames_per_second
+
+    @property
+    def num_resource_blocks(self) -> int:
+        return self._num_resource_blocks
+
+    @property
+    def cyclic_prefix_mode(self) -> CyclicPrefixMode:
+        return self._cyclic_prefix_mode
+
+    @property
+    def num_sc_per_resource_block(self) -> int:
+        return self._num_sc_per_resource_block
+
+    @property
+    @cache
+    def num_sc(self) -> int:
+        return self.num_resource_blocks * self.num_sc_per_resource_block
+
+    @property
+    def num_symbols_per_slot(self) -> int:
+        return self._num_symbols_per_slot
+
+    @property
+    def num_slots_per_subframe(self) -> int:
+        return self._num_slots_per_subframe
+
+    @property
+    @cache
+    def num_symbols_per_subframe(self) -> int:
+        return self.num_symbols_per_slot * self.num_slots_per_subframe
+
+    @property
+    def num_pss_rb(self) -> int:
+        return self._num_pss_rb
+
+    @property
+    def num_sss_rb(self) -> int:
+        return self._num_sss_rb
+
+    @property
+    def pss_symbol_idx_in_slot(self) -> int:
+        return self._pss_symbol_idx_in_slot
+
+    @property
+    @cache
+    def pss_sc_offset_in_symbol(self) -> int:
+        return int(
+            ((self.num_resource_blocks - self.num_pss_rb) / 2)
+            * self.num_sc_per_resource_block
+        )
+
+    @property
+    def sss_symbol_idx_in_slot(self) -> int:
+        return self._sss_symbol_idx_in_slot
+
+    @property
+    @cache
+    def sss_sc_offset_in_symbol(self) -> int:
+        return int(
+            ((self.num_resource_blocks - self.num_sss_rb) / 2)
+            * self.num_sc_per_resource_block
+        )
+
+    @property
+    def sss_subframe_index(self) -> int:
+        return self._sss_subframe_index
+
+    @property
+    @cache
+    def num_fft_bins(self) -> int:
+        return int(
+            2 ** np.ceil(np.log2(self.num_sc))
+        )  # find closest power of 2 fitting all sub-carriers
+
+    @property
+    def num_subframes_per_frame(self) -> int:
+        return self._num_subframes_per_frame
+
+    @property
+    def num_frames_per_second(self) -> int:
+        return self._num_frames_per_second
+
+    @property
+    @cache
+    def num_samples_per_subframe(self) -> int:
+        return self.num_fft_bins * self.num_symbols_per_subframe + np.sum(
+            self.cyclic_prefix_mode.get_lengths(self.num_fft_bins, self.num_sc)
+        )
+
+    @property
+    @cache
+    def ofdm_sample_rate(self) -> int:
+        return (
+            self.num_samples_per_subframe
+            * self.num_subframes_per_frame
+            * self.num_frames_per_second
+        )
+
+
+class CorrelationResult:
+    def __init__(self, magnitudes: np.ndarray, sample_rate: int) -> None:
+        self._magnitudes = magnitudes
+        self._sample_rate = sample_rate
+
+    @property
+    def magnitudes(self) -> np.ndarray:
+        return self._magnitudes
+
+    @magnitudes.setter
+    def magnitudes(self, value: np.ndarray) -> None:
+        self._magnitudes = value
+
+    @property
+    def sample_rate(self) -> int:
+        return self._sample_rate
+
+    @sample_rate.setter
+    def sample_rate(self, value: int) -> None:
+        self._sample_rate = value
+
+    @property
+    @cache
+    def max_peak_index(self) -> Tuple[int, int]:
+        return np.unravel_index(
+            np.argmax(self.magnitudes, axis=None), self.magnitudes.shape
+        )
+
+    @property
+    @cache
+    def peak_time_offset(self):
+        return self.max_peak_index[1] / self.sample_rate
+
+    @property
+    @cache
+    def max_magnitude(self):
+        return self.magnitudes[self.max_peak_index[0]]
 
 
 def generate_pss_sequence(cell_id: ArrayLike) -> np.ndarray:
@@ -104,73 +346,48 @@ def generate_pss_sequence(cell_id: ArrayLike) -> np.ndarray:
     return zadoff_chu
 
 
+@cache
 def _generate_s_sequence(n: int):
     if n < 0:
         raise ValueError(f"Function undefined for given n: {n} < 0")
 
-    if int(n) in _generate_s_sequence._CACHE:
-        return _generate_s_sequence._CACHE[int(n)]
+    if 0 <= n <= 3:
+        return 0
+    elif n == 4:
+        return 1
+    else:
+        return (_generate_s_sequence(n - 3) + _generate_s_sequence(n - 5)) % 2
 
-    result = (_generate_s_sequence(n - 3) + _generate_s_sequence(n - 5)) % 2
-    _generate_s_sequence._CACHE[int(n)] = result
 
-    return result
-
-
+@cache
 def _generate_c_sequence(n: int):
     if n < 0:
         raise ValueError(f"Function undefined for given n: {n} < 0")
 
-    if int(n) in _generate_c_sequence._CACHE:
-        return _generate_c_sequence._CACHE[int(n)]
+    if 0 <= n <= 3:
+        return 0
+    elif n == 4:
+        return 1
+    else:
+        return (_generate_c_sequence(n - 2) + _generate_c_sequence(n - 5)) % 2
 
-    result = (_generate_c_sequence(n - 2) + _generate_c_sequence(n - 5)) % 2
-    _generate_c_sequence._CACHE[int(n)] = result
 
-    return result
-
-
+@cache
 def _generate_z_sequence(n: int):
     if n < 0:
         raise ValueError(f"Function undefined for given n: {n} < 0")
 
-    if int(n) in _generate_z_sequence._CACHE:
-        return _generate_z_sequence._CACHE[int(n)]
-
-    result = (
-        _generate_z_sequence(n - 1)
-        + _generate_z_sequence(n - 2)
-        + _generate_z_sequence(n - 4)
-        + _generate_z_sequence(n - 5)
-    ) % 2
-    _generate_z_sequence._CACHE[int(n)] = result
-
-    return result
-
-
-_generate_s_sequence._CACHE = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 1,
-}
-
-_generate_c_sequence._CACHE = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 1,
-}
-
-_generate_z_sequence._CACHE = {
-    0: 0,
-    1: 0,
-    2: 0,
-    3: 0,
-    4: 1,
-}
+    if 0 <= n <= 3:
+        return 0
+    elif n == 4:
+        return 1
+    else:
+        return (
+            _generate_z_sequence(n - 1)
+            + _generate_z_sequence(n - 2)
+            + _generate_z_sequence(n - 4)
+            + _generate_z_sequence(n - 5)
+        ) % 2
 
 
 def _generate_m_sequence(n: int, m_generator: collections.abc.Callable):
@@ -178,7 +395,7 @@ def _generate_m_sequence(n: int, m_generator: collections.abc.Callable):
 
 
 def generate_sss_sequence(
-    cell_id_in_group: int, subframe_index: Optional[int] = 0
+    cell_id_in_group: int, subframe_index: int = 0
 ) -> np.ndarray:
     """Generate frequency-domain SSS sequence consisting of two scrambled
     interleaved concatinated length-31 binary sequences.
@@ -275,45 +492,9 @@ generate_sss_sequence.generate_m_sequence = np.frompyfunc(
 )
 
 
-def get_num_fft_bins(num_sc: int) -> int:
-    return int(
-        2 ** np.ceil(np.log2(num_sc))
-    )  # find closest power of 2 fitting all sub-carriers
-
-
-def get_cyclic_prefix_lengths(
-    num_fft_bins: int,
-    extended: Optional[bool] = False,
-    num_sc_rb: Optional[int] = 0,
-) -> np.ndarray:
-    if not extended:
-        cyc_pref = np.tile(np.array([160, 144, 144, 144, 144, 144, 144]), 2)
-    else:
-        if num_sc_rb <= 0:
-            raise ValueError(
-                "When extended=True cyclic prefix num_sc_rb must be a positive"
-                "integer."
-            )
-        if num_sc_rb == 12:
-            return np.full((6,), 512)
-        elif num_sc_rb == 24:
-            return np.full((3,), 1024)
-        elif num_sc_rb == 72:
-            return np.full((1,), 3072)
-        elif num_sc_rb == 144:
-            return np.full((1,), 6144)
-        elif num_sc_rb == 486:
-            return np.full((1,), 9216)
-        else:
-            raise ValueError(
-                "Unrecognized number of sub-carriers per resource"
-                f" block, num_sc_rb={num_sc_rb}"
-            )
-
-    return (cyc_pref / np.sum(cyc_pref) * num_fft_bins).astype(int)
-
-
-def ofdm_modulate_subframe(grid: np.ndarray) -> Tuple[np.ndarray, float]:
+def ofdm_modulate_subframe(
+    grid: np.ndarray, enb: ENodeB
+) -> Tuple[np.ndarray, float]:
     """OFDM modulate grid of subframes into time-domain waveforms.
 
     Parameters
@@ -335,24 +516,18 @@ def ofdm_modulate_subframe(grid: np.ndarray) -> Tuple[np.ndarray, float]:
     """  # noqa E501
     num_subframes = grid.shape[0]
     num_sc = grid.shape[1]
-    num_fft_bins = get_num_fft_bins(num_sc)
+    num_fft_bins = enb.num_fft_bins
+
+    assert num_fft_bins >= num_sc
+
     first_sc_idx = (
         num_fft_bins // 2 - num_sc // 2 - 1
     )  # offset of first sub-carrier in larger-than-necessary set of FFT-bins
-    cyc_pref = get_cyclic_prefix_lengths(num_fft_bins)
-    symbols_per_slot = 7
-    slots_per_subframe = 2
-    symbols_per_subframe = symbols_per_slot * slots_per_subframe
-    samples_per_subframe = int(
-        num_fft_bins * symbols_per_subframe + np.sum(cyc_pref)
-    )
-    subframes_per_frame = 10
-    frames_per_second = 100
-    samples_per_frame = samples_per_subframe * subframes_per_frame
-    generator_sample_rate = samples_per_frame * frames_per_second
+    cyc_pref = enb.cyclic_prefix_mode.get_lengths(num_fft_bins, enb.num_sc)
 
     ifft_in = np.zeros(
-        (num_subframes, num_fft_bins, symbols_per_subframe), dtype=np.complex128
+        (num_subframes, num_fft_bins, enb.num_symbols_per_subframe),
+        dtype=np.complex128,
     )
     ifft_in[:, first_sc_idx : first_sc_idx + num_sc // 2 + 1, :] = grid[
         :, np.arange(num_sc // 2 + 1), :
@@ -366,10 +541,10 @@ def ofdm_modulate_subframe(grid: np.ndarray) -> Tuple[np.ndarray, float]:
     ifft_out = np.fft.ifft(np.fft.fftshift(ifft_in, axes=1), axis=1)
 
     subframe_waveforms = np.empty(
-        (num_subframes, samples_per_subframe), dtype=np.complex128
+        (num_subframes, enb.num_samples_per_subframe), dtype=np.complex128
     )
 
-    for sym_idx in np.arange(symbols_per_subframe):
+    for sym_idx in np.arange(enb.num_symbols_per_subframe):
         subframe_waveforms[
             :,
             sym_idx * num_fft_bins
@@ -387,7 +562,247 @@ def ofdm_modulate_subframe(grid: np.ndarray) -> Tuple[np.ndarray, float]:
             :, :, sym_idx
         ]  # fill rest of time-slot with OFDM symbol
 
-    return (subframe_waveforms, generator_sample_rate)
+    return subframe_waveforms
+
+
+class MultiSignalStream:
+    def __init__(self) -> None:
+        self._inputs: List[SampleIO] = None
+
+    @property
+    def inputs(self) -> List[SampleIO]:
+        return self._inputs
+
+    @property
+    def curr_enb(self) -> ENodeB:
+        return self._enb
+
+    def start_unsynchronized(self, *inputs: SampleIO) -> None:
+        self._inputs = inputs
+
+    def start_synchronized(
+        self, *inputs: SampleIO, enb: ENodeB, **kwargs
+    ) -> Tuple[int, List[CorrelationResult], List[CorrelationResult]]:
+        """Start a new stream with multiple synchronized inputs.
+
+        Examples
+        --------
+        >>> from .ioutils import SdriqSampleIO
+
+        >>> enb = ENodeB(6)
+        >>> mss = MultiSignalStream()
+
+        >>> ref_fp = "tests/data/two_frames_unaligned.sdriq"
+        >>> obsrv_fp = "tests/data/two_frames_unaligned_shifted.sdriq"
+
+        >>> with SdriqSampleIO(ref_fp) as ref, SdriqSampleIO(obsrv_fp) as obsrv:
+        ...     cell_id, _, _ = mss.start_synchronized(
+        ...         ref, obsrv, enb=enb, num_frames=8
+        ...     )
+        ...     cell_id
+        36
+        """
+
+        if len(inputs) <= 0:
+            raise ValueError("Parameter inputs must not be empty.")
+
+        checksPassed = all(
+            input.sample_rate == inputs[0].sample_rate
+            and input.center_frequency == inputs[0].center_frequency
+            for input in inputs
+        )
+        if not checksPassed:
+            raise ValueError(
+                "Input sample_rate or center_frequency attributes not equal"
+            )
+
+        sample_rate = inputs[0].sample_rate
+
+        earliest = min(input.start for input in inputs)
+
+        time_diffs = np.fromiter(
+            [(input.start - earliest).total_seconds() for input in inputs],
+            float,
+        )
+        estim_sample_shifts = time_diffs * sample_rate
+
+        refine_grace_period = 1
+
+        for idx, estim_sample_shift in enumerate(estim_sample_shifts):
+            inputs[idx].seek(
+                max(
+                    int(estim_sample_shift) - refine_grace_period * sample_rate,
+                    0,
+                ),
+                SEEK_CUR,
+            )
+
+        cell_id, pss_correlations, sss_correlations = self.find_cell(
+            *inputs, enb=enb, num_frames=kwargs.get("num_frames", 8)
+        )
+
+        self._inputs = inputs
+        self._enb = enb
+
+        return cell_id, pss_correlations, sss_correlations
+
+    def find_cell(
+        self, *inputs: SampleIO, enb: ENodeB, num_frames: int
+    ) -> Tuple[int, List[CorrelationResult], List[CorrelationResult]]:
+        def throw_if_index_mismatch(
+            correlations: List[CorrelationResult],
+            reference_peak_index: int,
+            type: str,
+        ):
+            if any(
+                1
+                for corr in correlations[1:]
+                if corr.max_peak_index[0] != reference_peak_index
+            ):
+                raise ValueError(
+                    f"Mismatching {type}: "
+                    f"{[c.max_peak_index[0] for c in correlations]}"
+                )
+
+        start_offsets = [input.tell() for input in inputs]
+
+        pss_correlations = self.determine_pss_offsets(
+            *inputs, enb=enb, num_frames=num_frames
+        )
+        pss_index = pss_correlations[0].max_peak_index[0]
+        throw_if_index_mismatch(pss_correlations, pss_index, "PSS index")
+        LOGGER.debug(f"Matching PSS indices: {pss_index}")
+
+        for input, offset in zip(inputs, start_offsets):
+            input.seek(offset)
+
+        sss_correlations = self.determine_sss_offsets(
+            *inputs,
+            cell_id_in_group=pss_index,
+            enb=enb,
+            num_frames=num_frames,
+        )
+        sss_index = sss_correlations[0].max_peak_index[0]
+        throw_if_index_mismatch(sss_correlations, sss_index, "SSS index")
+
+        cell_id = 3 * sss_index + pss_index
+
+        for input, offset in zip(inputs, start_offsets):
+            input.seek(offset)
+
+        return cell_id, pss_correlations, sss_correlations
+
+    def determine_pss_offsets(
+        self, *inputs: SampleIO, enb: ENodeB, num_frames: int
+    ) -> List[CorrelationResult]:
+        pss_sequences = generate_pss_sequence([0, 1, 2])
+
+        grid = np.zeros(
+            (pss_sequences.shape[0], enb.num_sc, enb.num_symbols_per_subframe),
+            dtype=np.complex128,
+        )
+
+        pss_indices = np.arange(
+            enb.pss_sc_offset_in_symbol,
+            enb.pss_sc_offset_in_symbol + pss_sequences.shape[1],
+        )
+
+        grid[:, pss_indices, enb.pss_symbol_idx_in_slot] = pss_sequences[:, :]
+
+        pss_waveforms = ofdm_modulate_subframe(grid, enb)
+
+        return [
+            self.find_correlation(
+                input, pss_waveforms, enb.ofdm_sample_rate, num_frames
+            )
+            for input in inputs
+        ]
+
+    def determine_sss_offsets(
+        self,
+        *inputs: SampleIO,
+        enb: ENodeB,
+        cell_id_in_group: int,
+        num_frames: int,
+    ) -> List[CorrelationResult]:
+        sss_sequences = generate_sss_sequence(
+            cell_id_in_group, enb.sss_subframe_index
+        )
+
+        grid = np.zeros(
+            (sss_sequences.shape[0], enb.num_sc, enb.num_symbols_per_subframe),
+            dtype=np.complex128,
+        )
+
+        sss_indices = np.arange(
+            enb.sss_sc_offset_in_symbol,
+            enb.sss_sc_offset_in_symbol + sss_sequences.shape[1],
+        )
+
+        grid[:, sss_indices, enb.sss_symbol_idx_in_slot] = sss_sequences[:, :]
+
+        sss_waveforms = ofdm_modulate_subframe(grid, enb)
+
+        return [
+            self.find_correlation(
+                input, sss_waveforms, enb.ofdm_sample_rate, num_frames
+            )
+            for input in inputs
+        ]
+
+    def find_correlation(
+        self,
+        input: SampleIO,
+        waveforms: np.ndarray,
+        ofdm_sample_rate: int,
+        num_frames: int,
+    ) -> CorrelationResult:
+        obsrv_samples = input.read(
+            int(input.sample_rate * ENodeB.T_FRAME * num_frames)
+        )
+
+        if obsrv_samples.shape[0] < int(
+            input.sample_rate * ENodeB.T_FRAME * num_frames
+        ):
+            raise EOFError(f"Not enough samples in input {input}.")
+
+        sample_rate_diff = ofdm_sample_rate - input.sample_rate
+        if sample_rate_diff > 0:
+            LOGGER.warning(
+                f"Input sample rate at {input.sample_rate} S/sec lower than "
+                "needed, padding frequency-space with zeros to achieve "
+                f"{ofdm_sample_rate} S/sec"
+            )
+            obsrv_samples = self.pad_freqs_of_waveform(
+                obsrv_samples,
+                int(sample_rate_diff * ENodeB.T_FRAME * num_frames),
+            )
+        elif sample_rate_diff < 0:
+            LOGGER.info(
+                f"Input sample rate at {input.sample_rate} S/sec higher than "
+                f"needed, downsampling to {ofdm_sample_rate} S/sec"
+            )
+            obsrv_samples = signal.resample(obsrv_samples, ofdm_sample_rate)
+
+        corr_mags = np.vstack(
+            [
+                np.abs(correlate(obsrv_samples, waveform, mode="valid"))
+                for waveform in waveforms
+            ]
+        )
+
+        return CorrelationResult(corr_mags, ofdm_sample_rate)
+
+    def pad_freqs_of_waveform(self, waveform, sample_rate_diff):
+        fftout = np.fft.fftshift(np.fft.fft(waveform))
+        padded_fftout = np.pad(
+            fftout,
+            pad_width=(
+                sample_rate_diff // 2,
+                sample_rate_diff // 2,
+            ),
+        )
+        return np.fft.ifft(np.fft.fftshift(padded_fftout))
 
 
 if __name__ == "__main__":

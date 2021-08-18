@@ -9,6 +9,7 @@ Bradfisch
 bungcip
 conda
 conda_pkgs_dir
+CUDA
 cupy
 curr
 cusignal
@@ -21,9 +22,12 @@ dockerfilelint
 dtype
 eamodio
 esbenp
+estim
 ETSI
 ffmpeg
+fftout
 fftshift
+freqs
 frompyfunc
 ftype
 gitlens
@@ -47,6 +51,7 @@ noqa
 numpy
 NUMSC
 NUMSUBF
+obsrv
 OFDM
 pylance
 pylint
@@ -59,6 +64,8 @@ subf
 surv_cmplx_conj
 SYMPERSUBF
 tobytes
+unsynchronized
 venv
+vstack
 Zadoff
 zfunc

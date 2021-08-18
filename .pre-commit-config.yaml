@@ -3,6 +3,11 @@ repos:
       rev: v4.0.1
       hooks:
           - id: check-added-large-files
+            exclude: |
+                (?x)^(
+                  tests/data/two_frames_unaligned_shifted.sdriq|
+                  tests/data/two_frames_unaligned.sdriq
+                )$
           - id: check-merge-conflict
           - id: check-toml
           - id: check-yaml
