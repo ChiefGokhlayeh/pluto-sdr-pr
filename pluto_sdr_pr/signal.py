@@ -696,6 +696,18 @@ class MultiSignalStream:
             pss_only=pss_only,
         )
 
+        if not pss_only:
+            LOGGER.warning(
+                "Start-of-Frame based synchronization using SSS information is "
+                "currently not supported! Falling back to PSS-only "
+                "synchronization."
+            )
+
+        for input, offset in zip(
+            self.inputs, [corr.max_peak_index[1] for corr in pss_correlations]
+        ):
+            input.seek(offset)
+
         return cell_id, pss_correlations, sss_correlations
 
     def _find_cell(
