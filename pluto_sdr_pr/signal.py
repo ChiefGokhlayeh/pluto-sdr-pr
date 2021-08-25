@@ -66,7 +66,7 @@ class CyclicPrefixMode(Enum):
             if num_sc_rb <= 0:
                 raise ValueError(
                     "For CyclicPrefixMode.EXTENDED num_sc_rb must be a positive"
-                    " integer."
+                    " integer"
                 )
             if num_sc_rb == 12:
                 return np.full((6,), 512)
@@ -84,7 +84,7 @@ class CyclicPrefixMode(Enum):
                     f" block, num_sc_rb={num_sc_rb}"
                 )
         else:
-            raise Exception("Unknown cyclic prefix mode.")
+            raise Exception("Unknown cyclic prefix mode")
 
         return (cyc_pref / np.sum(cyc_pref) * num_fft_bins).astype(int)
 
@@ -568,26 +568,29 @@ def ofdm_modulate_subframe(
 class MultiSignalStream:
     def __init__(self) -> None:
         self._inputs: List[SampleIO] = None
+        self._enb: ENodeB = None
 
     @property
     def inputs(self) -> List[SampleIO]:
         return self._inputs
 
     @property
-    def curr_enb(self) -> ENodeB:
+    def enb(self) -> ENodeB:
         return self._enb
 
-    def start_unsynchronized(self, *inputs: SampleIO) -> None:
-        self._inputs = inputs
-
     def start_synchronized(
-        self, *inputs: SampleIO, enb: ENodeB, **kwargs
-    ) -> Tuple[int, List[CorrelationResult], Optional[List[CorrelationResult]]]:
+        self, *inputs: SampleIO, enb: Optional[ENodeB], **kwargs
+    ) -> Tuple[
+        Optional[int],
+        Optional[List[CorrelationResult]],
+        Optional[List[CorrelationResult]],
+    ]:
         """Start a new stream with multiple synchronized inputs.
 
         Examples
         --------
-        Synchronize two data-streams based on PSS & SSS correlation.
+        Synchronize two data-streams based on timestamp and PSS & SSS
+        correlation.
         >>> from .ioutils import SdriqSampleIO
 
         >>> enb = ENodeB(6)
@@ -603,7 +606,9 @@ class MultiSignalStream:
         ...     cell_id
         36
 
-        Synchronize two data-streams based only on PSS correlation.
+        Synchronize two data-streams based only on timestamp and PSS
+        correlation. In this case SSS index is assumed 0, resulting in `cell_id`
+        only containing the PSS index.
         >>> from .ioutils import SdriqSampleIO
 
         >>> enb = ENodeB(6)
@@ -618,10 +623,23 @@ class MultiSignalStream:
         ...     )
         ...     cell_id
         0
+
+        Synchronize two data-streams based only on timestamp correlation.
+        >>> from .ioutils import SdriqSampleIO
+
+        >>> mss = MultiSignalStream()
+
+        >>> ref_fp = "tests/data/two_frames_unaligned.sdriq"
+        >>> obsrv_fp = "tests/data/two_frames_unaligned_shifted.sdriq"
+
+        >>> with SdriqSampleIO(ref_fp) as ref, SdriqSampleIO(obsrv_fp) as obsrv:
+        ...     _, _, _ = mss.start_synchronized(
+        ...         ref, obsrv, enb=None, timestamp_only=True
+        ...     )
         """
 
         if len(inputs) <= 0:
-            raise ValueError("Parameter inputs must not be empty.")
+            raise ValueError("Parameter inputs must not be empty")
 
         checksPassed = all(
             input.sample_rate == inputs[0].sample_rate
@@ -643,7 +661,7 @@ class MultiSignalStream:
         )
         estim_sample_shifts = time_diffs * sample_rate
 
-        refine_grace_period = 1
+        refine_grace_period = kwargs.get("grace_period", 1)
 
         for idx, estim_sample_shift in enumerate(estim_sample_shifts):
             inputs[idx].seek(
@@ -653,21 +671,34 @@ class MultiSignalStream:
                 ),
                 SEEK_CUR,
             )
-        pss_only = kwargs.get("pss_only", False)
-
-        cell_id, pss_correlations, sss_correlations = self.find_cell(
-            *inputs,
-            enb=enb,
-            num_frames=kwargs.get("num_frames", 8),
-            pss_only=pss_only,
-        )
 
         self._inputs = inputs
         self._enb = enb
 
+        if not kwargs.get("timestamp_only", False):
+            return self._synchronize_on_pss_and_sss(**kwargs)
+        else:
+            return None, None, None
+
+    def resynchronize(self, **kwargs):
+        if self.inputs is None or len(self.inputs) <= 0:
+            raise Exception("Inputs not set")
+        self._enb = kwargs.get("enb", self.enb)
+        return self._synchronize_on_pss_and_sss(**kwargs)
+
+    def _synchronize_on_pss_and_sss(self, **kwargs):
+        pss_only = kwargs.get("pss_only", False)
+
+        cell_id, pss_correlations, sss_correlations = self._find_cell(
+            *self.inputs,
+            enb=self.enb,
+            num_frames=kwargs.get("num_frames", 8),
+            pss_only=pss_only,
+        )
+
         return cell_id, pss_correlations, sss_correlations
 
-    def find_cell(
+    def _find_cell(
         self, *inputs: SampleIO, enb: ENodeB, num_frames: int, pss_only: bool
     ) -> Tuple[int, List[CorrelationResult], Optional[List[CorrelationResult]]]:
         def throw_if_index_mismatch(
@@ -687,7 +718,7 @@ class MultiSignalStream:
 
         start_offsets = [input.tell() for input in inputs]
 
-        pss_correlations = self.determine_pss_offsets(
+        pss_correlations = self._determine_pss_offsets(
             *inputs, enb=enb, num_frames=num_frames
         )
         pss_index = pss_correlations[0].max_peak_index[0]
@@ -698,7 +729,7 @@ class MultiSignalStream:
             input.seek(offset)
 
         if not pss_only:
-            sss_correlations = self.determine_sss_offsets(
+            sss_correlations = self._determine_sss_offsets(
                 *inputs,
                 cell_id_in_group=pss_index,
                 enb=enb,
@@ -717,7 +748,7 @@ class MultiSignalStream:
 
         return cell_id, pss_correlations, sss_correlations
 
-    def determine_pss_offsets(
+    def _determine_pss_offsets(
         self, *inputs: SampleIO, enb: ENodeB, num_frames: int
     ) -> List[CorrelationResult]:
         pss_sequences = generate_pss_sequence([0, 1, 2])
@@ -737,13 +768,13 @@ class MultiSignalStream:
         pss_waveforms = ofdm_modulate_subframe(grid, enb)
 
         return [
-            self.find_correlation(
+            self._find_correlation(
                 input, pss_waveforms, enb.ofdm_sample_rate, num_frames
             )
             for input in inputs
         ]
 
-    def determine_sss_offsets(
+    def _determine_sss_offsets(
         self,
         *inputs: SampleIO,
         enb: ENodeB,
@@ -769,13 +800,13 @@ class MultiSignalStream:
         sss_waveforms = ofdm_modulate_subframe(grid, enb)
 
         return [
-            self.find_correlation(
+            self._find_correlation(
                 input, sss_waveforms, enb.ofdm_sample_rate, num_frames
             )
             for input in inputs
         ]
 
-    def find_correlation(
+    def _find_correlation(
         self,
         input: SampleIO,
         waveforms: np.ndarray,
@@ -789,7 +820,7 @@ class MultiSignalStream:
         if obsrv_samples.shape[0] < int(
             input.sample_rate * ENodeB.T_FRAME * num_frames
         ):
-            raise EOFError(f"Not enough samples in input {input}.")
+            raise EOFError(f"Not enough samples in input {input}")
 
         sample_rate_diff = ofdm_sample_rate - input.sample_rate
         if sample_rate_diff > 0:
@@ -798,7 +829,7 @@ class MultiSignalStream:
                 "needed, padding frequency-space with zeros to achieve "
                 f"{ofdm_sample_rate} S/sec"
             )
-            obsrv_samples = self.pad_freqs_of_waveform(
+            obsrv_samples = self._pad_freqs_of_waveform(
                 obsrv_samples,
                 int(sample_rate_diff * ENodeB.T_FRAME * num_frames),
             )
@@ -818,7 +849,7 @@ class MultiSignalStream:
 
         return CorrelationResult(corr_mags, ofdm_sample_rate)
 
-    def pad_freqs_of_waveform(self, waveform, sample_rate_diff):
+    def _pad_freqs_of_waveform(self, waveform, sample_rate_diff):
         fftout = np.fft.fftshift(np.fft.fft(waveform))
         padded_fftout = np.pad(
             fftout,
