@@ -253,12 +253,12 @@ class CorrelationResult:
 
     @property
     @cache
-    def peak_time_offset(self):
+    def peak_time_offset(self) -> float:
         return self.max_peak_index[1] / self.sample_rate
 
     @property
     @cache
-    def max_magnitude(self):
+    def max_magnitude(self) -> np.ndarray:
         return self.magnitudes[self.max_peak_index[0]]
 
 
