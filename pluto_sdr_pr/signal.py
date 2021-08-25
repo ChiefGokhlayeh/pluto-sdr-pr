@@ -11,7 +11,7 @@ from io import SEEK_CUR
 import logging
 from enum import Enum, auto
 from functools import cache
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import numpy as np
 from numpy.typing import ArrayLike
@@ -582,11 +582,12 @@ class MultiSignalStream:
 
     def start_synchronized(
         self, *inputs: SampleIO, enb: ENodeB, **kwargs
-    ) -> Tuple[int, List[CorrelationResult], List[CorrelationResult]]:
+    ) -> Tuple[int, List[CorrelationResult], Optional[List[CorrelationResult]]]:
         """Start a new stream with multiple synchronized inputs.
 
         Examples
         --------
+        Synchronize two data-streams based on PSS & SSS correlation.
         >>> from .ioutils import SdriqSampleIO
 
         >>> enb = ENodeB(6)
@@ -601,6 +602,22 @@ class MultiSignalStream:
         ...     )
         ...     cell_id
         36
+
+        Synchronize two data-streams based only on PSS correlation.
+        >>> from .ioutils import SdriqSampleIO
+
+        >>> enb = ENodeB(6)
+        >>> mss = MultiSignalStream()
+
+        >>> ref_fp = "tests/data/two_frames_unaligned.sdriq"
+        >>> obsrv_fp = "tests/data/two_frames_unaligned_shifted.sdriq"
+
+        >>> with SdriqSampleIO(ref_fp) as ref, SdriqSampleIO(obsrv_fp) as obsrv:
+        ...     cell_id, _, _ = mss.start_synchronized(
+        ...         ref, obsrv, enb=enb, num_frames=8, pss_only=True
+        ...     )
+        ...     cell_id
+        0
         """
 
         if len(inputs) <= 0:
@@ -636,9 +653,13 @@ class MultiSignalStream:
                 ),
                 SEEK_CUR,
             )
+        pss_only = kwargs.get("pss_only", False)
 
         cell_id, pss_correlations, sss_correlations = self.find_cell(
-            *inputs, enb=enb, num_frames=kwargs.get("num_frames", 8)
+            *inputs,
+            enb=enb,
+            num_frames=kwargs.get("num_frames", 8),
+            pss_only=pss_only,
         )
 
         self._inputs = inputs
@@ -647,8 +668,8 @@ class MultiSignalStream:
         return cell_id, pss_correlations, sss_correlations
 
     def find_cell(
-        self, *inputs: SampleIO, enb: ENodeB, num_frames: int
-    ) -> Tuple[int, List[CorrelationResult], List[CorrelationResult]]:
+        self, *inputs: SampleIO, enb: ENodeB, num_frames: int, pss_only: bool
+    ) -> Tuple[int, List[CorrelationResult], Optional[List[CorrelationResult]]]:
         def throw_if_index_mismatch(
             correlations: List[CorrelationResult],
             reference_peak_index: int,
@@ -676,19 +697,23 @@ class MultiSignalStream:
         for input, offset in zip(inputs, start_offsets):
             input.seek(offset)
 
-        sss_correlations = self.determine_sss_offsets(
-            *inputs,
-            cell_id_in_group=pss_index,
-            enb=enb,
-            num_frames=num_frames,
-        )
-        sss_index = sss_correlations[0].max_peak_index[0]
-        throw_if_index_mismatch(sss_correlations, sss_index, "SSS index")
+        if not pss_only:
+            sss_correlations = self.determine_sss_offsets(
+                *inputs,
+                cell_id_in_group=pss_index,
+                enb=enb,
+                num_frames=num_frames,
+            )
+            sss_index = sss_correlations[0].max_peak_index[0]
+            throw_if_index_mismatch(sss_correlations, sss_index, "SSS index")
+
+            for input, offset in zip(inputs, start_offsets):
+                input.seek(offset)
+        else:
+            sss_correlations = None
+            sss_index = 0
 
         cell_id = 3 * sss_index + pss_index
-
-        for input, offset in zip(inputs, start_offsets):
-            input.seek(offset)
 
         return cell_id, pss_correlations, sss_correlations
 
