@@ -13,7 +13,7 @@ SDRIQ_IQ_STRUCT = struct.Struct("<IQQIII")  # cSpell:disable-line
 
 
 def read_samples(
-    fid: typing.BinaryIO, num_samples: int, offset: typing.Optional[int] = 0
+    fid: typing.BinaryIO, num_samples: int, offset: int = 0
 ) -> np.ndarray:
     """Read specified number of IQ samples from IO-like.
 
@@ -23,7 +23,7 @@ def read_samples(
         IO-like from which to read
     num_samples : int
         Number of samples to read.
-    offset : typing.Optional[int], optional
+    offset : int, optional
         Offset (in samples) to skip before reading, by default 0.
 
     Returns
@@ -53,7 +53,7 @@ def read_samples(
 def read_sdriq_samples(
     fid: typing.Union[typing.BinaryIO, str],
     num_samples: int,
-    offset: typing.Optional[int] = 0,
+    offset: int = 0,
 ) -> typing.Tuple[np.ndarray, typing.Dict[str, int]]:
     """Read specified number of IQ samples from IO-like including `.sdriq`
     header.
@@ -64,7 +64,7 @@ def read_sdriq_samples(
         file-like object or file path from which to read.
     num_samples : int
         Number of samples to read.
-    offset : typing.Optional[int], optional
+    offset : int, optional
         Offset (in samples) to skip before reading, by default 0.
 
     Returns
@@ -127,8 +127,8 @@ class SampleIO(ABC):
     @abstractmethod
     def read(
         self,
-        num_samples: typing.Optional[int] = -1,
-        offset: typing.Optional[int] = 0,
+        num_samples: int = -1,
+        offset: int = 0,
     ) -> np.ndarray:
         pass
 
@@ -280,8 +280,8 @@ class SdriqSampleIO(SampleIO):
 
     def read(
         self,
-        num_samples: typing.Optional[int] = -1,
-        offset: typing.Optional[int] = 0,
+        num_samples: int = -1,
+        offset: int = 0,
     ) -> np.ndarray:
         """Read samples from SDR-IQ file.
 
