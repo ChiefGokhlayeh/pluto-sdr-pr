@@ -680,13 +680,21 @@ class MultiSignalStream:
         else:
             return None, None, None
 
-    def resynchronize(self, **kwargs):
+    def resynchronize(
+        self, **kwargs
+    ) -> Tuple[int, List[CorrelationResult], Optional[List[CorrelationResult]]]:
         if self.inputs is None or len(self.inputs) <= 0:
             raise Exception("Inputs not set")
         self._enb = kwargs.get("enb", self.enb)
         return self._synchronize_on_pss_and_sss(**kwargs)
 
-    def _synchronize_on_pss_and_sss(self, **kwargs):
+    def _synchronize_on_pss_and_sss(
+        self, **kwargs
+    ) -> Tuple[
+        int,
+        List[CorrelationResult],
+        Optional[List[CorrelationResult]],
+    ]:
         pss_only = kwargs.get("pss_only", False)
 
         cell_id, pss_correlations, sss_correlations = self._find_cell(
