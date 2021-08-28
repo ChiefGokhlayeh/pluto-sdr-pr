@@ -565,6 +565,22 @@ def ofdm_modulate_subframe(
     return subframe_waveforms
 
 
+class SyncedSampleArray(np.ndarray):
+    def __new__(cls, input_array, source: SampleIO = None):
+        obj = np.asarray(input_array).view(cls)
+        obj._source = source
+        return obj
+
+    def __array_finalize__(self, obj: np.ndarray):
+        if obj is None:
+            return
+        self._source = getattr(obj, "_source", None)
+
+    @property
+    def source(self) -> SampleIO:
+        return self._source
+
+
 class MultiSignalStream:
     def __init__(self) -> None:
         self._inputs: List[SampleIO] = None
@@ -688,8 +704,11 @@ class MultiSignalStream:
         self._enb = kwargs.get("enb", self.enb)
         return self._synchronize_on_pss_and_sss(**kwargs)
 
-    def read(self, **kwargs):
-        return [input.read(**kwargs) for input in self._inputs]
+    def read(self, *args, **kwargs) -> List[SyncedSampleArray]:
+        return [
+            SyncedSampleArray(input.read(*args, **kwargs), source=input)
+            for input in self._inputs
+        ]
 
     def _synchronize_on_pss_and_sss(
         self, **kwargs
