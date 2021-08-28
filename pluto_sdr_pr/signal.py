@@ -688,6 +688,9 @@ class MultiSignalStream:
         self._enb = kwargs.get("enb", self.enb)
         return self._synchronize_on_pss_and_sss(**kwargs)
 
+    def read(self, **kwargs):
+        return [input.read(**kwargs) for input in self._inputs]
+
     def _synchronize_on_pss_and_sss(
         self, **kwargs
     ) -> Tuple[
