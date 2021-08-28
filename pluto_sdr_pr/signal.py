@@ -605,23 +605,6 @@ class MultiSignalStream:
 
         Examples
         --------
-        Synchronize two data-streams based on timestamp and PSS & SSS
-        correlation.
-        >>> from .ioutils import SdriqSampleIO
-
-        >>> enb = ENodeB(6)
-        >>> mss = MultiSignalStream()
-
-        >>> ref_fp = "tests/data/two_frames_unaligned.sdriq"
-        >>> obsrv_fp = "tests/data/two_frames_unaligned_shifted.sdriq"
-
-        >>> with SdriqSampleIO(ref_fp) as ref, SdriqSampleIO(obsrv_fp) as obsrv:
-        ...     cell_id, _, _ = mss.start_synchronized(
-        ...         ref, obsrv, enb=enb, num_frames=8
-        ...     )
-        ...     cell_id
-        36
-
         Synchronize two data-streams based only on timestamp and PSS
         correlation. In this case SSS index is assumed 0, resulting in `cell_id`
         only containing the PSS index.
@@ -638,7 +621,7 @@ class MultiSignalStream:
         ...         ref, obsrv, enb=enb, num_frames=8, pss_only=True
         ...     )
         ...     cell_id
-        0
+        1
 
         Synchronize two data-streams based only on timestamp correlation.
         >>> from .ioutils import SdriqSampleIO
