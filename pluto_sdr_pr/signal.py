@@ -858,7 +858,14 @@ class MultiSignalStream:
                 f"Input sample rate at {input.sample_rate} S/sec higher than "
                 f"needed, downsampling to {ofdm_sample_rate} S/sec"
             )
-            obsrv_samples = signal.resample(obsrv_samples, ofdm_sample_rate)
+            obsrv_samples = signal.resample(
+                obsrv_samples,
+                int(
+                    ofdm_sample_rate
+                    / input.sample_rate
+                    * obsrv_samples.shape[0]
+                ),
+            )
 
         corr_mags = np.vstack(
             [
