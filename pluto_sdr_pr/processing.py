@@ -1,8 +1,6 @@
 import numpy as np
 from numpy.typing import ArrayLike
 
-import typing
-
 try:
     import cupy as cp
     import cusignal
@@ -233,7 +231,7 @@ if not NO_CUPY:
         reference_signal: np.ndarray,
         surveillance_signal: np.ndarray,
         num_samples_per_cpi: int,
-        batch_size: typing.Optional[int] = 1,
+        batch_size: int = 1,
     ):
         """Fast implementation of cross ambiguity function (CAF) on GPU, using
         Fourier Transform of Lag Product approach.
