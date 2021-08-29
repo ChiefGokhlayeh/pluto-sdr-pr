@@ -119,6 +119,82 @@ def fast_ambiguity(
     ...     surveillance_signal=surveillance)
     >>> np.argmax(amb)
     50
+
+    Comprehensive example in which an amplitude modulated square wave is shifted
+    in time and frequency.
+    >>> import matplotlib.pyplot as plt
+
+    >>> duration = 1.0
+    >>> duty_cycle = 0.5
+    >>> delay = 0.3
+    >>> doppler = -0.2
+    >>> sample_rate = 4000
+    >>> carrier_freq = 100
+    >>> num_samples = int(duration * sample_rate)
+    >>> t = np.arange(num_samples) / sample_rate
+
+    >>> waveform_prototype = np.concatenate(
+    ...     [
+    ...         np.ones(int(num_samples * duty_cycle)),
+    ...         np.zeros(int(num_samples * (1 - duty_cycle))),
+    ...     ]
+    ... )
+
+    >>> waveform_prototype *= 1 + 0.5 * np.sin(2 * np.pi * carrier_freq * t)
+
+    >>> waveform = scipy.signal.hilbert(waveform_prototype)
+
+    >>> ref_waveform = waveform
+    >>> surv_waveform = np.roll(
+    ...     ref_waveform, int(delay * waveform.shape[0])
+    ... ) * np.exp(-2j * doppler * np.pi * sample_rate * t)
+
+    >>> _, axs = plt.subplots(2, 1, figsize=(10, 7))
+    >>> _ = axs[0].plot(np.real(ref_waveform))
+    >>> _ = axs[0].set_title("Reference Channel")
+    >>> _ = axs[0].set_ylabel("Real");
+    >>> axs[0].grid(True)
+    >>> _ = axs[1].plot(np.real(surv_waveform));
+    >>> _ = axs[1].set_title("Surveillance Channel");
+    >>> _ = axs[1].set_ylabel("Real");
+    >>> axs[1].grid(True)
+
+    >>> amb = fast_ambiguity(
+    ...     num_samples,
+    ...     sample_rate,
+    ...     ref_waveform,
+    ...     surv_waveform
+    ... )
+    >>> peak = np.unravel_index(np.argmax(amb), amb.shape)
+
+    >>> _, ax = plt.subplots(figsize=(10, 5))
+    >>> _ = ax.set_title("Cross Ambiguity (log-scale)")
+    >>> _ = ax.annotate(
+    ...     f"Peak ({peak[0]},{peak[1] - sample_rate // 2:.0f})",
+    ...     peak,
+    ...     xytext=(10, 10),
+    ...     xycoords="data",
+    ...     textcoords="offset pixels",
+    ...     arrowprops={"arrowstyle": "wedge"},
+    ... )
+    >>> _ = ax.set_xlabel("Delay [Samples]")
+    >>> _ = ax.set_ylabel("Doppler [Hz]")
+    >>> _ = ax.set_yticks(np.linspace(0, sample_rate, 8, endpoint=False))
+    >>> _ = ax.set_yticklabels(
+    ...     map(lambda y: f"{y - sample_rate // 2:.0f}", ax.get_yticks())
+    ... )
+    >>> _ = ax.imshow(10 * np.log10(np.abs(amb.T)))
+
+    >>> assert np.allclose(
+    ...     peak,
+    ...     np.array(
+    ...         [
+    ...             num_samples * delay,
+    ...             sample_rate * doppler + sample_rate // 2,
+    ...         ]
+    ...     ),
+    ...     atol=200,
+    ... )
     """
     num_samples_per_cpi = reference_signal.shape[0]
 
