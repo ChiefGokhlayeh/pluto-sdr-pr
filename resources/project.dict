@@ -1,4 +1,5 @@
 abatilo
+ambfun
 arange
 asarray
 astype
@@ -40,6 +41,7 @@ ipykernel
 ipympl
 ipynb
 isclose
+Kulpa
 mambaforge
 matmul
 matplotlib
