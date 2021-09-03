@@ -69,6 +69,7 @@ struct
 subf
 surv_cmplx_conj
 SYMPERSUBF
+textidote
 tobytes
 unsynchronized
 venv
