@@ -6,6 +6,7 @@ astype
 atleast
 atol
 autodocstring
+bareantenna
 Baulig
 bistatische
 bistatischen
@@ -78,6 +79,7 @@ SYMPERSUBF
 textidote
 tobytes
 unsynchronized
+veclen
 venv
 vstack
 xlabel

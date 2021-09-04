@@ -3,7 +3,7 @@
 
 Im vorliegenden Bericht wird vielseitig auf praktische Aspekte die zum Bau eines Passivradars notwendig sind eingegangen. Um dem Leser das Verständnis dieser Aspekte zu erleichtern, ist es sinnvoll, zunächst die theoretischen Grundlagen zu erläutern. Dieses Kapitel dient der Beschreibung einiger essenzieller Prinzipien, die bei Passivradar zum Einsatz kommen. Dazu wird zunächst der Begriff der bistatischen Geometrie eingeführt und erklärt, anschließend wird diese im Zusammenhang mit passiver Zieldetektion und -lokalisierung kombiniert und mit einer mathematischen Beschreibung versehen. Schließlich wird auf konstruktionsabhängige Eigenarten, sowie Vor- und Nachteile eingegangen.
 
-\section{Bistatische Geometrie}
+\section{Bistatische Geometrie}\label{sct:bistatic_geometry}
 
 In der Ortungstechnik versteht man unter dem Begriff der bistatischen Geometrie die räumliche Trennung zwischen einem Sender und einem Empfänger. Bezogen auf Systeme mit mehreren Sendern und Empfängern wird auch der Begriff des multistatischen Systems genutzt. Im umgekehrten Fall, wenn die räumliche Trennung zwischen Sender und Empfänger als vernachlässigbar klein verstanden wird, spricht man von monostatischen Systemen. Die Abbildung~\ref{fig:mono_bi_multistatic_geometry} zeigt vereinfachte Illustrationen dieser Konzepte. Tx und Rx bezeichnen hierbei jeweils Sender und Empfänger im System. Zu beachten hierbei sind die verschiedenen Signalpfade die sich aus der Anordnung der Sender und Empfänger ergeben. Man unterscheidet zwischen Direkt- und Echosignalen, also jeweils solche die auf direktem Wege von Sender zu Empfänger wandern und solche die erst an einem oder mehreren Objekten reflektieren und dann beim Empfänger eingehen. Letztere werden weiter untereteilt in erwünschte (Ziele, engl.\ Targets) und unerwünschte (engl.\ Clutter) Echos.
 
@@ -165,6 +165,163 @@ Eingesetzt in die ursprüngliche Gleichung~\ref{eq:bistatic_range}, beschreiben 
 Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen Ellipsoiden, auch bistatischer Ellipsoid genannt.
 
 \section{Passive Zieldetektion und -lokalisierung}
+
+Wie die verwendung des Akronyms Passiv\emph{radar} (\textbf{Ra}dio \textbf{D}etection \textbf{a}nd \textbf{R}anging) bereits vermuten lässt, handelt es sich bei den Ausstrahlungen der Sender um elektromagnetische Wellen im Radio oder Mikrowellenbereich. Sender werden in der Literatur auch Beleuchter oder Illuminator bezeichnet. Diese werden anders als bei aktivem Radar nicht vom Operator selbst gesteuert. Stattdessen dienen sie oft einer ganz anderen Primärfunktion, wie bspw.\ Hör-, Mobilfunk oder Fernsehen. Die vorliegenden Wellenformen können somit unvorteilhafte Eigenschaften in Bezug auf Radar aufweisen.
+
+Aufgrund der Nutzung von Beleuchtern aus der Umgebung ist grundsätzlich von einer bistatischen Systemanordnung wie in Abschnitt~\ref{sct:bistatic_geometry} auszugehen. Die zur Ziellokalisierung genutzte Messgröße ist dabei stets der gemessene Zeitversatz \(\tau \) zwischen Echo- und Direktsignal. Wie in Gleichung~\ref{eq:bistatic_delay_measurement} ergibt sich daraus unter berücksichtigung der Ausbreitungsgeschwindigkeit elektromagnetischer Wellen \(c \approx 3\cdot10^8\) direkt die bistatische Entfernung \(R\).
+
+\begin{equation}
+    R = c \cdot \tau
+\end{equation}\label{eq:bistatic_delay_measurement}
+
+Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüsse auf die kartesische Position des Ziels getroffen werden können. Hierzu ist entweder die zuhilfenahme mehrerer Messungen der bistatischer Entfernung oder, sofern die Bauart des Systems es erlaubt, der Winkel des eintreffenden Echos notwendig. Abbildung~\ref{fig:localization_via_multiple_bistatic_ranges} zeigt wie eine Ziellokalisierung mittels mehrerer bistatischer Entfernungsmessungen ausgehend von mehreren Beleuchtern ablaufen kann. Gleichermaßen zeigt Abbildung~\ref{fig:localization_via_angular_measurement} wie die Lokalisierung über Winkelmessung erfolgt.
+
+\begin{figure}[htb]
+    \centering
+    \begin{tikzpicture}
+
+        \coordinate (rx1_coord) at (-5,0);
+        \coordinate (tx1_coord) at (5,0);
+        \coordinate (tx2_coord) at (2,2);
+        \coordinate (tx3_coord) at (6,-3);
+        \coordinate (target_coord) at (-2,-3.5);
+
+        \draw [red]
+        let
+        \p1=(tx1_coord),
+        \p2=($(target_coord)-(\p1)$),
+        \p3=($(target_coord)-(rx1_coord)$),
+        \p4=($(\p1)-(rx1_coord)$),
+        \n1={scalar((veclen(\x2,\y2) + veclen(\x3,\y3))*1pt/1cm)},
+        \n2={scalar(veclen(\x4,\y4)*1pt/1cm)},
+        \n3={sqrt(pow(\n1/2, 2))},
+        \n4={sqrt(pow(\n1/2, 2) - pow(\n2/2, 2))},
+        in
+        ($(rx1_coord)!0.5!(\p1)$)
+        circle [x radius=\n3,y radius=\n4,draw=gray];
+
+        \draw [green]
+        let
+        \p1=(tx2_coord),
+        \p2=($(target_coord)-(\p1)$),
+        \p3=($(target_coord)-(rx1_coord)$),
+        \p4=($(\p1)-(rx1_coord)$),
+        \p5=(rx1_coord),
+        \n1={scalar((veclen(\x2,\y2) + veclen(\x3,\y3))*1pt/1cm)},
+        \n2={scalar(veclen(\x4,\y4)*1pt/1cm)},
+        \n3={sqrt(pow(\n1/2, 2))},
+        \n4={sqrt(pow(\n1/2, 2) - pow(\n2/2, 2))},
+        \n5={atan2(scalar(\y1*1pt/1cm),scalar(\x1*1pt/1cm)-scalar(\x5*1pt/1cm))},
+        in
+        ($(rx1_coord)!0.5!(\p1)$)
+        circle [x radius=\n3,y radius=\n4,draw=gray,rotate=\n5];
+
+        \draw [blue]
+        let
+        \p1=(tx3_coord),
+        \p2=($(target_coord)-(\p1)$),
+        \p3=($(target_coord)-(rx1_coord)$),
+        \p4=($(\p1)-(rx1_coord)$),
+        \p5=(rx1_coord),
+        \n1={scalar((veclen(\x2,\y2) + veclen(\x3,\y3))*1pt/1cm)},
+        \n2={scalar(veclen(\x4,\y4)*1pt/1cm)},
+        \n3={sqrt(pow(\n1/2, 2))},
+        \n4={sqrt(pow(\n1/2, 2) - pow(\n2/2, 2))},
+        \n5={atan2(scalar(\y1*1pt/1cm),scalar(\x1*1pt/1cm)-scalar(\x5*1pt/1cm))},
+        in
+        ($(rx1_coord)!0.5!(\p1)$)
+        circle [x radius=\n3,y radius=\n4,draw=gray,rotate=\n5];
+
+        \draw [dotted,red] (rx1_coord) -- (tx1_coord) node [cross out,draw,solid] {} node [below=2pt] {Tx1};
+        \draw [dotted,green] (rx1_coord) -- (tx2_coord) node [cross out,draw,solid] {} node [below=2pt] {Tx2};
+        \draw [dotted,blue] (rx1_coord) -- (tx3_coord) node [cross out,draw,solid] {} node [below=2pt] {Tx3};
+
+        \node at (target_coord) {\huge\faPlane};
+        \path (rx1_coord) node [below=2pt] {Rx} node [cross out,draw,solid] {};
+    \end{tikzpicture}
+    \caption{Ziellokalisierung über Messung mehrerer bistatischer Entfernungen in einem System mit mehreren Sendern.}\label{fig:localization_via_multiple_bistatic_ranges}
+\end{figure}
+
+\begin{figure}[htb]
+    \centering
+    \begin{tikzpicture}
+        \coordinate (rx1_coord) at (-5,0);
+        \coordinate (tx1_coord) at (5,0);
+        \coordinate (target_coord) at (-2,-3.5);
+        \coordinate (horizon) at (0,0);
+
+        \begin{scope}
+            \clip
+            let
+            \p1=(tx1_coord),
+            \p2=($(target_coord)-(\p1)$),
+            \p3=($(target_coord)-(rx1_coord)$),
+            \p4=($(\p1)-(rx1_coord)$),
+            \n1={scalar((veclen(\x2,\y2) + veclen(\x3,\y3))*1pt/1cm)},
+            \n2={scalar(veclen(\x4,\y4)*1pt/1cm)},
+            \n3={sqrt(pow(\n1/2, 2))},
+            \n4={sqrt(pow(\n1/2, 2) - pow(\n2/2, 2))},
+            in
+            ($(rx1_coord)!0.5!(\p1)$)
+            circle [x radius=\n3,y radius=\n4];
+
+            \foreach \angle in {-50} {
+                    \path [rotate around={{\angle+5}:(rx1_coord)}]
+                    let
+                    \p1=(tx1_coord),
+                    \p2=($(target_coord)-(\p1)$),
+                    \p3=($(target_coord)-(rx1_coord)$),
+                    \n1={scalar((veclen(\x2,\y2) + veclen(\x3,\y3))*1pt/1cm)},
+                    \n3={sqrt(pow(\n1/2, 2)) + 1},
+                    in
+                    (rx1_coord) -- (\n3,0) node (a) {};
+                    \path [rotate around={{\angle-5}:(rx1_coord)}]
+                    let
+                    \p1=(tx1_coord),
+                    \p2=($(target_coord)-(\p1)$),
+                    \p3=($(target_coord)-(rx1_coord)$),
+                    \n1={scalar((veclen(\x2,\y2) + veclen(\x3,\y3))*1pt/1cm)},
+                    \n3={sqrt(pow(\n1/2, 2)) + 1},
+                    in
+                    (rx1_coord) -- (\n3,0) node (b) {};
+
+                    \fill [red,opacity=0.5] (rx1_coord) -- (a.center) -- (b.center);
+                }
+        \end{scope}
+        \draw [dotted] (rx1_coord) -- (horizon);
+
+        \pic [draw,angle radius=1cm,angle eccentricity=0.8] {angle=target_coord--rx1_coord--horizon};
+
+        \node (antenna_north) [above=0.4 of rx1_coord,anchor=south] {};
+        \node (antenna_east) [base right=0.4 of rx1_coord,anchor=south] {};
+        \node (antenna_south) [below=0.4 of rx1_coord,anchor=south] {};
+        \node (antenna_west) [base left=0.4 of rx1_coord,anchor=south] {};
+
+        \node [bareantenna,scale=0.5,above=0 of antenna_north.south] {};
+        \node [bareantenna,scale=0.5,above=0 of antenna_east.south] {};
+        \node [bareantenna,scale=0.5,above=0 of antenna_south.south] {};
+        \node [bareantenna,scale=0.5,above=0 of antenna_west.south] {};
+
+        \draw (antenna_north.south) -- (rx1_coord) edge (antenna_east.south) -- (rx1_coord) edge (antenna_south.south) -- (rx1_coord) edge (antenna_west.south) -- (rx1_coord);
+
+        \draw
+        let
+        \p1=(tx1_coord),
+        \p2=($(target_coord)-(\p1)$),
+        \p3=($(target_coord)-(rx1_coord)$),
+        \p4=($(\p1)-(rx1_coord)$),
+        \n1={scalar((veclen(\x2,\y2) + veclen(\x3,\y3))*1pt/1cm)},
+        \n2={scalar(veclen(\x4,\y4)*1pt/1cm)},
+        \n3={sqrt(pow(\n1/2, 2))},
+        \n4={sqrt(pow(\n1/2, 2) - pow(\n2/2, 2))},
+        in
+        ($(rx1_coord)!0.5!(\p1)$)
+        circle [x radius=\n3,y radius=\n4,draw=gray];
+
+        \node at (target_coord) {\huge\faPlane};
+    \end{tikzpicture}
+    \caption{Ziellokalisierung über bistatische Entfernung und Winkelmessung.}\label{fig:localization_via_angular_measurement}
+\end{figure}
 
 \section{Bauarten}
 
