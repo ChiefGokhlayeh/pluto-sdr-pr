@@ -63,6 +63,107 @@ In der Ortungstechnik versteht man unter dem Begriff der bistatischen Geometrie 
     \caption{Mono-, Bi- und Multistatische Geometrie.}\label{fig:mono_bi_multistatic_geometry}
 \end{figure}
 
+Ein weiterer wichtiger Begriff im Zusammenhang mit bistatischer Geometrie ist die bistatische Entfernung. Malanowski definiert diese in~\cite[S.~10]{Malanowski2019} wie folgt:
+
+\begin{equation}
+    R = R_1 + R_2 - R_\text{b}
+\end{equation}\label{eq:bistatic_range}
+
+Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) und \(R_2\) bezeichnen jeweils die Strecke vom Sender zum Ziel und vom Ziel zum Empfänger. Zusammen wird \(R_1 + R_2\) auch als bistatische Summe bezeichnet. Bildlich gesprochen versteht man under bistatischer Entfernung die zusätzliche Strecke die das Echosignal gegenüber dem Direktsignal zurückgelegt hat. Abbildung~\ref{fig:bistatic_range} zeigt diesen Zusammenhang grafisch.
+
+\begin{figure}[htb]
+    \centering
+    \subcaptionbox{Bistatische Geometrie.\label{fig:bistatic_range_model}}{
+        \begin{tikzpicture}
+            \coordinate (rx1_coord) at (-2,0);
+            \coordinate (tx1_coord) at (2,0);
+            \coordinate (target_coord) at (1.75,2);
+
+            \node at (tx1_coord) [draw,fill=white] (tx1) {Tx};
+            \node at (rx1_coord) [draw,fill=white] (rx) {Rx};
+
+            \node at (target_coord) [label={above:Ziel}] (target) {\Large\faPlane};
+
+            \draw [->,color=red] (tx1) -- (target) node [black,midway,right] {$R_1$};
+            \draw [->,color=red] (target) -- (rx) node [black,midway,above left] {$R_2$};
+            \draw [->,color=blue] (tx1) -- (rx) node [black,midway,below] {$R_\text{b}$};
+        \end{tikzpicture}
+    }
+    \subcaptionbox{Bistatische Entfernung.\label{fig:bistatic_range_equation}}{
+        \begin{tikzpicture}
+            \coordinate (rx1_coord) at (-2,0);
+            \coordinate (tx1_coord) at (2,0);
+            \coordinate (target_coord) at (1.75,2);
+
+            \draw [dotted,color=gray]
+            let
+            \p1=($(tx1_coord)-(target_coord)$),
+            \p2=($(target_coord)-(rx1_coord)$),
+            \p3=($(tx1_coord)-(rx1_coord)$),
+            \n1={veclen(\x1,\y1)},
+            \n2={\n1+veclen(\x2,\y2)},
+            \n3={\n2-veclen(\x3,\y3)}
+            in
+            (\n1,0) edge node [black,midway,right,align=center] {$+$} (\n1,-1)
+            (\n2,-1) edge node [black,midway,right,align=center] {$-$} (\n2,-2)
+            (\n3,-2) edge node [black,midway,right,align=center] {$=$} (\n3,-3);
+
+            \draw [->,color=red]
+            let
+            \p1=($(tx1_coord)-(target_coord)$),
+            \n1={veclen(\x1,\y1)}
+            in
+            (0,0) -- node [black,midway,above,align=center] {$R_1$} (\n1,0);
+            \draw [->,color=red]
+            let
+            \p1=($(tx1_coord)-(target_coord)$),
+            \p2=($(target_coord)-(rx1_coord)$),
+            \n1={veclen(\x1,\y1)},
+            \n2={\n1+veclen(\x2,\y2)}
+            in
+            (\n1,-1) -- node [black,midway,above,align=center] {$R_2$} (\n2,-1);
+            \draw [->,color=blue]
+            let
+            \p1=($(tx1_coord)-(target_coord)$),
+            \p2=($(target_coord)-(rx1_coord)$),
+            \p3=($(tx1_coord)-(rx1_coord)$),
+            \n1={veclen(\x1,\y1)},
+            \n2={\n1+veclen(\x2,\y2)},
+            \n3={\n2-veclen(\x3,\y3)}
+            in
+            (\n2,-2) -- node [black,midway,above,align=center] {$R_{\text{b}}$} (\n3,-2);
+
+            \draw [->,color=green]
+            let
+            \p1=($(tx1_coord)-(target_coord)$),
+            \p2=($(target_coord)-(rx1_coord)$),
+            \p3=($(tx1_coord)-(rx1_coord)$),
+            \n1={veclen(\x1,\y1)},
+            \n2={\n1+veclen(\x2,\y2)},
+            \n3={\n2-veclen(\x3,\y3)}
+            in
+            (0,-3) -- node [black,midway,above,align=center] {$R$} (\n3,-3);
+        \end{tikzpicture}
+    }
+    \caption{Grafische Herleitung der bistatischen Entfernung.}\label{fig:bistatic_range}
+\end{figure}
+
+Weitere Einsicht bietet die kartesische Betrachtung der bistatischen Entfernung. Ausgehend vom zweidimensionalen Fall werden zunächst Sender, Empfänger und Ziel kartesischen Koordinaten zugewiesen. Es gelten für die Position des Senders \(\boldsymbol{p}_\text{tx} = \begin{bmatrix} x_\text{tx}, y_\text{tx} \end{bmatrix}\), für die Position des Empfängers \(\boldsymbol{p}_\text{rx} = \begin{bmatrix} x_\text{rx}, y_\text{rx} \end{bmatrix}\) und die Position des Ziels \(\boldsymbol{p} = \begin{bmatrix} x, y \end{bmatrix}\). Dafür ergibt sich für die Entfernungen
+
+\begin{equation}
+    R_1 = {\lVert \boldsymbol{p} - \boldsymbol{p}_\text{tx} \rVert}_2 = \sqrt{{(x - x_\text{tx})}^2 + {(y - y_\text{tx})}^2}
+\end{equation}
+\begin{equation}
+    R_2 = {\lVert \boldsymbol{p} - \boldsymbol{p}_\text{rx} \rVert}_2 = \sqrt{{(x - x_\text{rx})}^2 + {(y - y_\text{rx})}^2}
+\end{equation}
+\begin{equation}
+    R_\text{b} = {\lVert \boldsymbol{p_\text{tx}} - \boldsymbol{p}_\text{rx} \rVert}_2 = \sqrt{{(x_\text{tx} - x_\text{rx})}^2 + {(y_\text{tx} - y_\text{rx})}^2}
+\end{equation}
+
+Eingesetzt in die ursprüngliche Gleichung~\ref{eq:bistatic_range}, beschreiben diese Gleichungen eine Ellipse deren Lösungsmenge alle möglichen Positionen des Ziels für eine gegeben bistatische Entfernung beschreibt. Diese Ellipse wird in der Literatur auch als bistatische Ellipse bezeichnet.
+
+Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen Ellipsoiden, auch bistatischer Ellipsoid genannt.
+
 \section{Passive Zieldetektion und -lokalisierung}
 
 \section{Bauarten}
