@@ -40,6 +40,7 @@ ftype
 gitlens
 ifft
 imshow
+interp
 ioutils
 ipykernel
 ipympl

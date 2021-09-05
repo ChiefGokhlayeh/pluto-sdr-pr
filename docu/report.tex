@@ -4,6 +4,7 @@
 \usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
 \usepackage[ngerman]{babel}
 \usepackage[nooldvoltagedirection]{circuitikz}
+\usepackage[outline]{contour}
 \usepackage[style=iso-authoryear,minnames=1,maxnames=3,giveninits,uniquename=init,backend=bibtex]{biblatex}
 \usepackage{amsbsy}
 \usepackage{amsmath}
@@ -12,8 +13,10 @@
 \usepackage{fancyhdr}
 \usepackage{fontawesome5}
 \usepackage{graphicx}
+\usepackage{pgfplots}
 \usepackage{subcaption}
 \usepackage{tikz}
+\usepackage{xcolor}
 
 \addbibresource{references.bib}
 \DefineBibliographyStrings{ngerman}{
@@ -42,6 +45,7 @@
     invisible/.style={opacity=0},
     visible on/.style={alt={#1{}{invisible}}},
 }
+\pgfplotsset{width=9cm,compat=newest}
 
 \begin{document}
 \include{report/titelpage}

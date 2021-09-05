@@ -160,9 +160,101 @@ Weitere Einsicht bietet die kartesische Betrachtung der bistatischen Entfernung.
     R_\text{b} = {\lVert \boldsymbol{p_\text{tx}} - \boldsymbol{p}_\text{rx} \rVert}_2 = \sqrt{{(x_\text{tx} - x_\text{rx})}^2 + {(y_\text{tx} - y_\text{rx})}^2}
 \end{equation}
 
-Eingesetzt in die ursprüngliche Gleichung~\ref{eq:bistatic_range}, beschreiben diese Gleichungen eine Ellipse deren Lösungsmenge alle möglichen Positionen des Ziels für eine gegeben bistatische Entfernung beschreibt. Diese Ellipse wird in der Literatur auch als bistatische Ellipse bezeichnet.
+Eingesetzt in die ursprüngliche Gleichung~\ref{eq:bistatic_range}, beschreiben diese Gleichungen eine Ellipse deren Lösungsmenge die möglichen Positionen des Ziels für eine gegeben bistatische Entfernung darstellt. Die Konstruktion dieser Ellipse ist in Abbildung~\ref{fig:bistatic_ellipse} illustriert. Position des Senders und Empfängers bilden jeweils die Brennpunkte der Ellipse. Der Term \(R_\text{b}\) wird für den Zeitraum der Messung als bekannt vorrausgesetzt. Die Summe der beiden Terme \(R_1\) und \(R_2\) ist durch Messung der bistatische Entfernung \(R\) beschränkt. Durch Variation von \(R_1\) und \(R_2\) ergibt sich eine Ellipsenform. Diese wird in der Literatur auch als bistatische Ellipse bezeichnet.
 
-Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen Ellipsoiden, auch bistatischer Ellipsoid genannt.
+\begin{figure}[htb]
+    \centering
+    \begin{tikzpicture}
+        \def\F{5}
+        \coordinate (rx1_coord) at (-\F,0);
+        \coordinate (tx1_coord) at (\F,0);
+        \coordinate (target_coord) at (2,3.5);
+        \coordinate (pencil) at (0.1,0.6);
+
+        \draw (0,0)
+        let
+        \p1=($(target_coord)-(tx1_coord)$),
+        \p2=($(target_coord)-(rx1_coord)$),
+        \p3=(tx1_coord),
+        \n1={scalar((veclen(\x1,\y1) + veclen(\x2,\y2))*1pt/1cm)},
+        \n2={sqrt(pow(\n1/2, 2))},
+        \n3={sqrt(pow(\n1/2, 2) - pow(\F, 2))}
+        in
+        circle [x radius=\n2,y radius=\n3,draw=gray];
+
+        \draw [dotted] (rx1_coord) node [cross out,draw,solid] {} node [below=0.1cm] {Rx} -- (0,0) node {\contour{white}{$R_{\text{b}}$}} -- (tx1_coord) node [cross out,draw,solid] {} node [below=0.1cm] {Tx};
+
+        \draw [dash dot] (rx1_coord) -- (target_coord) node [midway] {\contour{white}{$R_{2}$}} -- (tx1_coord) node [midway] {\contour{white}{$R_{1}$}};
+
+        \draw [<-] (target_coord) -- ++(pencil);
+
+        \node at (0,-1.5) {%
+            \(\begin{aligned}
+                    & R_{1} + R_{2}                & = \text{const.} & \dots \text{bistatische Summe}      \\
+                R = & R_{1} + R_{2} - R_{\text{b}} & = \text{const.} & \dots \text{bistatische Entfernung} \\
+            \end{aligned}
+            \)};
+    \end{tikzpicture}
+    \caption{Schematische Darstellung der bistatischen Ellipsoidengleichung.}\label{fig:bistatic_ellipse}
+\end{figure}
+
+Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen Ellipsoiden, auch bistatischer Ellipsoid genannt. Abbildung~\ref{fig:bistatic_ellipsoid} zeigt exemplarisch einen solchen bistatischen Ellipsoid. Die Lösungen der Ellipsoidengleichung bilden die möglichen Positionen des Ziels für eine gegebene bistatische Entfernung.
+
+\begin{figure}[htb]
+    \centering
+    \begin{tikzpicture}
+        \def\R{25}
+        \def\F{10}
+        \def\a{sqrt((\R/2)^2)}
+        \def\b{sqrt((\R/2)^2 - \F^2)}
+        \def\c{\b}
+        \def\xmin{-int(\a + 5 - mod(\a - 5, 5))}
+        \def\ymin{-int(\b + 5 - mod(\b - 5, 5))}
+        \def\zmin{-int(\c + 5 - mod(\c - 5, 5))}
+        \def\xmax{+int(\a + 5 - mod(\a - 5, 5))}
+        \def\ymax{+int(\b + 5 - mod(\b - 5, 5))}
+        \def\zmax{+int(\c + 5 - mod(\c - 5, 5)))}
+        \begin{axis}[
+                z buffer=sort,
+                axis equal,
+                colormap/viridis,
+                samples=31,
+                xmin=\xmin,
+                ymin=\ymin,
+                zmin=\zmin,
+                xmax=\xmax,
+                ymax=\ymax,
+                zmax=\zmax,
+                xlabel=$x$,
+                ylabel=$y$,
+                zlabel=$z$,
+                grid=major,
+                view/az=25,
+                view/el=30,
+            ]
+            \addplot3 coordinates {
+                    (\F,0,0)
+                    (\F,0,\zmin)
+                } node[left,pos=0] {Rx};
+            \addplot3 coordinates {
+                    (-\F,0,0)
+                    (-\F,0,\zmin)
+                } node[left,pos=0] {Tx};
+            \addplot3 [
+                surf,
+                shader=faceted interp,
+                opacity=1,
+                domain=0:180,
+                y domain=0:360,
+            ] (
+            {\a*sin(x)*cos(y)},
+            {\b*sin(x)*sin(y)},
+            {\c*cos(x)}
+            );
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Exemplarischer bistatischer Ellipsoid für \(R = 15\) und \(R_\text{b} = 10\).}\label{fig:bistatic_ellipsoid}
+\end{figure}
 
 \section{Passive Zieldetektion und -lokalisierung}
 
