@@ -5,8 +5,9 @@ repos:
           - id: check-added-large-files
             exclude: |
                 (?x)^(
-                  tests/data/two_frames_unaligned_shifted.sdriq|
-                  tests/data/two_frames_unaligned.sdriq
+                  tests/data/two_frames_unaligned_shifted\.sdriq|
+                  tests/data/two_frames_unaligned\.sdriq|
+                  docu/images/.*\.png
                 )$
           - id: check-merge-conflict
           - id: check-toml

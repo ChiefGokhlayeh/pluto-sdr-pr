@@ -31,7 +31,26 @@ In diesem Aufbau werden zwei Antennen die für DVB-T gedacht sind verwendet. Die
 \subsubsection{PSS}
 \subsubsection{SSS}
 \section{Software}
-\subsection{SDR-angel}
+
+Nachfolgend soll nun die verwendete Softwaresuite erläutert werden. Dazu wird zunächst die zur Aufnahme genutzte Lösung beschrieben. Anschließend wird näher auf die eigens entwickelte Signalverarbeitungskette eingegangen.
+
+\subsection{Aufnahme}
+
+Um Daten vom PlutoSDR zu empfangen bedarf es einer Bediensoftware um den Empfangsprozess zu steuern. Zahlreiche solcher SDR-Anwendungen existieren auf dem Markt, viele davon Open-Source oder als Freeware erhältlich. Der Hersteller selbst, Analog Devices, bietet ein low-level Treiberpaket names \emph{libiio} (der Name setzt sich zusammen aus dem Unix typischen lib-Präfix für \emph{library} und dem Akronym iio---%
+% cspell:disable-next-line
+\textbf{i}ndustrial \textbf{i}nput/\textbf{o}utput---%
+steht) an. Mit diesem ist es möglich lokal-, über USB- oder Netzwerk verbundene ADCs und FPGAs von Analog Devices zu steuern. Das Treiberpaket beinhaltet dabei einige Kommandozeilenanwendungen mit denen angeschlossene Geräte enumeriert, einzelne Register gelesen und beschrieben und die Firmware ak­tu­a­li­sie­rt werden können. Darüberhinaus kann über eine API, die Teil der namensgebenden libiio Bibliothekdatei ist, auf Geräte zugegriffen werden.
+
+Es ist diese API an der die meisten SDR-Anwendungen ansetzten. Welche Funktionen der Hardware dann genau nutzbar sind, hängt von der jeweiligen Anwendung ab. Für die Durchführung dieses Projekts würde sich dabei für die Anwendung SDRangel\footnote{Homepage: \url{https://bit.ly/sdrangel}} von Edouard Griffiths entschieden. Abbildung~\ref{fig:sdrangel_screenshot} zeigt die graphische Oberfläche der Anwendung. Die Software unterstützt das Darstellen und Aufzeichnen von IQ-Rohdaten in einem eigenen Dateiformat. Die Möglichkeit der Live-Darstellung der Daten in Frequenz- und Wasserfalldiagramm hat sich in den Messkampangen als äußerst hilfreich erwiesen.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\textwidth]{images/sdrangel.png}
+    \caption{SDRangel im Replay-Modus einer zuvor angefertigten Messung.}\label{fig:sdrangel_screenshot}
+\end{figure}
+
+Da es sich hierbei um Open-Source-Software handelt, konnten benötigte Funktionen oder Bugfixes\footnote{Liste aller Änderungen: \url{https://bit.ly/sdrangel-pr}} direkt selbst implementiert werden und sind anschließend ins Projekt zurück geflossen. So wurde ein Bugfix zur parallelen Nutzung zweier PlutoSDR erstellt, eingereicht und in den Hauptentwicklungszweig des Ursprungsprojekts aufgenommen.
+
 \subsection{Signalverarbeitung}
 \subsubsection{Ambiguity Funktion}\label{sct:ambiguity_function}
 \subsubsection{Clean Algorithmus}
