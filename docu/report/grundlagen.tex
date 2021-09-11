@@ -1,11 +1,11 @@
 % !TeX root = ../report.tex
 \chapter{Grundlagen}
 
-Im vorliegenden Bericht wird vielseitig auf praktische Aspekte die zum Bau eines Passivradars notwendig sind eingegangen. Um dem Leser das Verständnis dieser Aspekte zu erleichtern, ist es sinnvoll, zunächst die theoretischen Grundlagen zu erläutern. Dieses Kapitel dient der Beschreibung einiger essenzieller Prinzipien, die bei Passivradar zum Einsatz kommen. Dazu wird zunächst der Begriff der bistatischen Geometrie eingeführt und erklärt, anschließend wird diese im Zusammenhang mit passiver Zieldetektion und -lokalisierung kombiniert und mit einer mathematischen Beschreibung versehen. Schließlich wird auf konstruktionsabhängige Eigenarten zur Positionsbestimmung eingegangen.
+Im vorliegenden Bericht wird vielseitig auf praktische Aspekte, die zum Bau eines Passivradars notwendig sind, eingegangen. Um dem Leser das Verständnis dieser Aspekte zu erleichtern, ist es sinnvoll, zunächst die theoretischen Grundlagen zu erläutern. Dieses Kapitel dient der Beschreibung einiger essenzieller Prinzipien, die bei Passivradar zum Einsatz kommen. Dazu wird zunächst der Begriff der bistatischen Geometrie eingeführt und erklärt, anschließend wird diese im Zusammenhang mit passiver Zieldetektion und -lokalisierung kombiniert und mit einer mathematischen Beschreibung versehen. Schließlich wird auf konstruktionsabhängige Eigenarten zur Positionsbestimmung eingegangen.
 
 \section{Bistatische Geometrie}\label{sct:bistatic_geometry}
 
-In der Ortungstechnik versteht man unter dem Begriff der bistatischen Geometrie die räumliche Trennung zwischen einem Sender und einem Empfänger. Bezogen auf Systeme mit mehreren Sendern und Empfängern wird auch der Begriff des multistatischen Systems genutzt. Im umgekehrten Fall, wenn die räumliche Trennung zwischen Sender und Empfänger als vernachlässigbar klein verstanden wird, spricht man von monostatischen Systemen. Die Abbildung~\ref{fig:mono_bi_multistatic_geometry} zeigt vereinfachte Illustrationen dieser Konzepte. Tx und Rx bezeichnen hierbei jeweils Sender und Empfänger im System. Zu beachten hierbei sind die verschiedenen Signalpfade die sich aus der Anordnung der Sender und Empfänger ergeben. Man unterscheidet zwischen Direkt- und Echosignalen, also jeweils solche die auf direktem Wege von Sender zu Empfänger wandern und solche die erst an einem oder mehreren Objekten reflektieren und dann beim Empfänger eingehen. Letztere werden weiter untereteilt in erwünschte (Ziele, engl.\ Targets) und unerwünschte (engl.\ Clutter) Echos.
+In der Ortungstechnik versteht man unter dem Begriff der bistatischen Geometrie die räumliche Trennung zwischen einem Sender und einem Empfänger. Bezogen auf Systeme mit mehreren Sendern und Empfängern wird auch der Begriff des multistatischen Systems genutzt. Im umgekehrten Fall, wenn die räumliche Trennung zwischen Sender und Empfänger als vernachlässigbar klein verstanden wird, spricht man von monostatischen Systemen. Die Abbildung~\ref{fig:mono_bi_multistatic_geometry} zeigt vereinfachte Illustrationen dieser Konzepte. Tx und Rx bezeichnen hierbei jeweils Sender und Empfänger im System. Zu beachten hierbei sind die verschiedenen Signalpfade, die sich aus der Anordnung der Sender und Empfänger ergeben. Man unterscheidet zwischen Direkt- und Echosignalen, also jeweils solche die auf direktem Wege von Sender zu Empfänger wandern und solche die erst an einem oder mehreren Objekten reflektieren und dann beim Empfänger eingehen. Letztere werden weiter unterteilt in erwünschte (Ziele, engl.\ Targets) und unerwünschte (engl.\ Clutter) Echos.
 
 \begin{figure}[htb]
     \centering
@@ -69,7 +69,7 @@ Ein weiterer wichtiger Begriff im Zusammenhang mit bistatischer Geometrie ist di
     R = R_1 + R_2 - R_\text{b}
 \end{equation}\label{eq:bistatic_range}
 
-Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) und \(R_2\) bezeichnen jeweils die Strecke vom Sender zum Ziel und vom Ziel zum Empfänger. Zusammen wird \(R_1 + R_2\) auch als bistatische Summe bezeichnet. Bildlich gesprochen versteht man under bistatischer Entfernung die zusätzliche Strecke die das Echosignal gegenüber dem Direktsignal zurückgelegt hat. Abbildung~\ref{fig:bistatic_range} zeigt diesen Zusammenhang grafisch.
+Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) und \(R_2\) bezeichnen jeweils die Strecke vom Sender zum Ziel und vom Ziel zum Empfänger. Zusammen wird \(R_1 + R_2\) auch als bistatische Summe bezeichnet. Bildlich gesprochen versteht man unter bistatischer Entfernung die zusätzliche Strecke, die das Echosignal gegenüber dem Direktsignal zurückgelegt hat. Abbildung~\ref{fig:bistatic_range} zeigt diesen Zusammenhang grafisch.
 
 \begin{figure}[htb]
     \centering
@@ -160,7 +160,7 @@ Weitere Einsicht bietet die kartesische Betrachtung der bistatischen Entfernung.
     R_\text{b} = {\lVert \boldsymbol{p_\text{tx}} - \boldsymbol{p}_\text{rx} \rVert}_2 = \sqrt{{(x_\text{tx} - x_\text{rx})}^2 + {(y_\text{tx} - y_\text{rx})}^2}
 \end{equation}
 
-Eingesetzt in die ursprüngliche Gleichung~\ref{eq:bistatic_range}, beschreiben diese Gleichungen eine Ellipse deren Lösungsmenge die möglichen Positionen des Ziels für eine gegeben bistatische Entfernung darstellt. Die Konstruktion dieser Ellipse ist in Abbildung~\ref{fig:bistatic_ellipse} illustriert. Position des Senders und Empfängers bilden jeweils die Brennpunkte der Ellipse. Der Term \(R_\text{b}\) wird für den Zeitraum der Messung als bekannt vorrausgesetzt. Die Summe der beiden Terme \(R_1\) und \(R_2\) ist durch Messung der bistatische Entfernung \(R\) beschränkt. Durch Variation von \(R_1\) und \(R_2\) ergibt sich eine Ellipsenform. Diese wird in der Literatur auch als bistatische Ellipse bezeichnet.
+Eingesetzt in die ursprüngliche Gleichung~\ref{eq:bistatic_range}, beschreiben diese Gleichungen eine Ellipse, deren Lösungsmenge die möglichen Positionen des Ziels für eine gegeben bistatische Entfernung darstellt. Die Konstruktion dieser Ellipse ist in Abbildung~\ref{fig:bistatic_ellipse} illustriert. Position des Senders und Empfängers bilden jeweils die Brennpunkte der Ellipse. Der Term \(R_\text{b}\) wird für den Zeitraum der Messung als bekannt vorausgesetzt. Die Summe der beiden Terme \(R_1\) und \(R_2\) ist durch Messung der bistatische Entfernung \(R\) beschränkt. Durch Variation von \(R_1\) und \(R_2\) ergibt sich eine Ellipsenform. Diese wird in der Literatur auch als bistatische Ellipse bezeichnet.
 
 \begin{figure}[htb]
     \centering
@@ -258,9 +258,12 @@ Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen
 
 \section{Passive Zieldetektion und -lokalisierung}
 
-Wie die verwendung des Akronyms Passiv\emph{radar} (\textbf{Ra}dio \textbf{D}etection \textbf{a}nd \textbf{R}anging) bereits vermuten lässt, handelt es sich bei den Ausstrahlungen der Sender um elektromagnetische Wellen im Radio oder Mikrowellenbereich. Sender werden in der Literatur auch Beleuchter oder Illuminator bezeichnet. Diese werden anders als bei aktivem Radar nicht vom Operator selbst gesteuert. Stattdessen dienen sie oft einer ganz anderen Primärfunktion, wie bspw.\ Hör-, Mobilfunk oder Fernsehen. Die vorliegenden Wellenformen können somit unvorteilhafte Eigenschaften in Bezug auf Radar aufweisen.
+Wie die verwendung des Akronyms Passiv\emph{radar} (\textbf{Ra}dio %
+% cspell:disable-next-line
+\textbf{D}etection %
+\textbf{a}nd \textbf{R}anging) bereits vermuten lässt, handelt es sich bei den Ausstrahlungen der Sender um elektromagnetische Wellen im Radio oder Mikrowellenbereich. Sender werden in der Literatur auch Beleuchter oder Illuminator bezeichnet. Diese werden anders als bei aktivem Radar nicht vom Operator selbst gesteuert. Stattdessen dienen sie oft einer ganz anderen Primärfunktion, wie bspw.\ Hör-, Mobilfunk oder Fernsehen. Die vorliegenden Wellenformen können somit unvorteilhafte Eigenschaften in Bezug auf Radar aufweisen.
 
-Aufgrund der Nutzung von Beleuchtern aus der Umgebung ist grundsätzlich von einer bistatischen Systemanordnung wie in Abschnitt~\ref{sct:bistatic_geometry} auszugehen. Die zur Ziellokalisierung genutzte Messgröße ist dabei stets der gemessene Zeitversatz \(\tau \) zwischen Echo- und Direktsignal. Die genaue Bestimmung des Zeitversatzes geschieht i.\,d.\,R. mittels Kreuzambiguitätsfunktion, diese wird näher in Abschnitt~\ref{sct:ambiguity_function} erklärt. Wie in Gleichung~\ref{eq:bistatic_delay_measurement} ergibt sich daraus unter berücksichtigung der Ausbreitungsgeschwindigkeit elektromagnetischer Wellen \(c \approx 3\cdot10^8\) direkt die bistatische Entfernung \(R\).
+Aufgrund der Nutzung von Beleuchtern aus der Umgebung ist grundsätzlich von einer bistatischen Systemanordnung wie in Abschnitt~\ref{sct:bistatic_geometry} auszugehen. Die zur Ziellokalisierung genutzte Messgröße ist dabei stets der gemessene Zeitversatz \(\tau \) zwischen Echo- und Direktsignal. Die genaue Bestimmung des Zeitversatzes geschieht i.\,d.\,R. mittels Kreuzambiguitätsfunktion, diese wird näher in Abschnitt~\ref{sct:ambiguity_function} erklärt. Wie in Gleichung~\ref{eq:bistatic_delay_measurement} ergibt sich daraus unter Berücksichtigung der Ausbreitungsgeschwindigkeit elektromagnetischer Wellen \(c \approx 3\cdot10^8\) direkt die bistatische Entfernung \(R\).
 
 \begin{equation}
     R = c \cdot \tau
