@@ -260,13 +260,13 @@ Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen
 
 Wie die verwendung des Akronyms Passiv\emph{radar} (\textbf{Ra}dio \textbf{D}etection \textbf{a}nd \textbf{R}anging) bereits vermuten lässt, handelt es sich bei den Ausstrahlungen der Sender um elektromagnetische Wellen im Radio oder Mikrowellenbereich. Sender werden in der Literatur auch Beleuchter oder Illuminator bezeichnet. Diese werden anders als bei aktivem Radar nicht vom Operator selbst gesteuert. Stattdessen dienen sie oft einer ganz anderen Primärfunktion, wie bspw.\ Hör-, Mobilfunk oder Fernsehen. Die vorliegenden Wellenformen können somit unvorteilhafte Eigenschaften in Bezug auf Radar aufweisen.
 
-Aufgrund der Nutzung von Beleuchtern aus der Umgebung ist grundsätzlich von einer bistatischen Systemanordnung wie in Abschnitt~\ref{sct:bistatic_geometry} auszugehen. Die zur Ziellokalisierung genutzte Messgröße ist dabei stets der gemessene Zeitversatz \(\tau \) zwischen Echo- und Direktsignal. Wie in Gleichung~\ref{eq:bistatic_delay_measurement} ergibt sich daraus unter berücksichtigung der Ausbreitungsgeschwindigkeit elektromagnetischer Wellen \(c \approx 3\cdot10^8\) direkt die bistatische Entfernung \(R\).
+Aufgrund der Nutzung von Beleuchtern aus der Umgebung ist grundsätzlich von einer bistatischen Systemanordnung wie in Abschnitt~\ref{sct:bistatic_geometry} auszugehen. Die zur Ziellokalisierung genutzte Messgröße ist dabei stets der gemessene Zeitversatz \(\tau \) zwischen Echo- und Direktsignal. Die genaue Bestimmung des Zeitversatzes geschieht i.\,d.\,R. mittels Kreuzambiguitätsfunktion, diese wird näher in Abschnitt~\ref{sct:ambiguity_function} erklärt. Wie in Gleichung~\ref{eq:bistatic_delay_measurement} ergibt sich daraus unter berücksichtigung der Ausbreitungsgeschwindigkeit elektromagnetischer Wellen \(c \approx 3\cdot10^8\) direkt die bistatische Entfernung \(R\).
 
 \begin{equation}
     R = c \cdot \tau
 \end{equation}\label{eq:bistatic_delay_measurement}
 
-Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüsse auf die kartesische Position des Ziels getroffen werden können. Hierzu ist entweder die zuhilfenahme mehrerer Messungen der bistatischer Entfernung oder, sofern die Bauart des Systems es erlaubt, der Winkel des eintreffenden Echos notwendig. Abbildung~\ref{fig:localization_via_multiple_bistatic_ranges} zeigt wie eine Ziellokalisierung mittels mehrerer bistatischer Entfernungsmessungen ausgehend von mehreren Beleuchtern ablaufen kann. Gleichermaßen zeigt Abbildung~\ref{fig:localization_via_angular_measurement} wie die Lokalisierung über Winkelmessung erfolgt.
+Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüsse auf die kartesische Position des Ziels getroffen werden können. Hierzu ist entweder die Zuhilfenahme mehrerer Messungen der bistatischer Entfernung oder, sofern die Bauart des Systems es erlaubt, der Winkel des eintreffenden Echos notwendig. Abbildung~\ref{fig:localization_via_multiple_bistatic_ranges} zeigt wie eine Ziellokalisierung mittels mehrerer bistatischer Entfernungsmessungen ausgehend von drei Beleuchtern ablaufen kann. Hierbei ist festzuhalten, dass zur Ermittlung einer eindeutigen Position im zweidimensionalen Fall drei Ellipsenschnitte notwendig sind. Im dreidimensionalen erhöht sich dies auf vier Ellipsoidenschnitte. Bei nur drei oder weniger Ellipsoiden entstehen Schnittmengen mit zwei oder mehr Positionen, hier kann die Schnittmenge unter Anwendung geometrischer Einschränkungen oft reduziert werden (z.\,B. bei Lösungen unter Terrainhöhe können Flugzeuge ausgeschlossen werden). An bis zu dieser Stelle würde außerdem kein Messrauschen beachtet. In der Realität kann es somit auch vorkommen, dass bei ausreichend Beleuchtern dennoch keine eindeutige Lösung gefunden werden kann. Abbildung~\ref{fig:localization_via_angular_measurement} zeigt wie die Lokalisierung über Winkelmessung erfolgt. Dazu kommen oft Antennenarrays mit digital steuerbarer Hauptkeule zum Einsatz, welche eine schnelle Abtastung des Ellipsoiden erlauben. Die Positionsgenauigkeit ist hierbei in direkter Abhängigkeit von der Breite der Antennenhauptkeule und damit der Winkelauflösung des Antennenarrays.
 
 \begin{figure}[htb]
     \centering
@@ -331,7 +331,7 @@ Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüs
         \node at (target_coord) {\huge\faPlane};
         \path (rx1_coord) node [below=2pt] {Rx} node [cross out,draw,solid] {};
     \end{tikzpicture}
-    \caption{Ziellokalisierung über Messung mehrerer bistatischer Entfernungen in einem System mit mehreren Sendern.}\label{fig:localization_via_multiple_bistatic_ranges}
+    \caption{Ziellokalisierung über Messung mehrerer bistatischer Entfernungen in einem System mit drei Sendern.}\label{fig:localization_via_multiple_bistatic_ranges}
 \end{figure}
 
 \begin{figure}[htb]
