@@ -3,12 +3,14 @@ arange
 asarray
 astype
 atleast
+atol
 autodocstring
 Baulig
 Bradfisch
 bungcip
 conda
 conda_pkgs_dir
+CPIs
 CUDA
 cupy
 curr
@@ -32,6 +34,7 @@ frompyfunc
 ftype
 gitlens
 ifft
+imshow
 ioutils
 ipykernel
 ipympl
@@ -55,6 +58,7 @@ obsrv
 OFDM
 pylance
 pylint
+pyplot
 pytest
 rapidsai
 scipy
@@ -67,5 +71,14 @@ tobytes
 unsynchronized
 venv
 vstack
+xlabel
+xticklabels
+xticks
+xycoords
+xytext
+ylabel
+ylim
+yticklabels
+yticks
 Zadoff
 zfunc
