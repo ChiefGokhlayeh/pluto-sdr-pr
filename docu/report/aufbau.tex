@@ -6,7 +6,22 @@ Bei dem hier verwendeten SDR handelt es sich um ein ADALM
 PLUTO SDR. Der Hauptgrund, warum sich in diesem Versuchsaufbau für dieses Gerät entschieden wurde ist die Bandbreite dieses Gerätes die bei bis zu 20 MHz liegt. Die Bandbreite des Signals was hier für Passiv Radar verwendet beträgt nämlich 5MHz was einige SDR nicht aufbringen können.  Aufs weitere besitzt das SDR eine Frequenz Abdeckung von 325 MHz bis zu 3.8 MHz. Die weiteren Daten können in der Tabelle abgelesen werden. 
 
 \subsubsection{Synchronität}
-Zur Aufnahme des Referenzsignals als auch des reflektierten Signals werden jeweils ein Pluto-SDR benötigt, diese zwei müssen nun synchron betrieben werden. Dies wird erreicht durch Daisy Chaining  der beiden Uhren der SDRs und einem OCXO Oscillator als externen Uhr. Abbildung zeigt dann den fertigen Aufbau der Beiden SDRs und im Schaltplan in Abbildung ist zur erkennen wie die Uhr der jeweiligen SDRs aufgebaut ist.
+Zur Aufnahme des Referenzsignals als auch des reflektierten Signals werden jeweils ein Pluto-SDR benötigt, diese zwei müssen nun synchron betrieben werden. Dies wird erreicht durch Daisy Chaining  der beiden Uhren der SDRs und einem OCXO Oscillator als externen Uhr. Die Abbildungen /ref{Pluto} zeigen dann den fertigen Aufbau der Beiden SDRs und im Schaltplan in Abbildung /ref{Clock} ist zur erkennen wie die Uhr der jeweiligen SDRs aufgebaut ist.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/Schaltplan_Clock.png}
+    \caption{Schaltplan der Clock des Pluto SDRs} \label{Clock}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \subfigure[Pluto mit Clock]{\includegraphics[width=0.3\textwidth]{images/Pluto_1.jpeg}}
+    \subfigure[Daisy Chaining]{\includegraphics[width=0.3\textwidth]{images/Pluto_2.jpeg}}
+    \subfigure[Gesamter Aufbau]{\includegraphics[width=0.3\textwidth]{images/Pluto_4.jpeg}}
+    \caption{Aufbau der Hardware mit den beiden Plutos und der Clock} \label{Pluto}
+\end{figure}
+
 \subsection{Antenne}
 In diesem Aufbau werden zwei Antennen die für DVB-T gedacht sind verwendet. Die Antenne ist ein Yagi Antenne mit 43 Elementen wie man im Abbildung /ref{antenne} sieht die im Frequenzbereich von 470 bis 862 MHZ arbeitet, was für unseren Anwendungsfall sehr gut geeignet ist.Die weiteren Daten zur Antenne stehen in der Tabelle /ref{table:antenne}.
 
@@ -28,8 +43,11 @@ In diesem Aufbau werden zwei Antennen die für DVB-T gedacht sind verwendet. Die
 \end{figure}
 \section{Signal}
 \subsection{Aufbau von LTE}
-\subsubsection{PSS}
-\subsubsection{SSS}
+Zur Synchronisation des Signals benutzt LTE sowohl ein Primary Synchronisation Signal (PSS) als auch ein Secondary Synchronisation Signal (SSS).
+\subsubsection{Primary Synchronisation Signal (PSS)}
+ PSS wird in jeden Frame zweimal übertragen, und zwar im ersten und 10 Slot. Innerhalb jedes Slots wird das PSS im letzten OFDM Symbol übertragen. Was UE damit erreicht mit dem PSS erreicht ist eine Subframe Synchronisation, eine Slot Synchronisation sowie eine Symbol Synchronisation. Außerdem kann die Mitte des jeweiligen Kanals bestimmt werden in der Frequenz Domain. Ebenfalls wird die passenden PCI aus den drei verschiedenen PCI erkannt.
+\subsubsection{Secondary Synchronisation Signal (SSS)}
+
 \section{Software}
 \subsection{SDR-angel}
 Die Aufnahmen in diesem Projekt wurden mit der Open-Source-Software SDR-Angel gemacht. Mit der auch beide SDRs parrallel aufgezeichnen werden können.
