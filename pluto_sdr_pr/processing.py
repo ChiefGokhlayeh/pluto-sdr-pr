@@ -1,7 +1,6 @@
+from typing import Callable, Tuple
 import numpy as np
 from numpy.typing import ArrayLike
-
-import typing
 
 try:
     import cupy as cp
@@ -233,8 +232,8 @@ if not NO_CUPY:
         reference_signal: np.ndarray,
         surveillance_signal: np.ndarray,
         num_samples_per_cpi: int,
-        batch_size: typing.Optional[int] = 1,
-    ):
+        batch_size: int = 1,
+    ) -> np.ndarray:
         """Fast implementation of cross ambiguity function (CAF) on GPU, using
         Fourier Transform of Lag Product approach.
 
@@ -324,6 +323,57 @@ if not NO_CUPY:
         amb = cp.fft.fftshift(cp.fft.fft(amb, axis=1), axes=1)
 
         return amb.get()
+
+
+def clean(
+    reference_channel: np.ndarray,
+    surveillance_channel: np.ndarray,
+    ambfun: Callable[[np.ndarray, np.ndarray], np.ndarray],
+) -> Tuple[np.ndarray, int, int, np.complex128]:
+    """Applies one iteration of CLEAN algorithm according to \
+        [Kulpa (2008)](https://ieeexplore.ieee.org/document/4669567).
+
+    Parameters
+    ----------
+    reference_channel : np.ndarray
+        Analytical (IQ) time-domain signal from the reference channel.
+    surveillance_channel : np.ndarray
+        Analytical (IQ) time-domain signal from the surveillance channel.
+    ambfun : Callable[[np.ndarray, np.ndarray], np.ndarray]
+        Function to be used as ambiguity function. This allows the caller to
+        choose one of the pre-defined CAF implementations or
+        provide their own.
+
+    Returns
+    -------
+    np.ndarray, int, int, np.complex128
+        Returns a tuple containing the cleaned surveillance signal, the
+        Range/Doppler/Amplitude index of the estimated (and removed) clutter.
+
+    See Also
+    --------
+    direct_ambiguity : Direct (slow) implementation of the CAF.
+    fast_ambiguity : Fourier Transform of Lag Product CAF.
+    gpu_ambiguity : GPU based CAF.
+    """
+    amb = ambfun(reference_channel, surveillance_channel)
+    clutter_delay, clutter_doppler = np.unravel_index(np.argmax(amb), amb.shape)
+    clutter_amplitude = amb[clutter_delay, clutter_doppler]
+
+    clutter_estimate = clutter_amplitude * (
+        np.roll(
+            np.pad(surveillance_channel, pad_width=(0, clutter_delay)),
+            clutter_delay,
+        )[: surveillance_channel.shape[0]]
+        * np.exp(-2j * np.pi * clutter_doppler)
+    )
+
+    surveillance_channel -= clutter_estimate
+
+    return (
+        surveillance_channel,
+        (clutter_delay, clutter_doppler, clutter_amplitude),
+    )
 
 
 if __name__ == "__main__":

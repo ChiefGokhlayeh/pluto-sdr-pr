@@ -1,15 +1,51 @@
 \documentclass[12pt,oneside,ngerman]{report}
 \usepackage[utf8]{inputenc}
 
-\usepackage[a4paper, width=150mm, top=25mm, bottom=25mm]{geometry}
-\usepackage[ngerman]{babel} 
-\usepackage[style=iso-nummeric,minnames=1,maxnames=3,giveninits,uniquename=init,backend=bibtex]{biblatex}
-\usepackage{graphicx}
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm]{geometry}
+\usepackage[ngerman]{babel}
+\usepackage[nooldvoltagedirection]{circuitikz}
+\usepackage[outline]{contour}
+\usepackage[style=iso-authoryear,minnames=1,maxnames=3,giveninits,uniquename=init,backend=bibtex]{biblatex}
+\usepackage{amsbsy}
+\usepackage{amsmath}
+\usepackage{caption}
 \usepackage{csquotes}
-\usepackage{hyperref}
-\usepackage{subfigure}
+\usepackage{fancyhdr}
+\usepackage{fontawesome5}
+\usepackage{graphicx}
+\usepackage{pgfplots}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{xcolor}
 
 \addbibresource{references.bib}
+\DefineBibliographyStrings{ngerman}{
+    andothers = {{et\,al\adddot}},
+    online = {Online},
+}
+\setlength{\bibhang}{0cm} % left-align bibliography
+\setlength{\headheight}{15pt}
+
+% textidote: ignore begin
+\captionsetup{justification=centering}
+% textidote: ignore end
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[L]{\leftmark}
+\fancyfoot{}
+\fancyfoot[C]{\thepage}
+\setlength{\headheight}{15pt}
+\renewcommand{\chaptermark}[1]{\markboth{\chaptername{} \ \thechapter.\ #1}{}}
+
+\usetikzlibrary{angles,arrows.meta,calc,math,positioning,shapes.misc,quotes}
+\tikzset{}
+\tikzset{
+    >=Stealth,
+    alt/.code args={<#1>#2#3}{},
+    invisible/.style={opacity=0},
+    visible on/.style={alt={#1{}{invisible}}},
+}
+\pgfplotsset{width=9cm,compat=newest}
 
 \begin{document}
 \include{report/titelpage}
