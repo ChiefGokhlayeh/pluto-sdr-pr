@@ -52,5 +52,71 @@ Es ist diese API an der die meisten SDR-Anwendungen ansetzten. Welche Funktionen
 Da es sich hierbei um Open-Source-Software handelt, konnten benötigte Funktionen oder Bugfixes\footnote{Liste aller Änderungen: \url{https://bit.ly/sdrangel-pr}} direkt selbst implementiert werden und sind anschließend ins Projekt zurück geflossen. So wurde ein Bugfix zur parallelen Nutzung zweier PlutoSDR erstellt, eingereicht und in den Hauptentwicklungszweig des Ursprungsprojekts aufgenommen.
 
 \subsection{Signalverarbeitung}
+
+Die Signalverarbeitungskette stellt den essenziellen Teil dieser Projektarbeit dar. Bereits zu beginn des Projekts wurde sich dafür entschieden, diese weitestgehend in Python zu implementieren. Als Grundlage für mathematische Operationen dient dabei die numerische Mathematikbibliothek \emph{NumPy}. Zusätzlich wird vereinzelt auf Funktionen der \emph{SciPy-Signal} (Grundbausteine für Funktionen der Signalverarbeitung) oder \emph{CuPy} (GPU-beschleunigte Implementierung der NumPy-Funktionen) Bibliotheken zurückgegriffen. Ziel war es, sich eng vertraut mit den Aspekten der Signalverarbeitung zu machen, und weniger auf vorbereitete Funktionen zurückzugreifen; ohne deren Details zu verstehen. Der Entwicklungsprozess ließ sich dabei grob in zwei Schritte unterteilen. Zunächst wurden Algorithmen prototypisch in Form von Jupyter Notebooks implementiert und getestet. Hier konnten die Methoden und Algorithmen interaktiv entworfen werden, bevor sie im zweiten Schritt in solide und testbare Python Module ausgegliedert wurden.
+
+Die so entstandene Signalverarbeitungskette ist in Abbildung~\ref{fig:signal_processing_chain} gezeigt. Die Direkt- und Echosignale werden über zwei getrennte Kanäle aufgezeichnet. Die beiden Empfänger sind dabei am Wandler phasen- und frequenzkohärent getaktet. Durch die Wandler entsteht ein analytisches Zeitsignal, bestehend aus einer in- und einer \(90^\circ \) verschobenen Phasenkomponente %
+% cspell:disable-next-line
+(engl.\@ \textbf{I}n-phase und \textbf{Q}uadrature-phase). %
+Nach der Wandlung werden diese Daten per USB-Schnittstelle an einen Computer übertragen und dort aufgezeichnet. Dabei ist anzumerken, dass bereits durch die USB-Übertragung jegliche Synchronität der beiden Kanäle verloren geht. Um dem entgegen zu wirken, wird im Dateikopf jeder Aufzeichnung ein Millisekunden genauer Zeitstempel hinterlegt. Da jedoch weder das Betriebssystem noch die Aufnahmesoftware harte Echtzeit unterstützt ist auch hier von mehreren Millisekunden Jitter auszugehen. Um dies zu kompensieren wurde eine Synchronisierungsschnittstelle entworfen, die versucht, die beiden Datenströme zeitlich anzugleichen. Dazu wird zunächst eine grobe Angleichung mittels Zeitstempel aus der Aufzeichnung vorgenommen, anschließend wird versucht über die im LTE Signal enthaltenen Synchronisierungssequenzen eine OFDM-Symbol genaue Synchronisierung herzustellen. So entstehen zwei in Zeit, Frequenz und Phase synchronisierte Datenströme, die für die weitere Prozessierung verwendet werden.
+
+Die mitführung des Referenzkanals ermöglicht grobe Clutter Suppression mittels \emph{CLEAN} Algorithmus~\cite{Kulpa2019}. Dazu soll im Folgenden genauer auf die Kernelemente \emph{CAF} und \emph{CLEAN} eingegangen werden. Finales Ergebnis der Prozesskette ist eine von Clutter bereinigte Range-Doppler Matrix. Zukünftige Arbeiten könnten an dieser Stelle ansetzen und die Informationen aus der Range-Doppler Matrix zur Alarmerzeugung nutzen.
+
+\begin{figure}[htb]
+    \centering
+    \begin{tikzpicture}[
+            flow node/.style={
+                    draw,
+                    fill=blue!20,
+                    rounded corners,
+                    minimum height=2em,
+                    minimum width=5cm,
+                },
+            every edge quotes/.style={
+                    fill=white,
+                    rounded corners,
+                    fill opacity=0.8,
+                    text opacity=1,
+                    font=\scriptsize,
+                }
+        ]
+        \coordinate (origin) at (0,0);
+
+        \node (pluto_a) [flow node, left=0.5cm of origin, anchor=east] {PlutoSDR A};
+        \node (pluto_b) [flow node, right=0.5cm of origin, anchor=west] {PlutoSDR B};
+
+        \node (antenna_a) [bareRXantenna, above=1.5cm of pluto_a]{Rx A};
+        \node (antenna_b) [bareRXantenna, above=1.5cm of pluto_b]{Rx B};
+
+        \node (recording_ref) [flow node, below=1.5cm of pluto_a, anchor=north] {Aufzeichnung (Ref.)};
+        \node (recording_surv) [flow node, below=1.5cm of pluto_b, anchor=north] {Aufzeichnung (Surv.)};
+
+        \node (parser_ref) [flow node, below=1.5cm of recording_ref, anchor=north] {Parser};
+        \node (parser_surv) [flow node, below=1.5cm of recording_surv, anchor=north] {Parser};
+
+        \path let \p1=($(parser_ref.south)!0.5!(parser_surv.south)$) in node (sync) [flow node, below=1.5cm of (\p1), anchor=north] {Synchronisation};
+
+        \node (caf) [flow node, below=1.5cm of sync, anchor=north] {CAF};
+
+        \node (clean) [flow node, right=1.5cm of caf, anchor=west] {CLEAN};
+
+        \node (display) [flow node, below=1.5cm of caf, anchor=north] {Anzeige};
+
+        \draw (antenna_a) -- (pluto_a);
+        \draw (antenna_b) -- (pluto_b);
+        \path (pluto_a) edge [->,"IQ Rohdaten"] (recording_ref);
+        \path (recording_ref) edge [->,"\directory{reference.sdriq} Datei"] (parser_ref);
+        \path (parser_ref) edge [->,"Zeitsignal"] (sync);
+        \path (pluto_b) edge [->,"IQ Rohdaten"] (recording_surv);
+        \path (recording_surv) edge [->,"\directory{surveillance.sdriq} Datei"] (parser_surv);
+        \path (parser_surv) edge [->,"Zeitsignal"] (sync);
+        \path (sync) edge [->,"(2x) Sync. Zeitsignal"] (caf);
+        \path let \p1=($(caf.east) + (0,0.2cm)$), \p2=($(clean.west) + (0,0.2cm)$) in (\p1) edge [->,"Range-Doppler Matrix" {right,rotate=40}] (\p2);
+        \path let \p1=($(clean.west) - (0,0.2cm)$), \p2=($(caf.east) - (0,0.2cm)$) in (\p1) edge [->,"Bereinigte Zeitsignale" {right,rotate=-40}] (\p2);
+        \path (caf) edge [->,"Range-Doppler Matrix"] (display);
+    \end{tikzpicture}
+    \caption{Schematische Darstellung der Signalverarbeitungskette.}\label{fig:signal_processing_chain}
+\end{figure}
+
 \subsubsection{Ambiguity Funktion}\label{sct:ambiguity_function}
 \subsubsection{Clean Algorithmus}

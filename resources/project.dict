@@ -30,6 +30,7 @@ docu
 dtype
 eamodio
 Edouard
+engl
 enumeriert
 esbenp
 estim
@@ -38,6 +39,7 @@ ffmpeg
 fftout
 fftshift
 freqs
+frequenzkohärent
 frompyfunc
 ftype
 gitlens
@@ -73,6 +75,7 @@ NUMSC
 NUMSUBF
 obsrv
 OFDM
+plutosdr
 pylance
 pylint
 pyplot
@@ -84,6 +87,7 @@ struct
 subf
 surv_cmplx_conj
 SYMPERSUBF
+Synchronität
 textidote
 tobytes
 unsynchronized
