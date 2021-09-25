@@ -12,6 +12,7 @@ bistatische
 bistatischen
 bistatischer
 Bradfisch
+bspw
 bungcip
 conda
 conda_pkgs_dir
@@ -30,6 +31,10 @@ docu
 dtype
 eamodio
 Edouard
+Ellipsenform
+Ellipsenschnitte
+Ellipsoidengleichung
+Ellipsoidenschnitte
 engl
 enumeriert
 esbenp
@@ -52,6 +57,7 @@ ipykernel
 ipympl
 ipynb
 isclose
+konstruktionsabhängige
 Kreuzambiguitätsfunktion
 Kulpa
 libiio
@@ -64,6 +70,8 @@ monostatische
 monostatischen
 ms-azuretools
 ms-toolsai
+multistatische
+multistatischen
 nbstripout
 nbytes
 ndarray
@@ -75,7 +83,10 @@ NUMSC
 NUMSUBF
 obsrv
 OFDM
+Passivradar
+Passivradars
 plutosdr
+Primärfunktion
 pylance
 pylint
 pyplot
@@ -88,6 +99,7 @@ subf
 surv_cmplx_conj
 SYMPERSUBF
 Synchronität
+Terrainhöhe
 textidote
 tobytes
 unsynchronized
