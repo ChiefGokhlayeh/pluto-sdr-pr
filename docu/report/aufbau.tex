@@ -1,29 +1,38 @@
 \chapter{Passiv Radar Setup}
-\section{Einführung}
+Der genaue Aufbau von der Hardware bis zur Software wird in dem folgenden Kapitel erläutert werden.
 \section{Hardware}
+Die Hardware setzt sich zusammen aus zwei ADALM-Pluto SDR sowie zwei Yagi Antennen und einem OCXO Oscillator als externe Uhr.
 \subsection{ADALM-Pluto SDR}
 Bei dem hier verwendeten SDR handelt es sich um ein ADALM
-PLUTO SDR. Der Hauptgrund, warum sich in diesem Versuchsaufbau für dieses Gerät entschieden wurde ist die Bandbreite dieses Gerätes die bei bis zu 20 MHz liegt. Die Bandbreite des Signals was hier für Passiv Radar verwendet beträgt nämlich 5MHz was einige SDR nicht aufbringen können.  Aufs weitere besitzt das SDR eine Frequenz Abdeckung von 325 MHz bis zu 3.8 MHz. Die weiteren Daten können in der Tabelle abgelesen werden. 
-
+PLUTO SDR. Der Hauptgrund, warum sich in diesem Versuchsaufbau für dieses Gerät entschieden wurde ist die Bandbreite dieses Gerätes die bei bis zu 20 MHz liegt. Die Bandbreite des Signals was hier für Passiv Radar verwendet wird beträgt  5 MHz was einige SDR nicht aufbringen können.  Aufs weitere besitzt das SDR eine Frequenz Abdeckung von 325 KHz bis zu 3.8 MHz. Die weiteren Daten können in der Tabelle abgelesen werden. 
 \subsubsection{Synchronität}
-Zur Aufnahme des Referenzsignals als auch des reflektierten Signals werden jeweils ein Pluto-SDR benötigt, diese zwei müssen nun synchron betrieben werden. Dies wird erreicht durch Daisy Chaining  der beiden Uhren der SDRs und einem OCXO Oscillator als externen Uhr. Die Abbildungen /ref{Pluto} zeigen dann den fertigen Aufbau der Beiden SDRs und im Schaltplan in Abbildung /ref{Clock} ist zur erkennen wie die Uhr der jeweiligen SDRs aufgebaut ist.
+Zur Aufnahme des Referenzsignals als auch des reflektierten Signals werden jeweils ein Pluto-SDR benötigt, diese zwei müssen nun synchron betrieben werden. Dies wird erreicht durch Daisy Chaining  der beiden Uhren der SDRs und einem OCXO Oscillator als externen Uhr. Die Abbildungen ~\ref{fig:Pluto} zeigen dann den fertigen Aufbau der Beiden SDRs und im Schaltplan in Abbildung ~\ref{fig:Clock} ist zur erkennen wie die Uhr der jeweiligen SDRs aufgebaut ist.
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/Schaltplan_Clock.png}
-    \caption{Schaltplan der Clock des Pluto SDRs} \label{Clock}
+    \caption{Schaltplan der Clock des Pluto SDRs} \label{fig:Clock}
 \end{figure}
 
 \begin{figure}
     \centering
-    \subfigure[Pluto mit Clock]{\includegraphics[width=0.3\textwidth]{images/Pluto_1.jpeg}}
-    \subfigure[Daisy Chaining]{\includegraphics[width=0.3\textwidth]{images/Pluto_2.jpeg}}
-    \subfigure[Gesamter Aufbau]{\includegraphics[width=0.3\textwidth]{images/Pluto_4.jpeg}}
-    \caption{Aufbau der Hardware mit den beiden Plutos und der Clock} \label{Pluto}
+    \begin{subfigure}[Pluto mit Clock]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{images/Pluto_1.jpeg}
+        \caption{Pluto SDR und OCXO}
+    \end{subfigure}
+    \begin{subfigure}[Daisy Chaining]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{images/Pluto_2.jpeg}
+        \caption{Daisy Chaining}
+    \end{subfigure}
+    \begin{subfigure}[Gesamter Aufbau]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{images/Pluto_4.jpeg}
+        \caption{Der gesamte Aufbau}
+    \end{subfigure}
+    \caption{Aufbau der Hardware mit den beiden Plutos und der Clock} \label{fig:Pluto}
 \end{figure}
 
 \subsection{Antenne}
-In diesem Aufbau werden zwei Antennen die für DVB-T gedacht sind verwendet. Die Antenne ist ein Yagi Antenne mit 43 Elementen wie man im Abbildung /ref{antenne} sieht die im Frequenzbereich von 470 bis 862 MHZ arbeitet, was für unseren Anwendungsfall sehr gut geeignet ist.Die weiteren Daten zur Antenne stehen in der Tabelle /ref{table:antenne}.
+In diesem Aufbau werden zwei Antennen die für DVB-T gedacht sind verwendet. Die Antenne ist ein Yagi Antenne mit 43 Elementen wie man im Abbildung ~\ref{fig:antenne} sieht die im Frequenzbereich von 470 bis 862 MHZ arbeitet, was für unseren Anwendungsfall sehr gut geeignet ist.Die weiteren Daten zur Antenne stehen in der Tabelle ~\ref{table:antenne}.
 
 \begin{table}
     \centering
@@ -39,9 +48,10 @@ In diesem Aufbau werden zwei Antennen die für DVB-T gedacht sind verwendet. Die
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/antenne.png}
-    \caption{SKT SL43-01 UHF 43 Antenne}\label{antenne}
+    \caption{SKT SL43-01 UHF 43 Antenne}\label{fig:antenne}
 \end{figure}
 \section{Signal}
+Das hier verwendete Signal beruht auf der LTE Technik. LTE besteht aus OFDM Modulen und benutzt die MIMO Technik. Ein LTE Frame ist 1ms lang und besteht aus 10 subframes.
 \subsection{Aufbau von LTE}
 Zur Synchronisation des Signals benutzt LTE sowohl ein Primary Synchronisation Signal (PSS) als auch ein Secondary Synchronisation Signal (SSS).
 \subsubsection{Primary Synchronisation Signal (PSS)}
