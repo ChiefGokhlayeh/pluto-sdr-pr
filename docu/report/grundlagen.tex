@@ -69,15 +69,16 @@ Ein weiterer wichtiger Begriff im Zusammenhang mit bistatischer Geometrie ist di
     R = R_1 + R_2 - R_\text{b}
 \end{equation}\label{eq:bistatic_range}
 
-Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) und \(R_2\) bezeichnen jeweils die Strecke vom Sender zum Ziel und vom Ziel zum Empfänger. Zusammen wird \(R_1 + R_2\) auch als bistatische Summe bezeichnet. Bildlich gesprochen versteht man unter bistatischer Entfernung die zusätzliche Strecke, die das Echosignal gegenüber dem Direktsignal zurückgelegt hat. Abbildung~\ref{fig:bistatic_range} zeigt diesen Zusammenhang grafisch.
+Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) und \(R_2\) bezeichnen jeweils die Strecke vom Sender zum Ziel und vom Ziel zum Empfänger. Zusammen wird \(R_1 + R_2\) auch als bistatische Summe bezeichnet. Bildlich gesprochen versteht man unter bistatischer Entfernung die zusätzliche Strecke, die das Echosignal gegenüber dem Direktsignal zurückgelegt hat. Abbildung~\ref{fig:bistatic_range} zeigt diesen Zusammenhang grafisch. Gezeigt ist neben den genannten Größen auch ein Geschwindigkeitsvektor \(\boldsymbol{v}\) des Ziels, sowie der s.\,g.\@ bistatische Winkel \(\beta \), definiert zwischen den Sichtlinien von Sender und Empfänger am Ziel. Der Term \(\delta \) bezeichnet den Winkel zwischen der Winkelhalbierenden von \(\beta \) und \(\boldsymbol{v}\).
 
 \begin{figure}[htb]
-    \centering
-    \subcaptionbox{Bistatische Geometrie.\label{fig:bistatic_range_model}}{
+    \begin{minipage}[b]{0.49\linewidth}
+        \centering
         \begin{tikzpicture}
             \coordinate (rx1_coord) at (-2,0);
             \coordinate (tx1_coord) at (2,0);
-            \coordinate (target_coord) at (1.75,2);
+            \coordinate (target_coord) at (1.75,2.5);
+            \coordinate (v_vec) at (2,0);
 
             \node at (tx1_coord) [draw,fill=white] (tx1) {Tx};
             \node at (rx1_coord) [draw,fill=white] (rx) {Rx};
@@ -87,9 +88,25 @@ Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) 
             \draw [->,color=red] (tx1) -- (target) node [black,midway,right] {$R_1$};
             \draw [->,color=red] (target) -- (rx) node [black,midway,above left] {$R_2$};
             \draw [->,color=blue] (tx1) -- (rx) node [black,midway,below] {$R_\text{b}$};
+
+            \pic [draw,angle radius=0.8cm,angle eccentricity=0.8,"\contour{white}{$\beta$}"] {angle=rx1_coord--target_coord--tx1_coord};
+
+            \draw [dotted] let
+            \p1 = ($(target_coord)!1cm!(rx1_coord)$),
+            \p2 = ($(target_coord)!1cm!(tx1_coord)$),
+            \p3 = ($(\p1) + (\p2) - (target_coord)$)
+            in
+            ($(target_coord)!1!(\p3)$) coordinate (A) -- ($(\p3)!1!(target_coord)$);
+
+            \path let \p1=($(target_coord)+(v_vec)$) in
+            (rx1_coord) -- (target_coord) coordinate (B) -- (\p1) coordinate (C) pic [draw,angle radius=1.1cm,angle eccentricity=0.8,"\contour{white}{$\delta$}"] {angle};
+
+            \draw let \p1=($(target_coord)+(v_vec)$) in [->,color=cyan] (target) -- node [black,midway,above,align=center] {$\boldsymbol{v}$} (\p1);
         \end{tikzpicture}
-    }
-    \subcaptionbox{Bistatische Entfernung.\label{fig:bistatic_range_equation}}{
+        \subcaption{Bistatische Geometrie.\label{fig:bistatic_range_model}}
+    \end{minipage}
+    \begin{minipage}[b]{0.49\linewidth}
+        \centering
         \begin{tikzpicture}
             \coordinate (rx1_coord) at (-2,0);
             \coordinate (tx1_coord) at (2,0);
@@ -144,7 +161,8 @@ Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) 
             in
             (0,-3) -- node [black,midway,above,align=center] {$R$} (\n3,-3);
         \end{tikzpicture}
-    }
+        \subcaption{Bistatische Entfernung.\label{fig:bistatic_range_equation}}
+    \end{minipage}
     \caption{Grafische Herleitung der bistatischen Entfernung.}\label{fig:bistatic_range}
 \end{figure}
 
@@ -198,7 +216,7 @@ Eingesetzt in die ursprüngliche Gleichung~\ref{eq:bistatic_range}, beschreiben 
     \caption{Schematische Darstellung der bistatischen Ellipsoidengleichung.}\label{fig:bistatic_ellipse}
 \end{figure}
 
-Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen Ellipsoiden, auch bistatischer Ellipsoid genannt. Abbildung~\ref{fig:bistatic_ellipsoid} zeigt exemplarisch einen solchen bistatischen Ellipsoid. Die Lösungen der Ellipsoidengleichung bilden die möglichen Positionen des Ziels für eine gegebene bistatische Entfernung.
+Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen Ellipsoiden, auch bistatischer Ellipsoid genannt. Abbildung~\ref{fig:bistatic_ellipsoid} zeigt exemplarisch einen solchen bistatischen Ellipsoid. Die Lösungen der Ellipsoidengleichung bilden die möglichen Positionen des Ziels für eine gegebene bistatische Entfernung. Eine genauere Modellierung der kartesischen Position wird in~\cite{Willis2005} vorgenommen.
 
 \begin{figure}[htb]
     \centering
@@ -254,6 +272,67 @@ Eine Erweiterung auf den dreidimensionalen Fall ergibt statt einer Ellipse einen
         \end{axis}
     \end{tikzpicture}
     \caption{Exemplarischer bistatischer Ellipsoid für \(R = 15\) und \(R_\text{b} = 10\).}\label{fig:bistatic_ellipsoid}
+\end{figure}
+
+Eine weitere messbare Eigenschaft des Echosignals ist der Dopplereffekt relativ zum Referenzsignal. Unter Annahme stationärer Sender und Empfänger erlaubt dies die Bestimmung der s.\,g.\@ bistatischen Geschwindigkeit. Im allgemeinen Fall (auch in solchen in denen die eben getroffene Annahme nicht zutrifft), bildet die bistatische Geschwindigkeit die erste Ableitung der bistatischen Summe; geometrisch betrachtet also die Rate der Vergrößerung oder Verkleinerung der bistatischen Ellipse (bzw. Ellipsoiden) über die Zeit~\cite[S.~119]{Willis2005}. Über diese simple geometrische Darstellung lassen sich recht einfach die Gradienten maximaler und minimaler bistatischer Geschwindigkeit finden, gezeigt in Abbildung~\ref{fig:bistatic_velocity}. Dabei ist festzustellen, dass die Gradienten maximaler bistatischer Geschwindigkeit stets entlang dem Winkelhalbierenden Vektor von \(\beta \) aus Abbildung~\ref{fig:bistatic_range_model} verlaufen. Folgt man den Gradienten zu jedem Zeitschritt, ergeben sich Hyperbeln konstanter bistatischer Geschwindigkeit.
+
+\begin{figure}[htb]
+    \centering
+    \begin{tikzpicture}
+        \def\F{5}
+        \coordinate (l_foci_coord) at (-\F,0);
+        \coordinate (r_foci_coord) at (\F,0);
+        \coordinate (point_on_ellipse_coord) at (6,0);
+
+        \draw (0,0)
+        let
+        \p1=($(point_on_ellipse_coord)-(r_foci_coord)$),
+        \p2=($(point_on_ellipse_coord)-(l_foci_coord)$),
+        \n1={scalar((veclen(\x1,\y1) + veclen(\x2,\y2))*1pt/1cm)},
+        \n2={\n1/2},
+        \n3={sqrt(pow(\n1/2, 2) - pow(\F, 2))}
+        in
+        circle [x radius=\n2,y radius=\n3,draw=gray];
+
+        \draw [dotted] (l_foci_coord) node [cross out,draw,solid] {} -- (0,0) node {\contour{\thepagecolor}{$R_{\text{b}}$}} -- (r_foci_coord) node [cross out,draw,solid] {};
+
+        \foreach \u in {-5.5,-5,...,5.5} {
+                \draw [->,blue] let
+                \p1=($(point_on_ellipse_coord)-(r_foci_coord)$),
+                \p2=($(point_on_ellipse_coord)-(l_foci_coord)$),
+                \n1={scalar((veclen(\x1,\y1) + veclen(\x2,\y2))*1pt/1cm)},
+                \p3=(\u,{sqrt( (pow(2 * \F / \n1, 2) - 1) * pow(\u, 2) + pow(\n1 / 2, 2) - pow(\F, 2) )}),
+                \p4=($(\p3)!1cm!(l_foci_coord)$),
+                \p5=($(\p3)!1cm!(r_foci_coord)$),
+                \p6=($(\p4) + (\p5) - (\p3)$),
+                in
+                (\p3) -- ($(\p6)!1.5!(\p3)$);
+            }
+
+        \foreach \u in {-6,6} {
+                \draw [->,blue] let
+                \p1=(\u,0),
+                \p2=($(\p1)!1cm!(l_foci_coord)$),
+                \p3=($(\p1)!1cm!(r_foci_coord)$),
+                \p4=($(\p2) + (\p3) - (\p1)$),
+                in
+                (\p1) -- ($(\p4)!1.5!(\p1)$);
+            }
+
+        \foreach \u in {-5.5,-5,...,5.5} {
+                \draw [->,blue] let
+                \p1=($(point_on_ellipse_coord)-(r_foci_coord)$),
+                \p2=($(point_on_ellipse_coord)-(l_foci_coord)$),
+                \n1={scalar((veclen(\x1,\y1) + veclen(\x2,\y2))*1pt/1cm)},
+                \p3=(\u,{-sqrt( (pow(2 * \F / \n1, 2) - 1) * pow(\u, 2) + pow(\n1 / 2, 2) - pow(\F, 2) )}),
+                \p4=($(\p3)!1cm!(l_foci_coord)$),
+                \p5=($(\p3)!1cm!(r_foci_coord)$),
+                \p6=($(\p4) + (\p5) - (\p3)$),
+                in
+                (\p3) -- ($(\p6)!1.5!(\p3)$);
+            }
+    \end{tikzpicture}
+    \caption{Gradienten maximaler positiver bistatischer Geschwindigkeit.}\label{fig:bistatic_velocity}
 \end{figure}
 
 \section{Passive Zieldetektion und -lokalisierung}
@@ -385,7 +464,7 @@ Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüs
         \end{scope}
         \draw [dotted] (rx1_coord) -- (horizon);
 
-        \pic [draw,angle radius=1cm,angle eccentricity=0.8] {angle=target_coord--rx1_coord--horizon};
+        \pic [draw,angle radius=1cm,angle eccentricity=0.8,"\(\alpha \)"] {angle=target_coord--rx1_coord--horizon};
 
         \node (antenna_north) [above=0.4 of rx1_coord,anchor=south] {};
         \node (antenna_east) [base right=0.4 of rx1_coord,anchor=south] {};
@@ -417,3 +496,11 @@ Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüs
     \end{tikzpicture}
     \caption{Ziellokalisierung über bistatische Entfernung und Winkelmessung.}\label{fig:localization_via_angular_measurement}
 \end{figure}
+
+Die bistatische Geschwindigkeit \(V\) lässt sich über die gemessene Dopplerfrequenz \(f_{\text{d}} = f - f_{0}\) und Wellenlänge des Signals \(\lambda = c / f_{c}\) wie folgt bestimmen~\cite[S.~12]{Malanowski2019}:
+
+\begin{equation}\label{equ:bistatic_velocity}
+    V = -\lambda \cdot f_{\text{d}}
+\end{equation}
+
+Sie kann unter anderem zur Initialisierung von bistatischen Tracks genutzt werden~\cite{Petsios2007}, spielt aber auch eine essenzielle Rolle in der Unterdrückung von statischem Clutter und dem herausfiltern potenziell relevanter Ziele.
