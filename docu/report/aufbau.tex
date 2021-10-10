@@ -119,4 +119,54 @@ Die mitführung des Referenzkanals ermöglicht grobe Clutter Suppression mittels
 \end{figure}
 
 \subsubsection{Ambiguity Funktion}\label{sct:ambiguity_function}
+
+Wie bereits durch die Erläuterung des Messprinzips in Kapitel~\ref{chp:theory_of_operation} beschrieben, basiert die Entfernungsschätzung in Passivradarsystemen auf der zeitlichen Korrelation zwischen Referenz- und Echosignal. Neben dem zeitlichen Versatz, welcher Rückschlüsse auf die Entfernung erlaubt, kann unter Berücksichtigung des Frequenzversatzes beider Signale auch eine bistatische Geschwindigkeit ermittelt werden. Um den Versatz eben dieser beiden Größen bestimmen zu können, wird in der Radartechnik allgemein auf die s.\,g.\ Kreuzambiguitätsfunktion (CAF) zurückgegriffen. Darunter wird die mathematische Korrelation zweier Eingangssignale unter Variation des Zeit- und Frequenzversatzes verstanden. Die resultierende Größe gibt Aufschluss über die \emph{Ähnlichkeit} beider Signale an den gewählten Funktionsparametern. Mathematisch ausgedrückt ist die CAF gegeben durch~\cite[S.~132]{Malanowski2019}:
+
+\begin{equation}\label{equ:cross_ambiguity_function}
+    \psi(t, f_{\text{d}}) = \int_{-T/2}^{T/2} {x_{e}(s) \cdot x_{r}^{*}} \left( s - t \right)\mathrm{e}^{\mathrm{j} 2 \pi f_{d} s} \, \text{d} s
+\end{equation}
+
+Die Variablen \(t\) und \(f_{d}\) steuern dabei den Zeit- bzw. Frequenzversatz. Die Funktionen \(x_{r}(s)\) und \(x_{e}(s)\) bestimmen das Referenz- bzw. Echosignal im Zeitbereich. \(T\) stellt den Integrationsintervall (auch Coherent Processing Interval [CPI]) dar. \({\{}\cdot{\}}^{*}\) wird hier als Operator der komplexen Konjugation und \(\mathrm{j}\) als imaginäre Einheit genutzt.
+
+Da in der Regel mit digitalen Systemen gearbeitet wird, soll an dieser Stelle auch die zeitdiskrete Variante der CAF eingeführt werden:
+
+\begin{equation}\label{equ:cross_ambiguity_function_digital}
+    \psi(m, k) = \sum_{n = 0}^{N - 1}{x_{e}(n) \cdot x_{r}^{*}(n - m) \mathrm{e}^{-\mathrm{j} \frac{2 \pi}{N} k n}}
+\end{equation}
+
+Wobei nun \(m\) den Zeitversatz in Samples, \(k\) den Frequenzversatz in Frequency Bins, sowie \(N\) die Anzahl Samples im Integrationsfenster ausdrückt.
+
+In der Praxis wird die CAF für ein ausgewähltes Intervall der Eingangsparameter \(m\) und \(k\) bzw.\@ \(t\) und \(f_\text{d}\) berechnet. Daraus resultiert eine Range-Doppler Map, in der nach potenziellen Zielen, s.\,g.\ Alarmen, gesucht wird. Die Einzelheiten solcher Detektionsalgorithmen, wie z.\,B.\ dem weit verbreitete Constant False Alarm Rate Detector (CFAR)~\cite[S.~208--230]{Malanowski2019}, sind nicht mehr Teil dieser Arbeit. Daher soll zunächst der Fokus auf der CAF bleiben.
+
+Zwar liefert eine direkte Implementierung der Gleichung~\ref{equ:cross_ambiguity_function_digital} mittels gängiger numerischer Basisoperationen bereits das gewünschte Ergebnis, jedoch ist die direkte Berechnung mit erheblicher Zeitkomplexität verbunden. Im Rahmen dieser Projektarbeit wurden daher verschiedene Implementierungen der CAF umgesetzt, auf die im Folgenden kurz eingegangen werden soll. Alle Implementierungen wurden mit einfachen synthetischen Beispielen, sowie gegeneinander getestet.
+
+\begin{description}
+    \item[Direkte Implementierung]
+
+          Diese erste Implementierung dient primär als Verifikationswerkzeug der anderen Varianten. Die CAF wird dabei naiv über eine direkte Übersetzung der Gleichung~\ref{equ:cross_ambiguity_function_digital} in numerische Operationen erzielt. Darüber hinaus werden keinerlei Vereinfachungen zur effizienteren Berechnung vorgenommen. Für jedes Eingangspaar \(m\) und \(k\) wird zunächst eine Matrixzeile des entsprechend zeitlich verschobenen Referenzsignals angelegt. Anschließend wird das Schur Produkt des komplex konjugierten und verschobenen Referenzsignals mit dem Echosignal gebildet. Schließlich muss die so entstandene Matrix aus Verzögerungsprodukten nun mit der analog aufgebauten komplexen Doppler-Exponenten Matrix multipliziert werden.
+
+          Ein sich aus dieser Herangehensweise ergebender Vorteil ist die Möglichkeit, beliebige Permutationen der Eingangspaare \(m\) und \(k\) zu bestimmen. Entscheidender Nachteil ist die hohe Zeitkomplexität dieses Algorithmus.
+    \item[Fine Mode (CPU)]
+
+          Ein approximativer Algorithmus zur Bestimmung der CAF, erstmals beschrieben in~\cite{Stein1981}. Auszeichnende Charakteristiken sind die verringerte Zeitkomplexität bei relativ geringem Implementierungsaufwand. Eine alternative Herleitungen basieren auf~\cite{Yatrakis2001} wurde letztendlich implementiert. Die Kernidee basiert auf der Annahme, dass der Dynamikbereich der Dopplerfrequenz deutlich geringer als die Samplerate \(f_{d,max} << F_{s}\) ist. Diese Annahme lässt sich auf das in dieser Arbeit betrachtete Szenario folgendermaßen ausweiten: Mit einer angenommenen maximalen Dopplergeschwindigkeit von \SI{100}{\metre\per\sec} (Flugzeug in Landeanflug) lässt sich der Dynamikbereich durch umstellen der Gleichung~\ref{equ:bistatic_velocity} bestimmen. Somit gilt: % chktex 35
+          \begin{equation*}
+              f_{d,max} = \left| \SI{624}{\mega\hertz} \cdot \frac{\SI{1000}{\metre\per\sec}}{\SI{3e8}{\metre\per\sec}} \right| \approx \SI{208}{\hertz} << F_s = \SI{5}{\mega\hertz} % chktex 35
+          \end{equation*}
+
+          In~\cite{Yatrakis2001} wird basierend auf dieser Ungleichung eine Approximation vorgenommen, die es erlaubt, das Problem in drei Schritten zu lösen. Vereinfacht lauten diese:
+          \begin{enumerate}
+              \item Berechne das komplexe Produkt zwischen Echo und dem dem um \(\tau \) verzögerten Referenzsignal.
+              \item Dezimiere das Verzögerungsprodukt um \(L << F_s / 2 \pi v_{max} \). Wobei \(v_{max}\) die maximal erwartete Dopplergeschwindigkeit in \si{\metre\per\second} darstellt. % chktex 35
+              \item Berechne die \(\mathbf{DFT} {\{ \cdot \}}\) des dezimierten Produktes.
+          \end{enumerate}
+
+          Zur Überprüfung auf Korrektheit, wurden die Rechenergebnisse mit denen der Direkten Implementierung verglichen. Entscheidender Vorteil dieser Variante ist die deutlich schnellere Berechnung, dank Nutzung des deutlich effizienteren \(\mathbf{FFT} {\{ \cdot \}}\) Algorithmus.
+
+    \item[Fine Mode (GPU)]
+
+          Eine GPU-optimierte Implementierungen des Fine Mode Algorithmus. Funktionsprinzip und Ablauf sind mit der CPU-Version identisch, jedoch werden sämtliche Operationen auf der GPU ausgeführt.
+
+          In der Praxis hat sich gezeigt, dass diese Variante zwar auf ein einzelnes Integrationsintervall bezogen schneller rechnet, jedoch ist die Prozessierung mehrerer Range-Doppler Matrizen im Batch-Modus schnell durch den geringeren VRAM limitiert.
+\end{description}
+
 \subsubsection{Clean Algorithmus}

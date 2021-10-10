@@ -15,6 +15,8 @@ bistatisches
 Bradfisch
 bspw
 bungcip
+CFAR
+chktex
 conda
 conda_pkgs_dir
 CPIs
@@ -24,12 +26,14 @@ curr
 cusignal
 davidanson
 decorrelate
+Detektionsalgorithmen
 devcontainer
 devcontainers
 dlti
 dockerfilelint
 docu
 Dopplerfrequenz
+Dopplergeschwindigkeit
 dtype
 eamodio
 Edouard
@@ -95,6 +99,7 @@ pylint
 pyplot
 pytest
 rapidsai
+Samplerate
 scipy
 sdriq
 struct
@@ -108,6 +113,11 @@ tobytes
 unsynchronized
 veclen
 venv
+Verifikationswerkzeug
+Verzögerungsprodukt
+Verzögerungsprodukten
+Verzögerungsprodukts
+VRAM
 vstack
 xlabel
 xticklabels
@@ -119,4 +129,5 @@ ylim
 yticklabels
 yticks
 Zadoff
+zeitdiskrete
 zfunc
