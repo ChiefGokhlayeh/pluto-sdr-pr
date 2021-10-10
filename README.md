@@ -2,6 +2,8 @@
 
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/ChiefGokhlayeh/pluto-sdr-pr/main.svg)](https://results.pre-commit.ci/latest/github/ChiefGokhlayeh/pluto-sdr-pr/main)
 [![pytest](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/pytest.yml/badge.svg)](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/pytest.yml)
+[![doc-build](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/doc-build.yml/badge.svg)](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/doc-build.yml)
+[![doc-lint](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/doc-lint.yml/badge.svg)](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/doc-lint.yml)
 
 Student project aiming to implement [passive radar](https://en.wikipedia.org/wiki/Passive_radar) functionality, using cheap ~~RTL-SDR receivers~~ **Pluto-SDR receivers** and public **LTE-based 5G Broadcast** radio signals as illuminators of opportunity.
 
