@@ -26,6 +26,7 @@ devcontainer
 devcontainers
 dlti
 dockerfilelint
+docu
 dtype
 eamodio
 esbenp
@@ -61,6 +62,7 @@ nbstripout
 nbytes
 ndarray
 njpwerner
+nonstopmode
 noqa
 numpy
 NUMSC
