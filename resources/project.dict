@@ -6,6 +6,7 @@ astype
 atleast
 atol
 autodocstring
+axvspan
 bareantenna
 Baulig
 bistatische
@@ -17,6 +18,7 @@ bspw
 bungcip
 CFAR
 chktex
+cmap
 conda
 conda_pkgs_dir
 CPIs
@@ -120,6 +122,7 @@ Verzögerungsprodukts
 VRAM
 vstack
 xlabel
+xlim
 xticklabels
 xticks
 xycoords
