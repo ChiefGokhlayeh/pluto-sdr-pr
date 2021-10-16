@@ -36,6 +36,7 @@ dockerfilelint
 docu
 Dopplerfrequenz
 Dopplergeschwindigkeit
+Dopplerversatz
 dtype
 eamodio
 Edouard
@@ -53,6 +54,7 @@ fftout
 fftshift
 freqs
 frequenzkohärent
+frequenzverschobene
 frompyfunc
 ftype
 gitlens
@@ -104,6 +106,7 @@ rapidsai
 Samplerate
 scipy
 sdriq
+Senderwellenform
 struct
 subf
 surv_cmplx_conj
@@ -112,6 +115,7 @@ Synchronität
 Terrainhöhe
 textidote
 tobytes
+überleuchtet
 unsynchronized
 veclen
 venv

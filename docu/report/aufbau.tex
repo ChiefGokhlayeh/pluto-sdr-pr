@@ -169,4 +169,49 @@ Zwar liefert eine direkte Implementierung der Gleichung~\ref{equ:cross_ambiguity
           In der Praxis hat sich gezeigt, dass diese Variante zwar auf ein einzelnes Integrationsintervall bezogen schneller rechnet, jedoch ist die Prozessierung mehrerer Range-Doppler Matrizen im Batch-Modus schnell durch den geringeren VRAM limitiert.
 \end{description}
 
-\subsubsection{Clean Algorithmus}
+\subsubsection{CLEAN Algorithmus}
+
+Eine entscheidende Hürde in der Entwicklung eines jeden Radarsystems ist es gewünschte Signale (s.\,g.\ Targets) von unerwünschten (s.\,g.\ Clutter) zu unterscheiden. Selbstverständlich unterscheidet sich welche Reflexionen als Targets oder als Clutter klassifiziert werden je nach Anwendungsfall. Im Falle eines Luftüberwachungsradars werden üblicherweise nur Reflexionen an Flugzeugen als erwünscht angesehen. Neben diesen, Empfangen solche Systeme typischerweise auch unweigerlich Reflexionen an Terrain, Gebäuden, Wolken, Vogelschwärmen, Bodenfahrzeugen oder Schiffen. Diese Clutter-Quellen unterscheiden sich jeweils in ihrem Radarquerschnitt und somit der Leistung die sie an einen Empfänger zurückwerfen können. Eine besondere Clutter-Quelle speziell bei Passivradar ist das einleuchten des Direktsignals, bspw.\ über Nebenkeulen der Empfangsantenne. Dies trifft typischerweise mit deutlich höherer Leistung am Empfänger ein als die Echos der Targets. Es ist daher essenziell diese und andere Quellen von Clutter zu unterdrücken; man spricht von s.\,g.\ Clutter-Suppression. Ohne jegliche Form von Unterdrückung werden Zielreflexionen komplett vom Clutter verdeckt und sind unmöglich in der Range-Doppler Map auszumachen. Für den Prozess der Clutter-Suppression werden typischerweise adaptive Filter verwendet, einige verbreitete Ansätze sind in~\cite[S.~177--202]{Malanowski2019} beschrieben.
+
+Aufgrund der einfachen Implementierung wird in dieser Projektarbeit der CLEAN Algorithmus zur Clutter-Suppression eingesetzt. Damit wird in der aktuellen Version vornehmlich versucht, die Direkteinstrahlung des Referenzsignals im Überwachungskanal zu unterdrücken. Diese Anwendung wurde unter anderem in~\cite{Feng2013} demonstriert.
+
+Der Funktion des CLEAN Algorithmus liegt folgendes an~\cite{Kulpa2008} angelehnte Empfangsmodell zugrunde. Zunächst wird ein Referenz- und ein Überwachungskanal im Basisband definiert. Der Referenzkanal wird als die gedämpfte und mit additivem weißen Rauschen \(\eta (t)\) beaufschlagte Senderwellenform \(u (t)\) modelliert:
+%
+\begin{equation}
+    y_{ref} (t) = a \cdot u (t) + \eta_{ref} (t)
+\end{equation}%
+%
+Wobei \(a\) die nach Dämpfung verbleibende komplexe Amplitude des Signals darstellt.
+
+Im Überwachungskanal wird diese Wellenform als Summe von \(n\) Reflexion an stationären oder bewegten Objekten behandelt. Die aufgrund der Mehrwegeausbreitung verlängerte Signallaufzeit vom \(i\)-ten Objekt zum Empfänger wird als zum Referenzsignal relativer Zeitversatz \(\tau_{i} \) aufgespielt. Gleichermaßen wird ein Dopplerversatz \(f_{d,i}\) für bewegte Ziele beaufschlagt. Schließlich ist auch der Überwachungskanal weißen Rauschen ausgesetzt:%
+%
+\begin{equation}
+    y_{surv} (t) = \sum_{i = 0}^{n}{a_{i} \cdot u (t - \tau_{i}) \cdot \mathrm{e}^{\mathrm{j} 2 f_{d,i} t}} + \eta_{surv} (t)
+\end{equation}%
+%
+Wobei \(\mathrm{j}\) die imaginäre Einheit darstellt. Die so modellierten \(i\) Kopien der vom Sender emittierten Wellenform können sowohl erwünschte Zielreflexionen aber auch Clutter oder Direkteinstrahlung des Referenzsignals sein. Es ist davon auszugehen, dass Direkteinstrahlung und Clutter höhere Amplitude aufweisen, als echte Ziele. Diese werden somit von den unerwünschten Reflexionen überleuchtet. Ziel ist es nun, die Parameter \(a_{i}\), \(\tau_{i}\) und \(f_{d,i}\) eben dieser unerwünschten Einstrahlungen zu schätzen, um im nächsten Schritt entsprechend zeit- und frequenzverschobene Senderwellenform vom Überwachungskanal abzuziehen. Übrig bleiben die Reflexionen der erwünschten Ziele.
+
+Die Kernidee des CLEAN Algorithmus besteht nun darin, die genannten Parameter aus den Peaks der Range/Doppler Matrix abzulesen und rekursiv vom Überwachungskanal abzuziehen. Dabei basiert die Entscheidung, welche Peaks Ziele und welche Clutter darstellen, auf a priori Wissen über das Operationsgebiet. Vorausgesetzt Sender, sowie Empfänger sind stationär; und beide Empfangsantennen in unmittelbarer Nähe zueinander, so ist beispielsweise davon auszugehen, dass der höchste Peak vom Direktsignal bei \(\tau_{direct} \approx 0\) und \(f_{d,direct} \approx 0\) ausgeht. Was fehlt ist die komplexe Amplitude, die aus dem verschobenen Referenzsignal bezogen werden kann. Vor der Subtraktion vom Überwachungskanal, ist sicherzustellen, dass sowohl das geschätzte Clutter-Signal als auch der Überwachungskanal normiert sind.
+
+Eine Demonstration dieses Vorgangs ist in~\ref{fig:clean_signal} dargestellt.
+
+\begin{figure}[htb]
+    \centering
+    \subcaptionbox{Ausgesendete Wellenform\label{fig:clean_base_waveform}}{
+        \includesvg[width=0.9\textwidth]{images/generated/clean_base_waveform.svg}
+    }
+
+    \subcaptionbox{Empfangenes Signal im Referenzkanal\label{fig:clean_ref_waveform}}{
+        \includesvg[width=0.9\textwidth]{images/generated/clean_ref_waveform.svg}
+    }
+
+    \subcaptionbox{Empfangenes Signal im Übertragungskanal\label{fig:clean_surv_waveform}}{
+        \includesvg[width=0.9\textwidth]{images/generated/clean_surv_waveform.svg}
+    }
+
+    \subcaptionbox{Range/Doppler Matrix vor CLEAN Algorithmus\label{fig:clean_amb_before_2d}}{
+        \includesvg[width=0.9\textwidth]{images/generated/clean_amb_before_2d.svg}
+    }
+
+    \caption{Empfangsmodell des CLEAN Algorithmus}\label{fig:clean_signal}
+\end{figure}
