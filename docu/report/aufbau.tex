@@ -112,7 +112,7 @@ Die mitführung des Referenzkanals ermöglicht grobe Clutter Suppression mittels
         \path (parser_surv) edge [->,"Zeitsignal"] (sync);
         \path (sync) edge [->,"(2x) Sync. Zeitsignal"] (caf);
         \path let \p1=($(caf.east) + (0,0.2cm)$), \p2=($(clean.west) + (0,0.2cm)$) in (\p1) edge [->,"Range-Doppler Matrix" {right,rotate=40}] (\p2);
-        \path let \p1=($(clean.west) - (0,0.2cm)$), \p2=($(caf.east) - (0,0.2cm)$) in (\p1) edge [->,"Bereinigte Zeitsignale" {right,rotate=-40}] (\p2);
+        \path let \p1=($(clean.west) - (0,0.2cm)$), \p2=($(caf.east) - (0,0.2cm)$) in (\p1) edge [->,"Bereinigtes Zeitsignal" {right,rotate=-40}] (\p2);
         \path (caf) edge [->,"Range-Doppler Matrix"] (display);
     \end{tikzpicture}
     \caption{Schematische Darstellung der Signalverarbeitungskette.}\label{fig:signal_processing_chain}
