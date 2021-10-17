@@ -103,6 +103,7 @@ pylint
 pyplot
 pytest
 rapidsai
+rauschfrei
 Samplerate
 scipy
 sdriq
