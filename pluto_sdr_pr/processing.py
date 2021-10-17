@@ -347,8 +347,9 @@ def clean(
     Returns
     -------
     np.ndarray, int, int, np.complex128
-        Returns a tuple containing the cleaned surveillance signal, the
-        Range/Doppler/Amplitude index of the estimated (and removed) clutter.
+        Returns a tuple containing the cleaned and normalized surveillance
+        signal, the range/doppler index and power of the estimated (and removed)
+        clutter.
 
     See Also
     --------
@@ -357,22 +358,24 @@ def clean(
     gpu_ambiguity : GPU based CAF.
     """
     amb = ambfun(reference_channel, surveillance_channel)
-    clutter_delay, clutter_doppler = np.unravel_index(np.argmax(amb), amb.shape)
-    clutter_amplitude = amb[clutter_delay, clutter_doppler]
+    clutter_delay, clutter_doppler_idx = np.unravel_index(
+        np.argmax(amb), amb.shape
+    )
+    clutter_power = amb[clutter_delay, clutter_doppler_idx]
 
-    clutter_estimate = clutter_amplitude * (
-        np.roll(
-            np.pad(surveillance_channel, pad_width=(0, clutter_delay)),
-            clutter_delay,
-        )[: surveillance_channel.shape[0]]
-        * np.exp(-2j * np.pi * clutter_doppler)
+    clutter_doppler = int(amb.shape[1] / 2 - clutter_doppler_idx)
+
+    clutter_estimate = np.roll(
+        np.pad(reference_channel, pad_width=(0, clutter_delay)),
+        clutter_delay,
+    )[: reference_channel.shape[0]] * np.exp(
+        -2j * np.pi * np.arange(reference_channel.shape[0]) * clutter_doppler
     )
 
-    surveillance_channel -= clutter_estimate
-
     return (
-        surveillance_channel,
-        (clutter_delay, clutter_doppler, clutter_amplitude),
+        surveillance_channel / np.max(np.abs(surveillance_channel))
+        - clutter_estimate / np.max(np.abs(clutter_estimate)),
+        (clutter_delay, clutter_doppler, clutter_power),
     )
 
 
