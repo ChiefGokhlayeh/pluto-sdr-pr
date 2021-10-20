@@ -15,6 +15,7 @@
 \usepackage{fontawesome5}
 \usepackage{graphicx}
 \usepackage{hyperref}
+\usepackage{listings}
 \usepackage{menukeys}
 \usepackage{pagecolor}
 \usepackage{pgfplots}
@@ -22,6 +23,7 @@
 \usepackage{subcaption}
 \usepackage{svg}
 \usepackage{tikz}
+\usepackage{units}
 \usepackage{xcolor}
 
 \addbibresource{references.bib}
@@ -43,15 +45,14 @@
 \setlength{\headheight}{15pt}
 \renewcommand{\chaptermark}[1]{\markboth{\chaptername{} \ \thechapter.\ #1}{}}
 
-\usetikzlibrary{angles,babel,backgrounds,arrows.meta,calc,graphs,math,positioning,shapes.misc,quotes}
+\usetikzlibrary{angles,arrows.meta,babel,backgrounds,calc,graphs,intersections,math,positioning,shapes.misc,quotes}
 \tikzset{}
 \tikzset{
     >=Stealth,
-    alt/.code args={<#1>#2#3}{},
-    invisible/.style={opacity=0},
-    visible on/.style={alt={#1{}{invisible}}},
 }
 \pgfplotsset{width=9cm,compat=newest}
+
+\lstset{basicstyle=\ttfamily,breaklines=true}
 
 \hyphenation{Plu-to-SDR}
 

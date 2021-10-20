@@ -12,12 +12,12 @@ In diesem Aufbau werden zwei Antennen die für DVB-T gedacht sind verwendet. Die
 
 \begin{table}
     \centering
-        \begin{tabular}[h]{rl}
-            Antenne         & SKT SL43-01 UHF 43            \\
-            Antennengewinn  & 11..13 dB                     \\
-            Frequenzbereich & 470-862 MHz                   \\
-            Halbwertsbreite & horiz. 30...40°/ver. 35...50° \\
-        \end{tabular}
+    \begin{tabular}[h]{rl}
+        Antenne         & SKT SL43-01 UHF 43            \\
+        Antennengewinn  & 11..13 dB                     \\
+        Frequenzbereich & 470-862 MHz                   \\
+        Halbwertsbreite & horiz. 30...40°/ver. 35...50° \\
+    \end{tabular}
     \caption{Daten der SKT SL43-01 UHF 43 Antenne}\label{table:antenne}
 \end{table}
 
@@ -36,7 +36,7 @@ Nachfolgend soll nun die verwendete Softwaresuite erläutert werden. Dazu wird z
 
 \subsection{Aufnahme}
 
-Um Daten vom PlutoSDR zu empfangen bedarf es einer Bediensoftware um den Empfangsprozess zu steuern. Zahlreiche solcher SDR-Anwendungen existieren auf dem Markt, viele davon Open-Source oder als Freeware erhältlich. Der Hersteller selbst, Analog Devices, bietet ein low-level Treiberpaket names \emph{libiio} (der Name setzt sich zusammen aus dem Unix typischen lib-Präfix für \emph{library} und dem Akronym iio---%
+Um Daten vom PlutoSDR zu empfangen bedarf es einer Bediensoftware um den Empfangsprozess zu steuern. Zahlreiche solcher SDR-Anwendungen existieren auf dem Markt, viele davon Open-Source oder als Freeware erhältlich. Der Hersteller selbst, Analog Devices, bietet ein low-level Treiberpaket namens \emph{libiio} (der Name setzt sich zusammen aus dem Unix typischen lib-Präfix für \emph{library} und dem Akronym iio---%
 % cspell:disable-next-line
 \textbf{i}ndustrial \textbf{i}nput/\textbf{o}utput---%
 steht) an. Mit diesem ist es möglich lokal-, über USB- oder Netzwerk verbundene ADCs und FPGAs von Analog Devices zu steuern. Das Treiberpaket beinhaltet dabei einige Kommandozeilenanwendungen mit denen angeschlossene Geräte enumeriert, einzelne Register gelesen und beschrieben und die Firmware ak­tu­a­li­sie­rt werden können. Darüber hinaus kann über eine API, die Teil der namensgebenden libiio Bibliotheksdatei ist, auf Geräte zugegriffen werden.
@@ -148,7 +148,7 @@ Zwar liefert eine direkte Implementierung der Gleichung~\ref{equ:cross_ambiguity
           Ein sich aus dieser Herangehensweise ergebender Vorteil ist die Möglichkeit, beliebige Permutationen der Eingangspaare \(m\) und \(k\) zu bestimmen. Entscheidender Nachteil ist die hohe Zeitkomplexität dieses Algorithmus.
     \item[Fine Mode (CPU)]
 
-          Ein approximativer Algorithmus zur Bestimmung der CAF, erstmals beschrieben in~\cite{Stein1981}. Auszeichnende Charakteristiken sind die verringerte Zeitkomplexität bei relativ geringem Implementierungsaufwand. Eine alternative Herleitungen basieren auf~\cite{Yatrakis2001} wurde letztendlich implementiert. Die Kernidee basiert auf der Annahme, dass der Dynamikbereich der Dopplerfrequenz deutlich geringer als die Samplerate \(f_{d,max} << F_{s}\) ist. Diese Annahme lässt sich auf das in dieser Arbeit betrachtete Szenario folgendermaßen ausweiten: Mit einer angenommenen maximalen Dopplergeschwindigkeit von \SI{100}{\metre\per\sec} (Flugzeug in Landeanflug) lässt sich der Dynamikbereich durch umstellen der Gleichung~\ref{equ:bistatic_velocity} bestimmen. Somit gilt: % chktex 35
+          Ein approximativer Algorithmus zur Bestimmung der CAF, erstmals beschrieben in~\cite{Stein1981}. Auszeichnende Charakteristiken sind die verringerte Zeitkomplexität bei relativ geringem Implementierungsaufwand. Eine alternative Herleitungen basieren auf~\cite{Yatrakis2001} und~\cite[S.~135--136]{Malanowski2019} wurde letztendlich implementiert. Die Kernidee basiert auf der Annahme, dass der Dynamikbereich der Dopplerfrequenz deutlich geringer als die Samplerate \(f_{d,max} << F_{s}\) ist. Diese Annahme lässt sich auf das in dieser Arbeit betrachtete Szenario folgendermaßen ausweiten: Mit einer angenommenen maximalen Dopplergeschwindigkeit von \SI{100}{\metre\per\sec} (Flugzeug in Landeanflug) lässt sich der Dynamikbereich durch umstellen der Gleichung~\ref{equ:bistatic_velocity} bestimmen. Somit gilt: % chktex 35
           \begin{equation*}
               f_{d,max} = \left| \SI{624}{\mega\hertz} \cdot \frac{\SI{1000}{\metre\per\sec}}{\SI{3e8}{\metre\per\sec}} \right| \approx \SI{208}{\hertz} << F_s = \SI{5}{\mega\hertz} % chktex 35
           \end{equation*}
@@ -160,6 +160,8 @@ Zwar liefert eine direkte Implementierung der Gleichung~\ref{equ:cross_ambiguity
               \item Berechne die \(\mathbf{DFT} {\{ \cdot \}}\) des dezimierten Produktes.
           \end{enumerate}
 
+          Abbildung~\ref{fig:caf_fine_mode_schematics} zeigt ein Blockschaltbild des beschriebenen Algorithmus. Die Terme \(x_{r}(n)\) und \(x_{e}(n)\) bilden die Samples des Referenz- bzw. Echosignals, wobei das Echosignal zunächst komplex-konjugiert wird. \(z^{a}\) repräsentiert eine Totzeit um \(a\) Samples. Anschließend werden die Signale multipliziert, woraus sich das Verzögerungsprodukt ergibt. Das gemischte Ergebnis wird durch einen Tiefpassfilter mit einer Grenzfrequenz von \(\nicefrac{1}{L}\) geführt. Danach wird eine Dezimierung der Schrittgröße \(L\) angewendet\footnote{NumPy's \lstinline{decimate} führt sowohl Tiefpassfilterung als auch Dezimierung in einer Operation durch.}. Ziel dieser beiden Operationen ist es, den interessanten Frequenzbereich (gegeben durch \(f_{d,max}\)) auf die gesamte Breite des Spektrums aufzuspreizen. Damit werden die Punkte der nachfolgenden \(\mathbf{DFT} {\{ \cdot \}}\) auf den interessenten Frequenzbereich limitiert, statt sie über die gesamte Bandbreite aufzuteilen. Das Ergebnis der \(\mathbf{DFT} {\{ \cdot \}}\) repräsentiert eine Zeitscheibe der Range/Doppler Matrix. % chktex 35
+
           Zur Überprüfung auf Korrektheit, wurden die Rechenergebnisse mit denen der Direkten Implementierung verglichen. Entscheidender Vorteil dieser Variante ist die deutlich schnellere Berechnung, dank Nutzung des deutlich effizienteren \(\mathbf{FFT} {\{ \cdot \}}\) Algorithmus.
 
     \item[Fine Mode (GPU)]
@@ -168,6 +170,159 @@ Zwar liefert eine direkte Implementierung der Gleichung~\ref{equ:cross_ambiguity
 
           In der Praxis hat sich gezeigt, dass diese Variante zwar auf ein einzelnes Integrationsintervall bezogen schneller rechnet, jedoch ist die Prozessierung mehrerer Range-Doppler Matrizen im Batch-Modus schnell durch den geringeren VRAM limitiert.
 \end{description}
+
+\begin{figure}[htb]
+    \centering
+    \begin{tikzpicture}[
+        result node/.style={
+                draw,
+                minimum width=1.75cm,
+                minimum height=2em,
+                thick,
+            },
+        function node/.style={
+                draw,
+                minimum width=2.5cm,
+                minimum height=2em,
+            },
+        mixer node/.style={
+                mixer,
+                scale=0.5,
+            },
+        delay node/.style={
+                function node,
+                minimum width=3em,
+            },
+        input node/.style={
+                draw,
+                minimum width=1.5cm,
+                minimum height=2em,
+                thick,
+            },
+        ghost/.style={
+                inner sep=0,
+                outer sep=0,
+                minimum width=0,
+                minimum height=2em,
+                anchor=center,
+            },
+        -|/.style={to path={-| (\tikztotarget)}},
+        |-/.style={to path={|- (\tikztotarget)}}
+        ]
+        \node [result node] (y0) at (0, 0) {\(\psi (0, \cdot)\)};
+        \node [result node, anchor=north, below=0.25cm of y0.south] (y1) {\(\psi (1, \cdot)\)};
+        \node [result node, anchor=north, below=0.25cm of y1.south] (y2) {\(\psi (2, \cdot)\)};
+        \node [result node, anchor=north, below=0.25cm of y2.south] (yD) {\(\psi (\dots, \cdot)\)};
+        \node [result node, anchor=north, below=0.25cm of yD.south] (yN) {\(\psi (M, \cdot)\)};
+
+        \node [function node, anchor=east, left=0.25cm of y0.west] (dft0) {\(\mathbf{DFT} {\{ \cdot, L \}}\)};
+        \node [function node, anchor=east, left=0.25cm of y1.west] (dft1) {\(\mathbf{DFT} {\{ \cdot, L \}}\)};
+        \node [function node, anchor=east, left=0.25cm of y2.west] (dft2) {\(\mathbf{DFT} {\{ \cdot, L \}}\)};
+        \node [function node, anchor=east, left=0.25cm of yD.west] (dftD) {\(\mathbf{DFT} {\{ \cdot, L \}}\)};
+        \node [function node, anchor=east, left=0.25cm of yN.west] (dftN) {\(\mathbf{DFT} {\{ \cdot, L \}}\)};
+
+        \path (dft0) edge [->] (y0);
+        \path (dft1) edge [->] (y1);
+        \path (dft2) edge [->] (y2);
+        \path (dftD) edge [->] (yD);
+        \path (dftN) edge [->] (yN);
+
+        \node [function node, anchor=east, left=0.25cm of dft0.west] (dec0) {\(\mathbf{DEC} {\{ \cdot, L \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dft1.west] (dec1) {\(\mathbf{DEC} {\{ \cdot, L \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dft2.west] (dec2) {\(\mathbf{DEC} {\{ \cdot, L \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dftD.west] (decD) {\(\mathbf{DEC} {\{ \cdot, L \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dftN.west] (decN) {\(\mathbf{DEC} {\{ \cdot, L \}}\)};
+
+        \path (dec0) edge [->] (dft0);
+        \path (dec1) edge [->] (dft1);
+        \path (dec2) edge [->] (dft2);
+        \path (decD) edge [->] (dftD);
+        \path (decN) edge [->] (dftN);
+
+        \node [function node, anchor=east, left=0.25cm of dec0.west] (lpf0) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dec1.west] (lpf1) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dec2.west] (lpf2) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of decD.west] (lpfD) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of decN.west] (lpfN) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
+
+        \path (lpf0) edge [->] (dec0);
+        \path (lpf1) edge [->] (dec1);
+        \path (lpf2) edge [->] (dec2);
+        \path (lpfD) edge [->] (decD);
+        \path (lpfN) edge [->] (decN);
+
+        \node [mixer node, anchor=east, left=0.25cm of lpf0.west] (mixer0) {};
+        \node [mixer node, anchor=east, left=0.25cm of lpf1.west] (mixer1) {};
+        \node [mixer node, anchor=east, left=0.25cm of lpf2.west] (mixer2) {};
+        \node [mixer node, anchor=east, left=0.25cm of lpfD.west] (mixerD) {};
+        \node [mixer node, anchor=east, left=0.25cm of lpfN.west] (mixerN) {};
+
+        \path (mixer0.east) edge [->] (lpf0);
+        \path (mixer1.east) edge [->] (lpf1);
+        \path (mixer2.east) edge [->] (lpf2);
+        \path (mixerD.east) edge [->] (lpfD);
+        \path (mixerN.east) edge [->] (lpfN);
+
+        \node [delay node, anchor=east, left=0.25cm of mixer0.west] (delay0) {\(z^{0}\)};
+        \node [delay node, anchor=east, left=0.25cm of mixer1.west] (delay1) {\(z^{-1}\)};
+        \node [delay node, anchor=east, left=0.25cm of mixer2.west] (delay2) {\(z^{-2}\)};
+        \node [delay node, anchor=east, left=0.25cm of mixerD.west] (delayD) {\(z^{-\dots}\)};
+        \node [delay node, anchor=east, left=0.25cm of mixerN.west] (delayN) {\(z^{-M}\)};
+
+        \path (delay0.east) edge [->] (mixer0.west);
+        \path (delay1.east) edge [->] (mixer1.west);
+        \path (delay2.east) edge [->] (mixer2.west);
+        \path (delayD.east) edge [->] (mixerD.west);
+        \path (delayN.east) edge [->] (mixerN.west);
+
+        \node [input node, anchor=east, left=0.5cm of delay0.west] (ref) {\(x_{r}(n)\)};
+        \node [input node, anchor=south, above=0.25cm of ref.north] (surv) {\(x_{e}^{*}(n)\)};
+
+        \node [ghost, left=0.25cm of delay0.west] (ref_ghost_delay0) {};
+        \node [ghost, left=0.25cm of delay1.west] (ref_ghost_delay1) {};
+        \node [ghost, left=0.25cm of delay2.west] (ref_ghost_delay2) {};
+        \node [ghost, left=0.25cm of delayD.west] (ref_ghost_delayD) {};
+        \node [ghost, left=0.25cm of delayN.west] (ref_ghost_delayN) {};
+
+        \path (ref_ghost_delay0.center) edge [->] (delay0.west);
+        \path (ref_ghost_delay1.center) edge [->] (delay1.west);
+        \path (ref_ghost_delay2.center) edge [->] (delay2.west);
+        \path (ref_ghost_delayD.center) edge [->] (delayD.west);
+        \path (ref.east) edge [-|] (ref_ghost_delayN.center) (ref_ghost_delayN.center) edge [->] (delayN.west);
+
+        \node [ghost, left=0.125cm of ref_ghost_delay0.center] (surv_ghost0_mixer0) {};
+        \node [ghost, left=0.125cm of ref_ghost_delay1.center] (surv_ghost0_mixer1) {};
+        \node [ghost, left=0.125cm of ref_ghost_delay2.center] (surv_ghost0_mixer2) {};
+        \node [ghost, left=0.125cm of ref_ghost_delayD.center] (surv_ghost0_mixerD) {};
+        \node [ghost, left=0.125cm of ref_ghost_delayN.center] (surv_ghost0_mixerN) {};
+
+        \node [ghost, above=0.125cm of surv_ghost0_mixer0.north, minimum height=0] (surv_ghost_mixer0) {};
+        \node [ghost, above=0.125cm of surv_ghost0_mixer1.north, minimum height=0] (surv_ghost_mixer1) {};
+        \node [ghost, above=0.125cm of surv_ghost0_mixer2.north, minimum height=0] (surv_ghost_mixer2) {};
+        \node [ghost, above=0.125cm of surv_ghost0_mixerD.north, minimum height=0] (surv_ghost_mixerD) {};
+        \node [ghost, above=0.125cm of surv_ghost0_mixerN.north, minimum height=0] (surv_ghost_mixerN) {};
+
+        \path (surv_ghost_mixer0.center) edge [-|,->] (mixer0.north);
+        \path (surv_ghost_mixer1.center) edge [-|,->] (mixer1.north);
+        \path (surv_ghost_mixer2.center) edge [-|,->] (mixer2.north);
+        \path (surv_ghost_mixerD.center) edge [-|,->] (mixerD.north);
+        \path (surv.east) edge [-|] (surv_ghost_mixerN.center) (surv_ghost_mixerN.center) edge [-|,->] (mixerN.north);
+
+        \path (y0.south west) edge [dotted] (y1.north west)
+        (y1.south west) edge [dotted] (y2.north west)
+        (y2.south west) edge [dotted] (yD.north west)
+        (yD.south west) edge [dotted] (yN.north west);
+        \path (y0.south east) edge [dotted] (y1.north east)
+        (y1.south east) edge [dotted] (y2.north east)
+        (y2.south east) edge [dotted] (yD.north east)
+        (yD.south east) edge [dotted] (yN.north east);
+
+        \path (y0.north east) -- node [midway,anchor=north,rotate=90] {\tiny Entfernung} (yN.south east);
+        \path (yN.south west) -- node [midway,anchor=north] {\tiny Doppler} (yN.south east);
+    \end{tikzpicture}
+
+    \caption{Blockdiagramm des Fine Mode CAF Algorithmus.\label{fig:caf_fine_mode_schematics}}
+\end{figure}
 
 \subsubsection{CLEAN Algorithmus}
 
