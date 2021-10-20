@@ -12,5 +12,5 @@ jobs:
                   args: latexmk -cd -pdf -interaction=nonstopmode -file-line-error docu/report.tex
             - uses: actions/upload-artifact@v2
               with:
-                  name: Internship Report
+                  name: Research Paper
                   path: docu/report.pdf
