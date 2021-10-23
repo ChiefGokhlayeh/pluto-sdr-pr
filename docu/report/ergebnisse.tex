@@ -1,13 +1,37 @@
 \chapter{Ergebnisse \& Ausblick}
 
-In diesem Kapitel werden die Ergebnisse des Studienprojekt präsentiert. Dabei ist zu beachten, dass die in der Einleitung getroffenen Zielvorgaben nur teilweise erfüllt werden konnten. Daher soll in der nachfolgenden Diskussion der Ergebnisse besonderer Fokus auf die vermuteten Problemquellen gelegt werden. Dies soll Ansatzpunkte für mögliche Verbesserungen in zukünftigen Arbeiten geben. Zunächst wird eine exemplarische Demonstration der Prozesskette durchgeführt. Diese wird anschließend diskutiert, um mögliche Optionen zur Verbesserung herauszuarbeiten. Die Diskussion erfolgt dabei grob in Reihenfolge der in Abschnitt~\ref{sct:software} besprochenen Prozesskette.
+In diesem Kapitel werden die Ergebnisse des Studienprojekts präsentiert. Dabei ist zu beachten, dass die in der Einleitung getroffenen Zielvorgaben nur teilweise erfüllt werden konnten. Dafür soll zunächst ein Fazit der faktisch vorhandenen Funktionalität gezogen werden. In der darauffolgenden Diskussion der Ergebnisse soll besonderer Fokus auf die vermuteten Problemquellen gelegt werden. Dies soll Ansatzpunkte für mögliche Verbesserungen in zukünftigen Arbeiten geben.
 
-\section{Demonstration}
+\section{Projektfazit}
+
+Untersucht wurde die Machbarkeit der Nutzung eines regionalen LTE-basierten 5G Broadcast-Signals als Illuminator of Opportunity unter Verwendung preisgünstiger und leicht erhältlicher Elektronik-Hardware, sowie freier Software in einem selbstentworfenen Passivradar-System. Das 5G Broadcast-Signal wurde auf praktische Aspekte der Nutzung als Beleuchter untersucht und eine entsprechende Signalverarbeitungskette implementiert. Mehrere Iterationen des Hardware-Aufbaus wurden durchgeführt, um den Anforderungen an Bandbreite und Synchronität gerecht zu werden. Zum Aufzeichnen der Daten wurden Fehlerbehebungen in frei verfügbarer Open-Source-Software durchgeführt, und diese Änderungen zurück an den Maintainer übergeben. Zusätzlich wurden weitere Verbesserungen in Zeitstempelgenauigkeit, sowie Anwendungsstabilität vorgenommen, und ebenfalls in die öffentliche Code-Basis eingespielt. Über den Zeitrahmen des Projekts wurden mehrere Messkampagnen im Feld durchgeführt. Die aufgezeichneten Daten dienten zur Weiterentwicklung der Signalverarbeitungskette im Labor. Durch Prozessierung konnten theoretisch besprochene Eigenschaften des LTE-Signals nachgewiesen und zur Signalsynchronisierung genutzt werden. Eigene Algorithmen zur Bestimmung der Kreuzambiguität und Anwendung von Clutter-Suppression wurden implementiert. Deren individuelle Funktionalität wurde durch einfache Tests geprüft und bestätigt. Nichtsdestotrotz scheiterte der beschriebene Aufbau in der Detektion landender Flugzeuge.
 
 \section{Diskussion}
 
+Nachfolgend sollen mögliche technische Ursachen zur Nichterfüllung des Projektziels diskutiert werden. Die Reihenfolge orientiert sich dabei grob an der in Abschnitt~\ref{sct:software} besprochenen Prozesskette.
+
+\subsection{Hardware}
+
+Ein Aspekt, auf den in dieser Projektarbeit besonderer Wert gelegt wurde, ist die Synchronität der Datenströme. Das Gleichschalten der lokalen Oszillatoren über kurze Leitungen zu beiden PlutoSDRs ermöglicht Nanosekunden-synchrones Sampling der ADCs, auch wenn diese Überlegung nie überprüft wurde. Die Synchronität geht jedoch verloren, sobald die Daten über USB an den Host-PC übertragen werden. Die verlorene Synchronität muss dann aufwendig über im Host erzeugte Zeitstempel, welche aufgrund der fehlenden Echtzeitfähigkeit des Betriebssystems um mehrere Mikro- bis Millisekunden variieren können, wiederhergestellt werden.
+
+Sollte höhere Synchronität in weiterführenden Arbeiten erforderlich werden, könnte dementsprechende Funktionalität über Änderungen an der PlutoSDR Firmware umgesetzt werden. Genauere Zeitstempel wären über Anpassungen an der Firmware des auf dem PlutoSDR verbauten Xilinx Zynq FPGAs möglich.
+
 \subsection{Aufnahme}
+
+Ein im Offline-Test der Aufnahmesoftware entdecktes Problem ist der Verlust von Samples beim Aufzeichnen mit hoher Bandbreite. Es besteht die Möglichkeit, dass dieses Problem auch in den Feldmessungen aufgetreten ist, jedoch durch die Umstände der Messung unbemerkt blieb. Im Format der vorliegenden Messdaten sind keinerlei Metadaten zu während der Messung aufgetretenen Fehlern vorgesehen. Die Software meldet den Verlust von Samples lediglich über die Standard-Ausgabe auf einem möglicherweise angeschlossenen Terminal. Da die Software bei den Feldmessungen allerdings nicht aus einem Terminal, sondern über die GUI gestartet wurde, blieben mögliche Hinweise auf verlorene Datenpakete unbemerkt. Offline-Tests haben ebenfalls gezeigt, dass Sample-Verlust, durch Auslastung der CPU (bspw\@. durch parallele Betrachtung im Wasserfalldiagramm) begünstigt wird. Da dieses Phänomen erst gegen Projektende und nach Abschluss aller Messkampagnen bemerkt wurde, konnten keine neuen Messungen erhoben werden.
+
+Weiterführende Arbeiten sollten sicherstellen, dass keine Samples bei der Messung verloren gehen. Außerdem sollten Mechanismen, wie visuelles Feedback über auftretende Fehler bei der Messung, implementiert werden.
 
 \subsection{Synchronisation}
 
-\subsection{Clutter Suppression}
+Da die Software ausschließlich für den Offlinebetrieb mit aufgezeichneten Daten ausgelegt ist, müssen die versetzt gestarteten Aufzeichnungen zunächst durch ein Synchronisierungsmodul präprozessiert werden. Da die Aufnahmen während der Feldmessung händisch gestartet werden, müssen so einige Sekunden Zeitunterschied angeglichen werden. Bereits ein Zeitversatz von \SI{1}{\milli\second} entspräche einer bistatischen Distanz von \SI{100}{\kilo\metre}. Ein höherer Versatz könnte dafür sorgen, dass der sich überschneidende Signalteil außerhalb des evaluierten bistatischen Entfernungsintervalls liegt. Des Weiteren wäre eine blinde Suche nach dem statischen Zeitversatz mittels Kreuzambiguität durch \emph{falsche} Peaks resultierend aus Nebenkeulen der Autoambiguität erschwert. Aus diesem Grund wird in dieser Projektarbeit eine Zwei-Stufen Synchronisation basierend auf Zeitstempeln und PSS-Sequenzen durchgeführt. Letztere hat sich jedoch als oft fehlerhaft und wenig verlässlich erwiesen. Abbildung~\ref{fig:pss_correlation_results} zeigt die Korrelationsergebnisse aller drei PSS Sequenzen über jeweils den Referenz- und Überwachungskanal. Die Daten stammen aus unter realbedingungen ausgeführten Feldmessungen, in der beide Antennen parallel in Richtung Beleuchter ausgerichtet wurden. Die y-Achsen sind auf den hochsten Peak aller drei Sequenzen normiert. Zu erkennen ist, dass die in Rot hervorgehobene zweite Sequenz deutlich erkennbare Peaks aufweist. Jedoch zeigen diese Peaks nicht die Regularität, die bei einem MBMS-LTE Signal zu erwarten wäre.
+
+\begin{figure}[htb]
+    \centering
+    \includesvg[width=\textwidth]{images/generated/pss_correlation_results.svg}
+    \caption{Ergebnisse der PSS-Korrelation von Referenz- und Überwachungskanal.}\label{fig:pss_correlation_results}
+\end{figure}
+
+\subsection{Clutter-Suppression}
+
+Zur Clutter- und Direktsignalunterdrückung wird der CLEAN Algorithmus eingesetzt. Ausgewählt wurde dieser vornehmlich aufgrund seiner einfachen Funktionsweise und Implementierung. Ob der CLEAN Algorithmus im gegebenen Szenario die gewünschte Clutter-Suppression Performance liefert, konnte aus zeitlichen Gründen nicht hinreichend innerhalb dieser Projektarbeit evaluiert werden. Hierfür sind weitere Analysen notwendig. Aufgrund der beschränkten Informationen über öffentliche 5G Sendeanlagen müssen viele Protokollparameter gemessen oder erraten werden. So basieren viele der in dieser Projektarbeit eingesetzten Verarbeitungsschritte auf Annahmen, die nicht mit dem Betreiber abgesprochen oder, aufgrund fehlendem Messequipments, durch eigene Messungen bestätigt werden konnten. Es besteht somit keine solide Basis, mit der die selbst bestimmten Eigenschaften verglichen werden können, was auf den Projekterfolg allgemein bezogen hinderlich wirkt.
