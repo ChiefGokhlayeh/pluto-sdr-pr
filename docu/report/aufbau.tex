@@ -67,10 +67,9 @@ Zur Synchronisation des Signals benutzt LTE sowohl ein Primary Synchronisation S
 
 \subsubsection{Primary Synchronisation Signal (PSS)}
  PSS wird in jeden Frame zweimal übertragen, und zwar im ersten und 10 Slot. Innerhalb jedes Slots wird das PSS im letzten OFDM Symbol übertragen. Was UE damit erreicht mit dem PSS erreicht ist eine Subframe Synchronisation, eine Slot Synchronisation sowie eine Symbol Synchronisation. Außerdem kann die Mitte des jeweiligen Kanals bestimmt werden in der Frequenz Domain. Ebenfalls wird die passenden PCI aus den drei verschiedenen PCI erkannt.
- Die Sequenz des PSS wird generiert durch die Zadoff-Chu erzeugt. Zadoff-Chu: $$ 	\operatorname{d_u}(n)=\begin{cases} e^{-j}, & \mbox{wenn }n\mbox{ gerade} \\ e^{-j}, & \mbox{wenn }n\mbox{ ungerade} \end{cases}$$
+ Die Sequenz des PSS wird generiert durch die Zadoff-Chu erzeugt. Zadoff-Chu: $$ 	\operatorname{d_u}(n)=\begin{cases} e^{-j\frac{\pi un(n+1)}{63}}, & n=0,1,...,30 \\ e^{-j\frac{\pi u(n+1)(n+2)}{63}}, & n=31,32,...,61 \end{cases}$$~\cite[S.~181]{etsi2021136} 
 \subsubsection{Secondary Synchronisation Signal (SSS)}
-
-
+Die für den sekundären Synchronisationssignal verwendete Sequenzen d(0),…,d(61) von zwei verknüpften Binärsequenzen der Länge 31. Die verknüpften Sequenzen werden mit einer Verschlüsselungssequenz aus dem ersten Synchronisationssignal verwurschtelt. Die Zuordnung der Sequenz zu den Resource-Elementen hängt von der Rahmenstruktur ab. Bei einem Subframe des Rahmenstruktur Typs 1 wird für das sekundäre Synchronisationssignal derselbe Antennenanschluss wie für das erstes verwendet. ~\cite[S.~183]{etsi2021136} 
 \section{Software}
 \subsection{SDR-angel}
 Die Aufnahmen in diesem Projekt wurden mit der Open-Source-Software SDR-Angel gemacht. Mit der auch beide SDRs parrallel aufgezeichnen werden können.
