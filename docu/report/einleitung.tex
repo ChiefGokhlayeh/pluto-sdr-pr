@@ -1,1 +1,12 @@
-\chapter{Einführung}
+% !TeX root = ../report.tex
+\chapter{Einleitung}
+
+Vorliegend ist eine Studienarbeit zur Implementierung eines eigenen Passivradar-Systems mittels LTE-basiertem 5G Broadcast Beleuchter. Das Projekt umfasst Konzeption, Beschaffung, Konstruktion, Durchführung, sowie Analyse eines ADALM-PlutoSDR basierten Sensorsystems zur passiven kohärenten Detektion startender und landender Verkehrsflugzeuge aus mehreren Kilometern Distanz. Angestrebt wird dabei ein non-kooperatives Detektionsverfahren, in dem das Multimedia-Broadcast Signal eines regionalen Funkturms des Süddeutschen Rundfunks zur Zielbeleuchtung dient. Neben der praktischen Umsetzung wird in einer wissenschaftlichen Vertiefung auch auf theoretische Aspekte der Passivradar-Technologie eingegangen. Dabei sollen Technologiegrundlagen, sowie eine genauere Betrachtung des Beleuchtersignals vorgestellt werden.
+
+\section{Projektziel}
+
+Ziel der Projektarbeit ist, die Aufbereitung und Verarbeitung der Referenz- und Echosignale, um visuelle Detektion eines im Betrachtungsgebiet befindlichen Verkehrsflugzeug in einer Range-Doppler Matrix zu erlauben. Darüber hinaus soll keine maschinelle Alarmgenerierung, kartesische Positionsbestimmung oder Tracking der Ziele erfolgen.
+
+\section{Vorangegangene Arbeit}
+
+Passive Radarsysteme sind in der Literatur seit langer Zeit bekannt und erfreuen sich neuerdings erfrischtem Interesse. Besonders im militärischen Einsatz bietet Passivradar zur unentdeckten Ortung von Flugzielen oder als Ergänzung zum aktiven Radar potenzielle taktische Vorteile. Auch über die zivile Nutzung zur weiträumigen Luftüberwachung wird nachgedacht~\cite{Stahl2018,Erhart2020}. In zahlreichen Publikationen werden Systeme mit FM~\cite{Lallo2008,Xie2018}, DAB~\cite{Winkler2021} oder DVB-T/2~\cite{Conti2016,Winkler2017} Beleuchtern untersucht, und eine handvoll Hersteller bieten bereits produkttaugliche Multiband-Systeme an~\cite{Lutz2018}. Die theoretische Betrachtung LTE-basierter Multimedia-Broadcast-Signale als Beleuchter wird unter anderem in~\cite{Klöck2019} diskutiert.
