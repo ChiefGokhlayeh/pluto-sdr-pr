@@ -76,6 +76,7 @@ Malanowski
 mambaforge
 matmul
 matplotlib
+MBMS
 miniconda
 monostatische
 monostatischen
@@ -98,6 +99,7 @@ Passivradar
 Passivradars
 Passivradarsystemen
 plutosdr
+präprozessiert
 Primärfunktion
 pylance
 pylint
@@ -111,6 +113,7 @@ sdriq
 Senderwellenform
 struct
 subf
+Subframes
 surv_cmplx_conj
 SYMPERSUBF
 Synchronität
@@ -140,3 +143,4 @@ yticks
 Zadoff
 zeitdiskrete
 zfunc
+Zynq
