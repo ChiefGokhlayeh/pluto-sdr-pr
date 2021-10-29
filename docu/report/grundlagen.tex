@@ -5,7 +5,7 @@ Im vorliegenden Bericht wird vielseitig auf praktische Aspekte, die zum Bau eine
 
 \section{Bistatische Geometrie}\label{sct:bistatic_geometry}
 
-In der Ortungstechnik versteht man unter dem Begriff der bistatischen Geometrie die räumliche Trennung zwischen einem Sender und einem Empfänger. Bezogen auf Systeme mit mehreren Sendern und Empfängern wird auch der Begriff des multistatischen Systems genutzt. Im umgekehrten Fall, wenn die räumliche Trennung zwischen Sender und Empfänger als vernachlässigbar klein verstanden wird, spricht man von monostatischen Systemen. Die Abbildung~\ref{fig:mono_bi_multistatic_geometry} zeigt vereinfachte Illustrationen dieser Konzepte. Tx und Rx bezeichnen hierbei jeweils Sender und Empfänger im System. Zu beachten hierbei sind die verschiedenen Signalpfade, die sich aus der Anordnung der Sender und Empfänger ergeben. Man unterscheidet zwischen Direkt- und Echosignalen, also jeweils solche die auf direktem Wege von Sender zu Empfänger wandern und solche die erst an einem oder mehreren Objekten reflektieren und dann beim Empfänger eingehen. Letztere werden weiter unterteilt in erwünschte (Ziele, engl.\ Targets) und unerwünschte (engl.\ Clutter) Echos.
+In der Ortungstechnik versteht man unter dem Begriff der bistatischen Geometrie die räumliche Trennung zwischen einem Sender und einem Empfänger. Bezogen auf Systeme mit mehreren Sendern und Empfängern wird auch der Begriff des multistatischen Systems genutzt. Im umgekehrten Fall, wenn die räumliche Trennung zwischen Sender und Empfänger als vernachlässigbar klein verstanden wird, spricht man von monostatischen Systemen. Abbildung~\ref{fig:mono_bi_multistatic_geometry} zeigt diese Konzepte in vereinfachter Form. Tx und Rx bezeichnen dabei jeweils stets Sender und Empfänger im System. Zu beachten hierbei sind die verschiedenen Signalpfade, die sich aus der Anordnung von Tx und Rx ergeben. Man unterscheidet zwischen Direkt- und Echosignalen, also jeweils solche die auf direktem Wege von Sender zu Empfänger wandern und solche die erst an einem oder mehreren Objekten reflektieren und dann beim Empfänger eingehen. Letztere werden weiter unterteilt in erwünschte (Ziele, engl.\@ Targets) und unerwünschte (engl.\@ Clutter) Echos.
 
 \begin{figure}[htb]
     \centering
@@ -63,12 +63,12 @@ In der Ortungstechnik versteht man unter dem Begriff der bistatischen Geometrie 
     \caption{Mono-, Bi- und Multistatische Geometrie.}\label{fig:mono_bi_multistatic_geometry}
 \end{figure}
 
-Ein weiterer wichtiger Begriff im Zusammenhang mit bistatischer Geometrie ist die bistatische Entfernung. Malanowski definiert diese in~\cite[S.~10]{Malanowski2019} wie folgt:
-
+Ein weiterer wichtiger Begriff im Zusammenhang mit bistatischer Geometrie ist die bistatische Entfernung. \citeauthor{Malanowski2019} definiert diese in~\cite[S.~10]{Malanowski2019} wie folgt:%
+%
 \begin{equation}
     R = R_1 + R_2 - R_\text{b}
-\end{equation}\label{eq:bistatic_range}
-
+\end{equation}\label{eq:bistatic_range}%
+%
 Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) und \(R_2\) bezeichnen jeweils die Strecke vom Sender zum Ziel und vom Ziel zum Empfänger. Zusammen wird \(R_1 + R_2\) auch als bistatische Summe bezeichnet. Bildlich gesprochen versteht man unter bistatischer Entfernung die zusätzliche Strecke, die das Echosignal gegenüber dem Direktsignal zurückgelegt hat. Abbildung~\ref{fig:bistatic_range} zeigt diesen Zusammenhang grafisch. Gezeigt ist neben den genannten Größen auch ein Geschwindigkeitsvektor \(\boldsymbol{v}\) des Ziels, sowie der s.\,g.\@ bistatische Winkel \(\beta \), definiert zwischen den Sichtlinien von Sender und Empfänger am Ziel. Der Term \(\delta \) bezeichnet den Winkel zwischen der Winkelhalbierenden von \(\beta \) und \(\boldsymbol{v}\).
 
 \begin{figure}[htb]
@@ -166,8 +166,8 @@ Wobei \(R_\text{b}\) die Strecke des Direktpfades bezeichnet. Die Terme \(R_1\) 
     \caption{Grafische Herleitung der bistatischen Entfernung.}\label{fig:bistatic_range}
 \end{figure}
 
-Weitere Einsicht bietet die kartesische Betrachtung der bistatischen Entfernung. Ausgehend vom zweidimensionalen Fall werden zunächst Sender, Empfänger und Ziel kartesischen Koordinaten zugewiesen. Es gelten für die Position des Senders \(\boldsymbol{p}_\text{tx} = \begin{bmatrix} x_\text{tx}, y_\text{tx} \end{bmatrix}\), für die Position des Empfängers \(\boldsymbol{p}_\text{rx} = \begin{bmatrix} x_\text{rx}, y_\text{rx} \end{bmatrix}\) und die Position des Ziels \(\boldsymbol{p} = \begin{bmatrix} x, y \end{bmatrix}\). Dafür ergibt sich für die Entfernungen
-
+Weitere Einsicht bietet die kartesische Betrachtung der bistatischen Entfernung. Ausgehend vom zweidimensionalen Fall werden zunächst Sender, Empfänger und Ziel kartesischen Koordinaten zugewiesen. Es gelten für die Position des Senders \(\boldsymbol{p}_\text{tx} = \begin{bmatrix} x_\text{tx}, y_\text{tx} \end{bmatrix}\), für die Position des Empfängers \(\boldsymbol{p}_\text{rx} = \begin{bmatrix} x_\text{rx}, y_\text{rx} \end{bmatrix}\) und die Position des Ziels \(\boldsymbol{p} = \begin{bmatrix} x, y \end{bmatrix}\). Daraus ergeben sich die Entfernungen:%
+%
 \begin{equation}
     R_1 = {\lVert \boldsymbol{p} - \boldsymbol{p}_\text{tx} \rVert}_2 = \sqrt{{(x - x_\text{tx})}^2 + {(y - y_\text{tx})}^2}
 \end{equation}
@@ -176,8 +176,8 @@ Weitere Einsicht bietet die kartesische Betrachtung der bistatischen Entfernung.
 \end{equation}
 \begin{equation}
     R_\text{b} = {\lVert \boldsymbol{p_\text{tx}} - \boldsymbol{p}_\text{rx} \rVert}_2 = \sqrt{{(x_\text{tx} - x_\text{rx})}^2 + {(y_\text{tx} - y_\text{rx})}^2}
-\end{equation}
-
+\end{equation}%
+%
 Eingesetzt in die ursprüngliche Gleichung~\ref{eq:bistatic_range}, beschreiben diese Gleichungen eine Ellipse, deren Lösungsmenge die möglichen Positionen des Ziels für eine gegeben bistatische Entfernung darstellt. Die Konstruktion dieser Ellipse ist in Abbildung~\ref{fig:bistatic_ellipse} illustriert. Position des Senders und Empfängers bilden jeweils die Brennpunkte der Ellipse. Der Term \(R_\text{b}\) wird für den Zeitraum der Messung als bekannt vorausgesetzt. Die Summe der beiden Terme \(R_1\) und \(R_2\) ist durch Messung der bistatische Entfernung \(R\) beschränkt. Durch Variation von \(R_1\) und \(R_2\) ergibt sich eine Ellipsenform. Diese wird in der Literatur auch als bistatische Ellipse bezeichnet.
 
 \begin{figure}[htb]
@@ -340,15 +340,15 @@ Eine weitere messbare Eigenschaft des Echosignals ist der Dopplereffekt relativ 
 Wie die verwendung des Akronyms Passiv\emph{radar} (\textbf{Ra}dio %
 % cspell:disable-next-line
 \textbf{D}etection %
-\textbf{a}nd \textbf{R}anging) bereits vermuten lässt, handelt es sich bei den Ausstrahlungen der Sender um elektromagnetische Wellen im Radio oder Mikrowellenbereich. Sender werden in der Literatur auch Beleuchter oder Illuminator bezeichnet. Diese werden anders als bei aktivem Radar nicht vom Operator selbst gesteuert. Stattdessen dienen sie oft einer ganz anderen Primärfunktion, wie bspw.\ Hör-, Mobilfunk oder Fernsehen. Die vorliegenden Wellenformen können somit unvorteilhafte Eigenschaften in Bezug auf Radar aufweisen.
+\textbf{a}nd \textbf{R}anging) bereits vermuten lässt, handelt es sich bei den Ausstrahlungen der Sender um elektromagnetische Wellen im Radio oder Mikrowellenbereich. Sender werden in der Literatur auch Beleuchter (engl.\@ Illuminator) bezeichnet. Diese werden anders als bei aktivem Radar nicht vom Operator selbst gesteuert. Stattdessen dienen sie oft einer ganz anderen Primärfunktion, wie bspw.\ Hör-, Mobilfunk oder Fernsehen. Die vorliegenden Wellenformen können somit unvorteilhafte Eigenschaften in Bezug auf klassisches Radar aufweisen.
 
-Aufgrund der Nutzung von Beleuchtern aus der Umgebung ist grundsätzlich von einer bistatischen Systemanordnung wie in Abschnitt~\ref{sct:bistatic_geometry} auszugehen. Die zur Ziellokalisierung genutzte Messgröße ist dabei stets der gemessene Zeitversatz \(\tau \) zwischen Echo- und Direktsignal. Die genaue Bestimmung des Zeitversatzes geschieht i.\,d.\,R. mittels Kreuzambiguitätsfunktion, diese wird näher in Abschnitt~\ref{sct:ambiguity_function} erklärt. Wie in Gleichung~\ref{eq:bistatic_delay_measurement} ergibt sich daraus unter Berücksichtigung der Ausbreitungsgeschwindigkeit elektromagnetischer Wellen \(c \approx 3\cdot10^8\) direkt die bistatische Entfernung \(R\)~\cite[S.~11]{Malanowski2019}.
-
+Aufgrund der Nutzung von Beleuchtern aus der Umgebung ist grundsätzlich von einer bistatischen Systemanordnung wie in Abschnitt~\ref{sct:bistatic_geometry} auszugehen. Die zur Ziellokalisierung genutzte Messgröße ist dabei stets der gemessene Zeitversatz \(\tau \) zwischen Echo- und Direktsignal. Die genaue Bestimmung des Zeitversatzes geschieht i.\,d.\,R.\@ mittels Kreuzambiguitätsfunktion, diese wird in Abschnitt~\ref{sct:ambiguity_function} näher erklärt. Wie in Gleichung~\ref{eq:bistatic_delay_measurement} ergibt sich daraus unter Berücksichtigung der Ausbreitungsgeschwindigkeit elektromagnetischer Wellen \(c \approx 3\cdot10^8\) direkt die bistatische Entfernung \(R\)~\cite[S.~11]{Malanowski2019}.%
+%
 \begin{equation}
     R = c \cdot \tau
 \end{equation}\label{eq:bistatic_delay_measurement}
 
-Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüsse auf die kartesische Position des Ziels getroffen werden können. Hierzu ist entweder die Zuhilfenahme mehrerer Messungen der bistatischer Entfernung oder, sofern die Bauart des Systems es erlaubt, der Winkel des eintreffenden Echos notwendig. Abbildung~\ref{fig:localization_via_multiple_bistatic_ranges} zeigt wie eine Ziellokalisierung mittels mehrerer bistatischer Entfernungsmessungen ausgehend von drei Beleuchtern ablaufen kann. Hierbei ist festzuhalten, dass zur Ermittlung einer eindeutigen Position im zweidimensionalen Fall drei Ellipsenschnitte notwendig sind. Im dreidimensionalen erhöht sich dies auf vier Ellipsoidenschnitte. Bei nur drei oder weniger Ellipsoiden entstehen Schnittmengen mit zwei oder mehr Positionen, hier kann die Schnittmenge unter Anwendung geometrischer Einschränkungen oft reduziert werden (z.\,B. bei Lösungen unter Terrainhöhe können Flugzeuge ausgeschlossen werden). An bis zu dieser Stelle würde außerdem kein Messrauschen beachtet. In der Realität kann es somit auch vorkommen, dass bei ausreichend Beleuchtern dennoch keine eindeutige Lösung gefunden werden kann. Abbildung~\ref{fig:localization_via_angular_measurement} zeigt wie die Lokalisierung über Winkelmessung erfolgt. Dazu kommen oft Antennenarrays mit digital steuerbarer Hauptkeule zum Einsatz, welche eine schnelle Abtastung des Ellipsoiden erlauben. Die Positionsgenauigkeit ist hierbei in direkter Abhängigkeit von der Breite der Antennenhauptkeule und damit der Winkelauflösung des Antennenarrays.
+Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüsse auf die kartesische Position des Ziels getroffen werden können. Hierzu ist entweder die Zuhilfenahme mehrerer Messungen der bistatischer Entfernung oder, sofern die Bauart des Systems es erlaubt, der Winkel des eintreffenden Echos notwendig. Abbildung~\ref{fig:localization_via_multiple_bistatic_ranges} zeigt wie eine Ziellokalisierung mittels mehrerer bistatischer Entfernungsmessungen ausgehend von drei Beleuchtern ablaufen kann. Hierbei ist festzuhalten, dass zur Ermittlung einer eindeutigen Position im zweidimensionalen Fall drei Ellipsenschnitte notwendig sind. Im dreidimensionalen erhöht sich dies auf vier Ellipsoidenschnitte. Bei nur drei oder weniger Ellipsoiden entstehen Schnittmengen mit zwei oder mehr Positionen, hier kann die Schnittmenge unter Anwendung geometrischer Einschränkungen oft reduziert werden (z.\,B.\@ bei Lösungen unter Terrainhöhe können Flugzeuge ausgeschlossen werden). Bei den bisher besprochenen Szenarien wurde Messrauschen vernachlässigt. In der Realität kann durch Einwirkung von Rauschen auch vorkommen, dass bei ausreichend Beleuchtern dennoch keine eindeutige Lösung gefunden werden kann. Abbildung~\ref{fig:localization_via_angular_measurement} zeigt wie die Lokalisierung über Winkelmessung erfolgt. Dazu kommen oft Antennenarrays mit elektrisch oder digital gesteuerter Hauptkeule zum Einsatz, welche eine schnelle Abtastung des Ellipsoiden erlauben. Die Positionsgenauigkeit ist hierbei in direkter Abhängigkeit von der Breite der Antennenhauptkeule und damit der Winkelauflösung des Antennenarrays.
 
 \begin{figure}[htb]
     \centering
@@ -497,10 +497,10 @@ Dabei ist festzustellen, dass ohne zusätzliche Informationen keine Rückschlüs
     \caption{Ziellokalisierung über bistatische Entfernung und Winkelmessung.}\label{fig:localization_via_angular_measurement}
 \end{figure}
 
-Die bistatische Geschwindigkeit \(V\) lässt sich über die gemessene Dopplerfrequenz \(f_{\text{d}} = f - f_{0}\) und Wellenlänge des Signals \(\lambda = c / f_{c}\) wie folgt bestimmen~\cite[S.~12]{Malanowski2019}:
-
+Die bistatische Geschwindigkeit \(V\) lässt sich über die gemessene Dopplerfrequenz \(f_{\text{d}} = f - f_{0}\) und Wellenlänge des Signals \(\lambda = c / f_{c}\) wie folgt bestimmen~\cite[S.~12]{Malanowski2019}:%
+%
 \begin{equation}\label{equ:bistatic_velocity}
     V = -\lambda \cdot f_{\text{d}}
-\end{equation}
-
+\end{equation}%
+%
 Sie kann unter anderem zur Initialisierung von bistatischen Tracks genutzt werden~\cite{Petsios2007}, spielt aber auch eine essenzielle Rolle in der Unterdrückung von statischem Clutter und dem herausfiltern potenziell relevanter Ziele.

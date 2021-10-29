@@ -135,6 +135,7 @@ Verzögerungsprodukten
 Verzögerungsprodukts
 VRAM
 vstack
+wiederauferlebtem
 xlabel
 xlim
 xticklabels
@@ -148,4 +149,5 @@ yticks
 Zadoff
 zeitdiskrete
 zfunc
+Zielaufschaltung
 Zynq
