@@ -5,17 +5,27 @@
 \usepackage[ngerman]{babel}
 \usepackage[nooldvoltagedirection]{circuitikz}
 \usepackage[outline]{contour}
-\usepackage[style=iso-authoryear,minnames=1,maxnames=3,giveninits,uniquename=init,backend=bibtex]{biblatex}
+\usepackage[style=iso-numeric,minnames=1,maxnames=3,giveninits,uniquename=init,backend=biber]{biblatex}
+\usepackage[T1]{fontenc}
 \usepackage{amsbsy}
 \usepackage{amsmath}
 \usepackage{caption}
 \usepackage{csquotes}
+\usepackage{enumitem}
 \usepackage{fancyhdr}
 \usepackage{fontawesome5}
 \usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{menukeys}
+\usepackage{microtype}
+\usepackage{pagecolor}
 \usepackage{pgfplots}
+\usepackage{siunitx}
 \usepackage{subcaption}
+\usepackage{svg}
 \usepackage{tikz}
+\usepackage{units}
 \usepackage{xcolor}
 
 \addbibresource{references.bib}
@@ -37,18 +47,20 @@
 \setlength{\headheight}{15pt}
 \renewcommand{\chaptermark}[1]{\markboth{\chaptername{} \ \thechapter.\ #1}{}}
 
-\usetikzlibrary{angles,arrows.meta,calc,math,positioning,shapes.misc,quotes}
+\usetikzlibrary{angles,arrows.meta,babel,backgrounds,calc,graphs,intersections,math,positioning,shapes.misc,quotes}
 \tikzset{}
 \tikzset{
     >=Stealth,
-    alt/.code args={<#1>#2#3}{},
-    invisible/.style={opacity=0},
-    visible on/.style={alt={#1{}{invisible}}},
 }
 \pgfplotsset{width=9cm,compat=newest}
 
+\lstset{basicstyle=\ttfamily,breaklines=true}
+
+\hyphenation{Plu-to-SDR}
+
 \begin{document}
 \include{report/titelpage}
+\include{report/zusammenfassung}
 \tableofcontents
 \listoffigures
 \include{report/einleitung}
@@ -56,7 +68,6 @@
 \include{report/aufbau}
 \include{report/durchführung}
 \include{report/ergebnisse}
-\include{report/ausblick}
-\printbibliography
+\printbibliography % chktex 1
 
 \end{document}
