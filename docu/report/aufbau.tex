@@ -22,12 +22,6 @@ Zur Aufnahme des Referenzsignals als auch des reflektierten Signals werden jewei
 
 \begin{figure}
     \centering
-    \includegraphics[width=\textwidth]{images/Schaltplan_Clock.png}
-    \caption{Schaltplan der Clock des Pluto SDRs} \label{fig:Clock}
-\end{figure}
-
-\begin{figure}
-    \centering
     \begin{subfigure}[Pluto mit Clock]{0.3\textwidth}
         \includegraphics[width=\textwidth]{images/Pluto_1.jpeg}
         \caption{PlutoSDR, OCXO Oscillator}
@@ -41,6 +35,12 @@ Zur Aufnahme des Referenzsignals als auch des reflektierten Signals werden jewei
         \caption{Der gesamte Aufbau}
     \end{subfigure}
     \caption{Aufbau der Hardware mit den beiden Plutos und der Clock} \label{fig:Pluto}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/Schaltplan_Clock.png}
+    \caption{Schaltplan der Clock des Pluto SDRs} \label{fig:Clock}
 \end{figure}
 
 \subsection{Antenne}
@@ -61,6 +61,7 @@ In diesem Aufbau werden zwei Antennen die für DVB-T gedacht sind verwendet. Die
     \centering
     \includegraphics[width=\textwidth]{images/antenne.png}
     \caption{SKT SL43-01 UHF 43 Antenne}\label{fig:antenne}
+    \quelle{\cite{ANTENNE2021}}
 \end{figure}
 \section{Signal}
 Das hier verwendete Signal beruht auf der LTE Technik. Long Term Evolution oder kurz LTE und war vor allem dadurch erfolgreich, dass eine neue Übertragungstechnik verwendet wurde, mit der das Multipath-Fading-Effekt umgangen wurde. Der Multipath-Fading-Effekt tritt auf, wenn die Länge eines Übertragungsschrittes verkleinert wird, was bei einer Verzögerung des Signals dazu führen kann, dass sich die einzelnen Übertragungsschritte überlappen. Die Technik, die dem gegen wirkt, hat die Bezeichnung Orthogonal Frequenz Division Multiplexing (OFDM) Technik. Hierbei wird ein schneller Datenstrom in viele kleine langsame unterteilt, da so kein Multipath-Fading-Effekt auftritt, nach dem Übertragen wird Datenstrom wieder zusammengeführt. OFDM wird in einem der unter Kapitel noch genauer erläutert werden. 
