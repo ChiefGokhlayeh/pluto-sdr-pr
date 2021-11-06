@@ -18,7 +18,7 @@ PLUTO SDR\@. Hauptgrund, warum sich für dieses Gerät entschieden wurde, ist de
 \end{table}
 
 \subsubsection{Synchronität}\label{sct:Oscillator}
-Zur Aufnahme des Referenzsignals als auch des reflektierten Signals werden jeweils ein Pluto-SDR benötigt, diese zwei müssen nun synchron betrieben werden, um das Referenzsignal zu dem reflektierten Signal zu ordnen zu können. Dies wird erreicht durch Daisy Chaining  der beiden Uhren der SDRs und einem OCXO Oscillator als externen Uhr. Die Abbildungen ~\ref{fig:Pluto} zeigen dann den fertigen Aufbau der Beiden SDRs und im Schaltplan in Abbildung ~\ref{fig:Clock} ist zur erkennen wie die Uhr der jeweiligen SDRs aufgebaut ist.
+Zur Aufnahme des Referenzsignals als auch des reflektierten Signals wird jeweils ein PlutoSDR benötigt. Diese müssen nun synchron betrieben werden, um Samples des Referenzsignals dem reflektierten Signal zuordnen zu können. Dies wird erreicht durch Daisy-Chaining der lokalen Oszillatoren beider SDRs durch den externen OCXO. Die Abbildungen~\ref{fig:Pluto} zeigen dann den fertigen Aufbau der beiden SDRs. Im Schaltplan in Abbildung~\ref{fig:Clock} ist zu erkennen, wie das Taktsignal eingespeist werden kann.
 
 \begin{figure}
     \centering
