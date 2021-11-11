@@ -71,7 +71,7 @@ Das hier verwendete Signal beruht auf der LTE Technik. Long Term Evolution oder 
 Ein LTE-Signal besteht aus 504 unterschiedlichen Zellidentitäten auf physikalischer Ebene, diese sind in 168 unterschiedliche physikalischer Gruppen unterteilt. Eine Zellidentität setzt sich zusammen aus Identifikationsnummer der Gruppe sowie der Identifikationsnummer der jeweiligen physikalischen Ebene in der physikalischen Gruppe zusammen. Somit berechnet sich die Zellidentität wie folgt:
 \begin{equation}
     N_{ID}^{cell}=3N_{ID}^{(1)}+N_{ID}^{(2)}
-\end{equation} 
+\end{equation}
 Hierbei gilt, dass jede Gruppe eine Nummer $N_{ID}^{(1)}$ zur Identifikation im Bereich von 0 bis 167 besitzt. Außerdem liegt die Identifikationsnummer $N_{ID}^{(2)}$ der physikalischen Ebene in der physikalischen Gruppe im Bereich von 0 bis 2.
 Zur Synchronisation des Signals benutzt LTE sowohl ein Primary Synchronisation Signal (PSS) als auch ein Secondary Synchronisation Signal (SSS).~\cite[S.~180]{etsi2021136}
 
@@ -83,7 +83,7 @@ Der Framestrukturtyp 1, der für Vollduplex und Halbdublex FDD gilt, hat eine L�
  Die Sequenz des PSS wird generiert durch die Zadoff-Chu erzeugt. Zadoff-Chu:
 \begin{equation}
     \operatorname{d_u}(n)=\begin{cases} e^{-j\frac{\pi un(n+1)}{63}}, & n=0,1,...,30 \\ e^{-j\frac{\pi u(n+1)(n+2)}{63}}, & n=31,32,...,61 \end{cases}
-\end{equation} 
+\end{equation}
 ~\cite[S.~181]{etsi2021136}. Bei einer MBMS-Zelle, die die Rahmenstruktur 1 verwendet, wird das Synchronsignal im Slot 0 in jedem vierten Subframe übertragen.
 
 \subsubsection{Secondary Synchronisation Signal (SSS)}
@@ -96,11 +96,11 @@ Die Signalübertragung eines OFDM besteht aus drei Phasen: Preamble, Header und 
 
 Der Header eines OFDM besteht aus 5 Feldern der Datenrate (4 Bits), einem Reservierten Bit (1 Bit), der Länge (12 Bits), einem Parität Bit (1 Bit) und dem Füllbits (6 Bits). Beim Datenrate Feld kann hier zwischen 16 Kombinationen gewählt werden. Das Längenfeld gibt Information über die tatsächliche Länge in Bytes der Daten.
 
-Das Datenformat besteht aus vier Felder Service, Nachricht, den Füllbits und Pad. Die Aufgabe des Padfeldes ist es, die Länge der Daten so anzupassen, dass die Datenlänge ist ein ganzzahliges Vielfaches von N dbps. Die gesamten Daten Länge ergibt sich aus der folgender Gleichung: 
+Das Datenformat besteht aus vier Felder Service, Nachricht, den Füllbits und Pad. Die Aufgabe des Padfeldes ist es, die Länge der Daten so anzupassen, dass die Datenlänge ist ein ganzzahliges Vielfaches von N dbps. Die gesamten Daten Länge ergibt sich aus der folgender Gleichung:
 \begin{equation}
     N_{data}=N_{dbps}(Ceiling(\frac{16+8N_{Nachricht}}{N_{dbps}}))
 \end{equation}
-wobei $N_{Nachricht}$ die Länge der Nachricht entspricht, die auch im Header übergeben wird. 16 entspricht der Anzahl an Service Bytes und 6 entspricht der Anzahl an Füllbits Bits. Die Anzahl an Pad hängt von der Daten Länge ab und berechnet sich wie folgt: 
+wobei $N_{Nachricht}$ die Länge der Nachricht entspricht, die auch im Header übergeben wird. 16 entspricht der Anzahl an Service Bytes und 6 entspricht der Anzahl an Füllbits Bits. Die Anzahl an Pad hängt von der Daten Länge ab und berechnet sich wie folgt:
 \begin{equation}
     N_{pad}=N_{data}-(16-8N_{Nachricht}+6)
 \end{equation}
