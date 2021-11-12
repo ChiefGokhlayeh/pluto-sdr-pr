@@ -28,11 +28,11 @@ Zur Aufnahme des Referenzsignals als auch des reflektierten Signals wird jeweils
     \end{subfigure}
     \begin{subfigure}[Daisy Chaining]{0.3\textwidth}
         \includegraphics[width=\textwidth]{images/Pluto_2.jpeg}
-        \caption{Daisy Chaining}
+        \caption{Daisy Chaining\\}
     \end{subfigure}
     \begin{subfigure}[Gesamter Aufbau]{0.3\textwidth}
         \includegraphics[width=\textwidth]{images/Pluto_4.jpeg}
-        \caption{Der gesamte Aufbau}
+        \caption{Der gesamte Aufbau\\}
     \end{subfigure}
     \caption{Aufbau der Hardware mit den beiden Plutos und der Clock} \label{fig:Pluto}
 \end{figure}
@@ -76,7 +76,24 @@ Hierbei gilt, dass jede Gruppe eine Nummer $N_{ID}^{(1)}$ zur Identifikation im 
 Zur Synchronisation des Signals benutzt LTE sowohl ein Primary Synchronisation Signal (PSS) als auch ein Secondary Synchronisation Signal (SSS).~\cite[S.~180]{etsi2021136}
 
 \subsubsection{Framestrukturtyp}
-Der Framestrukturtyp 1, der für Vollduplex und Halbdublex FDD gilt, hat eine Länge von 10 ms und besteht aus 10 Subframes, die jeweils eine Länge von $1ms$ haben und von 0 bis 9 durchnummeriert sind. Bei Subframes, die die Frequenz $\Delta f=2.5kHz$, $\Delta f=7.5kHz$ oder $\Delta f=15kHz$ besitzen wird ein Subframe in zwei Slots unterteilt, wo die länge jedes Slots $0.5ms$ beträgt. Bei einer Subframefrequenz von $\Delta f=1.25kHz$ besteht der Subframe aus keinen Slots und seine Länge beträgt $1ms$. Wenn die Übertragungsfrequenz bei $\Delta f=0.37kHz$ liegt, besitzt ein Slot eine Länge von $3ms$. Eine Periode ist $40ms$ lang und besteht dem nach aus 12 Slots, die von 0 bis 13 durchnummeriert sind. Die Übertragung beginnt somit bei jedem vierten Frame. Außerdem stehen für FDD 10 Subframes, 20 Slots oder bis 60 Subslots zur Verfügung.
+Der Framestrukturtyp 1, der für Vollduplex und Halbdublex FDD gilt, hat eine Länge von 10 ms und besteht aus 10 Subframes, die jeweils eine Länge von $1ms$ haben und von 0 bis 9 durchnummeriert sind. Bei Subframes, die die Frequenz $\Delta f=2.5kHz$, $\Delta f=7.5kHz$ oder $\Delta f=15kHz$ besitzen wird ein Subframe in zwei Slots unterteilt, wo die länge jedes Slots $0.5ms$ beträgt. Bei einer Subframefrequenz von $\Delta f=1.25kHz$ besteht der Subframe aus keinen Slots und seine Länge beträgt $1ms$. Wenn die Übertragungsfrequenz bei $\Delta f=0.37kHz$ liegt, besitzt ein Slot eine Länge von $3ms$. Eine Periode ist $40ms$ lang und besteht dem nach aus 12 Slots, die von 0 bis 13 durchnummeriert sind. Die Übertragung beginnt somit bei jedem vierten Frame. Außerdem stehen für FDD 10 Subframes, 20 Slots oder bis 60 Subslots zur Verfügung. In Abbildung~\ref{fig:LTE_frame} ist zum besseren Verständnis der Frame mit Subframes und Slots dargestellt. 
+
+
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \foreach \x in {0,...,2}
+        \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (\x*2,0) {$\#\x$};
+        \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (6,0) {$...$};
+        \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (8,0) {$\#18$};
+        \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (10,0) {$\#19$};
+        \draw[thick,red,decorate,decoration={brace,amplitude=12pt}] (-1,0.4) -- (3,0.4) node[midway, above,yshift=12pt,]{Subframe};
+        \draw[thick,green,decorate,decoration={brace,amplitude=12pt}] (-1,1.2) -- (11,1.2) node[midway, above,yshift=12pt,]{Frame};
+        \draw[thick,blue,decorate,decoration={brace,amplitude=12pt}] (1,-0.4) -- (-1,-0.4) node[midway, below,yshift=-12pt,]{Slot};
+    \end{tikzpicture}
+    \caption{Frame in Framestrukturtyp 1}\label{fig:LTE_frame}
+\end{figure}
 
 \subsubsection{Primary Synchronisation Signal (PSS)}
  PSS wird in jeden Frame zweimal übertragen, und zwar im ersten und 10 Slot. Innerhalb jedes Slots wird das PSS im letzten OFDM Symbol übertragen. Was UE damit erreicht mit dem PSS erreicht ist eine Subframe Synchronisation, eine Slot Synchronisation sowie eine Symbol Synchronisation. Außerdem kann die Mitte des jeweiligen Kanals bestimmt werden in der Frequenz Domain. Ebenfalls wird die passenden PCI aus den drei verschiedenen PCI erkannt.
