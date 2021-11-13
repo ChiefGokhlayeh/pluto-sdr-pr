@@ -16,8 +16,8 @@ PLUTO SDR\@. Hauptgrund, warum sich für dieses Gerät entschieden wurde, ist de
     \begin{tabular}[h]{rl}
         Empfänger      & \SIrange{325}{3800}{\mega\hertz} Truner-Frequenz, \SIrange{0.2}{20}{\mega\hertz} Bandbreite \\
         Sender         & \SIrange{325}{3800}{\mega\hertz} Truner-Frequenz, \SIrange{0.2}{20}{\mega\hertz} Bandbreite \\
-        Anschlüsse     & USB 2.0 OTG, USB power adapter                                                                              \\
-        Kompatibilität & MATLAB, Simulink, GNU Radio, Python, und weitere                                                            \\
+        Anschlüsse     & USB 2.0 OTG, USB power adapter                                                              \\
+        Kompatibilität & MATLAB, Simulink, GNU Radio, Python, und weitere                                            \\
     \end{tabular}
     \caption{Daten des ADALM PlutoSDR}\label{table:sdr}
 \end{table}
@@ -227,7 +227,7 @@ Die Mitführung des Referenzkanals ermöglicht grobe Clutter Suppression mittels
 Wie bereits durch die Erläuterung des Messprinzips in Kapitel~\ref{chp:theory_of_operation} beschrieben, basiert die Entfernungsschätzung in Passivradarsystemen auf der zeitlichen Korrelation zwischen Referenz- und Echosignal. Neben dem zeitlichen Versatz, welcher Rückschlüsse auf die Entfernung erlaubt, kann unter Berücksichtigung des Frequenzversatzes beider Signale auch eine bistatische Geschwindigkeit ermittelt werden. Um den Versatz eben dieser beiden Größen bestimmen zu können, wird in der Radartechnik allgemein auf die sog.\@ Kreuzambiguitätsfunktion (CAF) zurückgegriffen. Darunter wird die Korrelation zweier Eingangssignale unter Variation des Zeit- und Frequenzversatzes verstanden. Die resultierende Größe gibt Aufschluss über die \emph{Ähnlichkeit} beider Signale an den gewählten Funktionsparametern. Mathematisch ausgedrückt ist die CAF gegeben durch~\cite[S.~132]{Malanowski2019}:%
 %
 \begin{equation}\label{equ:cross_ambiguity_function}
-    \psi(t, f_{\text{d}}) = \int_{-T/2}^{T/2} {x_{e}(s) \cdot x_{r}^{*}} \left( s - t \right)\mathrm{e}^{\mathrm{j} 2 \pi f_{d} s} \, \text{d} s
+    \psi(t, f_{d}) = \int_{-T/2}^{T/2} {x_{e}(s) \cdot x_{r}^{*}} \left( s - t \right)\mathrm{e}^{\mathrm{j} 2 \pi f_{d} s} \, \text{d} s
 \end{equation}%
 %
 Die Variablen \(t\) und \(f_{d}\) steuern dabei den Zeit- bzw. Frequenzversatz. Die Funktionen \(x_{r}(s)\) und \(x_{e}(s)\) bestimmen das Referenz- bzw. Echosignal im Zeitbereich. \(T\) stellt den Integrationsintervall (auch Coherent Processing Interval [CPI]) dar. \({\{}\cdot{\}}^{*}\) wird hier als Operator der komplexen Konjugation und \(\mathrm{j}\) als imaginäre Einheit genutzt.
