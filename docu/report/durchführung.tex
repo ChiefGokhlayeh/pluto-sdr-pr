@@ -1,7 +1,7 @@
 \chapter{Durchführung}
 In diesem Kapitel wird auf die Durchführung der Messungen mit dem Passivradar eingegangen. Dabei wird erläutert, wo sich Beleuchter und Messpunkt befinden; und welche Kriterien zur Auswahl des Messplatzes beitragen. Außerdem wird der fertige Messaufbau dargestellt.
 \section{Punkt des Signals}
-Als Beleuchter dient der Stuttgarter Fernsehturm. Dieser liegt im Süden von Stuttgart und ist in Abbildung~\ref{fig:Fernsehturm} zu sehen. Das 5G Broadcast-Signal wird vom Stuttgarter Fernsehturm in Richtung der A8 ausgesendet. Der Broadcast ist Teil eines Pilotprojektes, gefördert durch einem Zusammenschluss aus Südwestrundfunk (SWR), Kathrein Broadcast GmbH,  DFMG  Deutsche Funkturm GmbH, Porsche AG, Rohde \& Schwarz GmbH \& Co. KG, TU Braunschweig und Telekom Deutschland GmbH benutzt. Das Ziel des Projektes ist es die Nutzung von 5G Broadcast für Anwendungen in Fahrzeugen zu erproben. Dafür werden vier Services übertragen: Zwei Fernsehprogramme, die ARD/SWR Mediathek und ein Reiseführer~\cite{5GMAG2020}.
+Als Beleuchter dient der Stuttgarter Fernsehturm. Dieser liegt im Süden von Stuttgart und ist in Abbildung~\ref{fig:Fernsehturm} zu sehen. Das 5G Broadcast-Signal wird vom Stuttgarter Fernsehturm in Richtung der A8 ausgesendet. Der Broadcast ist Teil eines Pilotprojektes, gefördert durch einen Zusammenschluss aus Südwestrundfunk (SWR), Kathrein Broadcast GmbH,  DFMG  Deutsche Funkturm GmbH, Porsche AG, Rohde \& Schwarz GmbH \& Co. KG, TU Braunschweig und Telekom Deutschland GmbH. Ziel des Projektes ist es, die Nutzung von 5G Broadcast für Anwendungen in Fahrzeugen zu erproben. Dafür werden vier Services übertragen: Zwei Fernsehprogramme, die ARD/SWR Mediathek und ein Reiseführer~\cite{5GMAG2020}.
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/Fernsehturm.jpg}
@@ -25,7 +25,7 @@ Der Ort der Feldmessungen ist so gewählt, dass sowohl der Stuttgarter Flughafen
 \end{figure}
 
 \section{Messaufbau}
-Der Messaufbau besteht aus den Komponenten die im Kapitel~\ref{sct:setup} auf S.\pageref{sct:setup} erläutert wurden. Der fertige Aufbau ist in Abbildung~\ref{fig:Messaufbau} zu sehen. Hier werden die beiden SDRs~\ref{sct:sdr} sowie der OCXO~\ref{sct:Oscillator} mit einem Laptop verbunden. Zu sehen ist ebenfalls die SDRangel Software, die zum Aufzeichnen verwendet wird. Die Antennen sind so ausgerichtet, dass eine in Richtung der Einflugsschneise des Flughafens, die andere in Richtung des Fernsehturms zeigt. Die Ausrichtung der Antennen ist in Abbildung~\ref{fig:Einflugschneise} gezeigt.
+Der Messaufbau besteht aus den Komponenten die im Kapitel~\ref{sct:setup} auf S.\pageref{sct:setup} erläutert wurden. Der fertige Aufbau ist in Abbildung~\ref{fig:Messaufbau} zu sehen. Hier werden die beiden SDRs~\ref{sct:sdr} sowie der OCXO~\ref{sct:Oscillator} mit einem Laptop verbunden. Zu sehen ist ebenfalls die SDRangel Software, die zum Aufzeichnen verwendet wird. Die Antennen sind so ausgerichtet, dass eine in Richtung der Einflugsschneise des Flughafens, die andere in Richtung des Fernsehturms zeigt. Die Ausrichtung der Antennen ist in Abbildung~\ref{fig:Einflugschneise} gezeigt. Zu beginn jeder Messung werden die Antennen parallel auf den Fernsehturm gerichtet. Nach dem einige Sekunden aufgenommen sind, wird die Antenne des Überwachungskanals in Richtung Flughafen gedreht. Somit soll garantiert werden, dass auf beiden Kanälen ein starkes 5G Signal zur späteren Synchronisierung vorliegt.
 
 \begin{figure}
     \centering
