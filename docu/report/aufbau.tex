@@ -1,24 +1,30 @@
 \chapter{Passivradar Aufbau}\label{sct:setup}
+
 Das Passivradar setzt sich zusammen aus Hardwarekomponenten, wie Antennen und Empfänger, sowie Softwarekomponenten, welche die empfangen Signale auswerten. Anschließend wird eine Vorhersage über die Position und Geschwindigkeit des Objekts getroffen. Dieses Kapitel beschäftigt sich mit den Komponenten, die in diesem Projekt eingesetzt werden. Dies beinhaltet Algorithmen zur Synchronisation des Referenzsignals mit dem reflektierten Signal, sowie weitere Algorithmen zur Bestimmung der Position und Geschwindigkeit.
+
 \section{Hardware}
+
 Die Hardware eines Passivradars setzt sich zusammen aus Empfängern und Antennen. Verwendet werden in diesem Projekt zwei Pluto SDRs. Angeschlossen werden diese an jeweils eine Yagi Antenne, um Referenz- und Echosignal getrennt zu empfangen. Außerdem Teil des Hardware-Aufbaus ist ein externer Oszillator zur Synchronisation der beiden Empfänger. Hierzu wird ein OCXO (Oven Controlled Crystal Oscillator) verwendet.
+
 \subsection{ADALM-Pluto SDR}\label{sct:sdr}
+
 Bei dem hier verwendeten SDR handelt es sich um ein ADALM
 PLUTO SDR\@. Hauptgrund, warum sich für dieses Gerät entschieden wurde, ist der günstige Preis und die verhältnismäßig hohe Bandbreite dieses Geräts, welche bei bis zu \SI{20}{\mega\hertz} liegt. Die Bandbreite des Beleuchtersignals, das hier für Passivradar verwendet wird beträgt \SI{5}{\mega\hertz}, was einige SDR nicht aufbringen können. Außerdem besitzt das SDR eine frei wählbare Tuner-Frequenz von \SI{325}{\kilo\hertz} bis zu \SI{3.8}{\giga\hertz}. Weitere Daten können Tabelle~\ref{table:sdr} entnommen werden.
 
 \begin{table}
     \centering
     \begin{tabular}[h]{rl}
-        Empfänger & \SIrange{325}{3800}{\mega\hertz} Truner-Frequenz, \SI{200}{\kilo\hertz}--\SI{20}{\mega\hertz} Bandbreite \\
-        Sender & \SIrange{325}{3800}{\mega\hertz} Truner-Frequenz, \SI{200}{\kilo\hertz}--\SI{20}{\mega\hertz} Bandbreite \\
-        Anschlüsse & USB 2.0 OTG, USB power adapter \\
-        Kompatibilität & MATLAB, Simulink, GNU Radio, Python, und weitere \\
+        Empfänger      & \SIrange{325}{3800}{\mega\hertz} Truner-Frequenz, \SIrange{0.2}{20}{\mega\hertz} Bandbreite \\
+        Sender         & \SIrange{325}{3800}{\mega\hertz} Truner-Frequenz, \SIrange{0.2}{20}{\mega\hertz} Bandbreite \\
+        Anschlüsse     & USB 2.0 OTG, USB power adapter                                                                              \\
+        Kompatibilität & MATLAB, Simulink, GNU Radio, Python, und weitere                                                            \\
     \end{tabular}
     \caption{Daten des ADALM PlutoSDR}\label{table:sdr}
 \end{table}
 
 \subsubsection{Synchronität}\label{sct:Oscillator}
-Zur Aufnahme des Referenzsignals als auch des reflektierten Signals wird jeweils ein PlutoSDR benötigt. Diese müssen nun synchron betrieben werden, um Samples des Referenzsignals dem reflektierten Signal zuordnen zu können. Dies wird erreicht durch Daisy-Chaining der lokalen Oszillatoren beider SDRs und Speisung durch den externen OCXO. Abbildungen~\ref{fig:Pluto} zeigen den fertigen Aufbau der beiden SDRs. Im Schaltplan in Abbildung~\ref{fig:Clock} ist zu erkennen, wie das Taktsignal eingespeist werden kann.
+
+Zur Aufnahme des Referenzsignals als auch des reflektierten Signals wird jeweils ein PlutoSDR benötigt. Diese müssen nun synchron betrieben werden, um Samples des Referenzsignals dem reflektierten Signal zuordnen zu können. Dies wird erreicht durch Daisy-Chaining der lokalen Oszillatoren beider SDRs und Speisung durch den externen OCXO\@. Abbildungen~\ref{fig:Pluto} zeigen den fertigen Aufbau der beiden SDRs. Im Schaltplan in Abbildung~\ref{fig:Clock} ist zu erkennen, wie das Taktsignal eingespeist werden kann.
 
 \begin{figure}
     \centering
@@ -34,58 +40,60 @@ Zur Aufnahme des Referenzsignals als auch des reflektierten Signals wird jeweils
         \includegraphics[width=\textwidth]{images/Pluto_4.jpeg}
         \caption{Der gesamte Aufbau}
     \end{subfigure}
-    \caption{Aufbau der Hardware mit den beiden Plutos und der Clock} \label{fig:Pluto}
+    \caption{Aufbau der Hardware mit den beiden Plutos und der Clock.\label{fig:Pluto}}
 \end{figure}
 
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{images/Schaltplan_Clock.png}
-    \caption{Schaltplan der Clock des Pluto SDRs} \label{fig:Clock}
+    \caption{Schaltplan der Clock des Pluto SDRs.\label{fig:Clock}}
 \end{figure}
 
 \subsection{Antenne}
+
 In diesem Aufbau werden zwei DVB-T Antennen verwendet. Die Antennen sind von der Yagi-Uda Bauart und bieten mit 43 Elementen hohe Richtwirkung. Abbildung~\ref{fig:antenne} zeigt das verwendete Modell. Die Antennen arbeiten laut Herstellerangaben im Frequenzbereich von \SIrange{470}{862}, was den designierten Anwendungsfall abdeckt. Weitere Daten zur Antenne stehen in Tabelle~\ref{table:antenne}.
 
 \begin{table}
     \centering
     \begin{tabular}[h]{rl}
-        Antenne         & SKT SL43-01 UHF 43            \\
-        Antennengewinn  & 11..13 dB                     \\
-        Frequenzbereich & 470-862 MHz                   \\
-        Halbwertsbreite & horiz. 30...40°/ver. 35...50° \\
+        Antenne         & SKT SL43-01 UHF 43                                              \\ % chktex 8
+        Antennengewinn  & 11..13 dB                                                       \\
+        Frequenzbereich & \SIrange{470}{862}{\mega\hertz}                                 \\
+        Halbwertsbreite & horiz. \SIrange{30}{40}{\degree}/ver. \SIrange{35}{50}{\degree} \\
     \end{tabular}
-    \caption{Daten der SKT SL43-01 UHF 43 Antenne}\label{table:antenne}
+    \caption{Daten der SKT SL43-01 UHF 43 Antenne.\label{table:antenne}} % chktex 8
 \end{table}
 
 \begin{figure}
     \centering
     \includegraphics[width=0.4\textwidth]{images/antenne.png}
     \quelle{\cite{ANTENNE2021}}
-    \caption{SKT SL43-01 UHF 43 Antenne}\label{fig:antenne}
+    \caption{SKT SL43-01 UHF 43 Antenne\label{fig:antenne}} % chktex 8
 \end{figure}
 
 \section{Signal}
-Das betrachtete Signal beruht auf der LTE Technik. Long Term Evolution oder kurz LTE ist und war vor allem dadurch erfolgreich, dass eine neue Übertragungstechnik verwendet wurde, mit der das Multipath-Fading-Effekt umgangen wurde. Der Multipath-Fading-Effekt tritt auf, wenn die Länge eines Übertragungsschrittes verkleinert wird, was bei einer Verzögerung des Signals dazu führen kann, dass sich die einzelnen Übertragungsschritte überlappen. Die Technik, die dem entgegen wirkt, hat die Bezeichnung Orthogonal Frequenz Division Multiplexing (OFDM) Technik. Hierbei wird ein schneller Datenstrom in viele kleine langsame unterteilt, da so kein Multipath-Fading-Effekt auftritt. Nach dem Übertragen wird der Datenstrom wieder zusammengeführt. OFDM wird in den folgenden Abschnitten noch weiter erläutert. Die Bandbreite von LTE ist recht variable wählbar und liegt zwischen 1,25 MHz und 20 MHz, in der bei diesem Projekt verwendeten Übertragungstechnik, die auf LTE basiert liegt die Bandbreite bei 5 MHz. Die Wahl der Bandbreite hängt hier sehr davon ab, was das Ziel für die Applikation ist, theoretisch können aber bei einer Bandbreite von 20MHz und sehr guten Übertragungsbedingungen Datenraten von über 100Mbit/s erreicht werden. Weitere nennenswerte Änderungen waren die Einführung von Multiple Input Multiple Output (MIMO) Übertragungen sowie der Fokus auf das paketvermittelnde Internet-Protokoll (IP).~\cite[S.205f]{Sauter2018}
+
+Das betrachtete Signal beruht auf der LTE Technik. Long Term Evolution oder kurz LTE ist und war vor allem dadurch erfolgreich, dass eine neue Übertragungstechnik verwendet wurde, mit der das Multipath-Fading-Effekt umgangen wurde. Der Multipath-Fading-Effekt tritt auf, wenn die Länge eines Übertragungsschrittes verkleinert wird, was bei einer Verzögerung des Signals dazu führen kann, dass sich die einzelnen Übertragungsschritte überlappen. Die Technik, die dem entgegen wirkt, hat die Bezeichnung Orthogonal Frequenz Division Multiplexing (OFDM) Technik. Hierbei wird ein schneller Datenstrom in viele kleine langsame unterteilt, da so kein Multipath-Fading-Effekt auftritt. Nach dem Übertragen wird der Datenstrom wieder zusammengeführt. OFDM wird in den folgenden Abschnitten noch weiter erläutert. Die Bandbreite von LTE ist recht variable wählbar und liegt zwischen \SI{1.25}{\mega\hertz} und \SI{20}{\mega\hertz}, in der bei diesem Projekt verwendeten Übertragungstechnik, die auf LTE basiert liegt die Bandbreite bei \SI{5}{\mega\hertz}. Die Wahl der Bandbreite hängt hier sehr davon ab, was das Ziel für die Applikation ist, theoretisch können aber bei einer Bandbreite von \SI{20}{\mega\hertz} und sehr guten Übertragungsbedingungen Datenraten von über \SI{100}{\mega\bit\per\second} erreicht werden. Weitere nennenswerte Änderungen waren die Einführung von Multiple Input Multiple Output (MIMO) Übertragungen sowie der Fokus auf das Paket vermittelnde Internet-Protokoll (IP)~\cite[S.~205f]{Sauter2018}.
 
 \subsection{Aufbau von LTE}
+
 Ein LTE-Signal besteht auf Übertragungsebene aus 504 unterschiedlichen Zellidentitäten. Diese sind in 168 unterschiedliche Gruppen unterteilt. Eine Zellidentität setzt sich zusammen aus Identifikationsnummer der Gruppe sowie der Identifikationsnummer der jeweiligen physikalischen Ebene in der physikalischen Gruppe zusammen. Somit berechnet sich die Zellidentität wie folgt:
 \begin{equation}
-    N_{ID}^{cell}=3N_{ID}^{(1)}+N_{ID}^{(2)}
+    N_\text{ID}^\text{cell}=3N_\text{ID}^\text{(1)}+N_\text{ID}^\text{(2)}
 \end{equation}
-Hierbei gilt, dass jede Gruppe eine Nummer $N_{ID}^{(1)}$ zur Identifikation im Bereich von 0 bis 167 besitzt. Die Identifikationsnummer $N_{ID}^{(2)}$ der physikalischen Ebene in der physikalischen Gruppe im Bereich von 0 bis 2.
+Hierbei gilt, dass jede Gruppe eine Nummer \(N_\text{ID}^{(1)}\) zur Identifikation im Bereich von \numrange{0}{167} besitzt. Die Identifikationsnummer \(N_\text{ID}^{(2)}\) der physikalischen Ebene in der physikalischen Gruppe im Bereich von \numrange{0}{2}.
 Um dem Empfänger die Synchronisation auf das OFDM Signal zu ermöglichen, sind im LTE Signal zwei Synchronisierungssequenzen eingebettet. Diese werden als Primary Synchronisation Signal (PSS) und Secondary Synchronisation Signal (SSS) bezeichnet~\cite[S.~180]{etsi2021136}.
 
 \subsubsection{Framestrukturtyp}
-Der Framestrukturtyp 1, der für Vollduplex und Halbdublex FDD gilt, hat eine Länge von \SI{10}{\milli\second} und besteht aus 10 Subframes, die jeweils eine Länge von \SI{1}{\milli\second} haben und von 0 bis 9 durchnummeriert sind. Bei Subframes, die die Frequenz $\Delta f=$ \SI{2.5}{\kilo\hertz}, $\Delta f=$\SI{7.5}{\kilo\hertz} oder $\Delta f=$ \SI{15}{\kilo\hertz} besitzen wird ein Subframe in zwei Slots unterteilt, wo die länge jedes Slots \SI{0.5}{\milli\second} beträgt. Bei einer Subframefrequenz von $\Delta f=$ \SI{1.25}{\kilo\hertz} besteht der Subframe aus keinen Slots und seine Länge beträgt \SI{1}{\milli\second}. Wenn die Übertragungsfrequenz bei $\Delta f=$ \SI{0.37}{\kilo\hertz} liegt, besitzt ein Slot eine Länge von \SI{3}{\milli\second}. Eine Periode ist \SI{40}{\milli\second} lang und besteht dem nach aus 12 Slots, die von 0 bis 13 durchnummeriert sind. Die Übertragung beginnt somit bei jedem vierten Frame. Außerdem stehen für FDD 10 Subframes, 20 Slots oder bis 60 Subslots zur Verfügung. In Abbildung~\ref{fig:LTE_frame} ist zum besseren Verständnis der Frame mit Subframes und Slots dargestellt.
 
-
+Der Framestrukturtyp 1, der für Vollduplex und Halbdublex FDD gilt, hat eine Länge von \SI{10}{\milli\second} und besteht aus \num{10} Subframes, die jeweils eine Länge von \SI{1}{\milli\second} haben und von \numrange{0}{9} durchnummeriert sind. Bei Subframes, die die Frequenz \(\Delta f=\SI{2.5}{\kilo\hertz}\), \(\Delta f=\SI{7.5}{\kilo\hertz}\) oder \(\Delta f=\SI{15}{\kilo\hertz}\) besitzen wird ein Subframe in zwei Slots unterteilt, wo die Länge jedes Slots \SI{0.5}{\milli\second} beträgt. Bei einer Subframefrequenz von \(\Delta f=\SI{1.25}{\kilo\hertz}\) besteht der Subframe aus keinen Slots und seine Länge beträgt \SI{1}{\milli\second}. Wenn die Übertragungsfrequenz bei \(\Delta f=\SI{0.37}{\kilo\hertz}\) liegt, besitzt ein Slot eine Länge von \SI{3}{\milli\second}. Eine Periode ist \SI{40}{\milli\second} lang und besteht dem nach aus \num{12} Slots, die von \numrange{0}{13} durchnummeriert sind. Die Übertragung beginnt somit bei jedem vierten Frame. Außerdem stehen für FDD \num{10} Subframes, \num{20} Slots oder bis \num{60} Subslots zur Verfügung. In Abbildung~\ref{fig:LTE_frame} ist zum besseren Verständnis der Frame mit Subframes und Slots dargestellt.
 
 \begin{figure}
     \centering
     \begin{tikzpicture}
         \foreach \x in {0,...,2}
         \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (\x*2,0) {$\#\x$};
-        \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (6,0) {$...$};
+        \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (6,0) {$\dots$};
         \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (8,0) {$\#18$};
         \node [draw, thick, shape=rectangle, minimum width=2cm, minimum height=0.8cm, anchor=center] at (10,0) {$\#19$};
         \draw[thick,red,decorate,decoration={brace,amplitude=12pt}] (-1,0.4) -- (3,0.4) node[midway, above,yshift=12pt,]{Subframe};
@@ -96,32 +104,35 @@ Der Framestrukturtyp 1, der für Vollduplex und Halbdublex FDD gilt, hat eine L�
 \end{figure}
 
 \subsubsection{Primary Synchronisation Signal (PSS)}
- PSS wird in jeden Frame zweimal übertragen, und zwar im ersten und 10 Slot. Innerhalb jedes Slots wird das PSS im letzten OFDM Symbol übertragen. Was UE damit erreicht mit dem PSS erreicht ist eine Subframe Synchronisation, eine Slot Synchronisation sowie eine Symbol Synchronisation. Außerdem kann die Mitte des jeweiligen Kanals bestimmt werden in der Frequenz Domain. Ebenfalls wird die passenden PCI aus den drei verschiedenen PCI erkannt.
- Die Sequenz des PSS wird generiert durch die Zadoff-Chu erzeugt. Zadoff-Chu:
+
+PSS wird in jeden Frame zweimal übertragen, und zwar im ersten und \num{10} Slot. Innerhalb jedes Slots wird das PSS im letzten OFDM Symbol übertragen. Was UE damit erreicht mit dem PSS erreicht ist eine Subframe Synchronisation, eine Slot Synchronisation sowie eine Symbol Synchronisation. Außerdem kann die Mitte des jeweiligen Kanals bestimmt werden in der Frequenz Domain. Ebenfalls wird die passenden PCI aus den drei verschiedenen PCI erkannt.
+Die Sequenz des PSS wird generiert durch die Zadoff-Chu erzeugt. Zadoff-Chu~\cite[S.~181]{etsi2021136}:
 \begin{equation}
-    \operatorname{d_u}(n)=\begin{cases} e^{-j\frac{\pi un(n+1)}{63}}, & n=0,1,...,30 \\ e^{-j\frac{\pi u(n+1)(n+2)}{63}}, & n=31,32,...,61 \end{cases}
+    \operatorname{d_u}(n)=\begin{cases} e^{-\mathrm{j}\frac{\pi un(n+1)}{63}}, & n=0,1,\dots,30 \\ e^{-\mathrm{j}\frac{\pi u(n+1)(n+2)}{63}}, & n=31,32,\dots,61 \end{cases}
 \end{equation}
-~\cite[S.~181]{etsi2021136}. Bei einer MBMS-Zelle, die die Rahmenstruktur 1 verwendet, wird das Synchronsignal im Slot 0 in jedem vierten Subframe übertragen.
+Bei einer MBMS-Zelle, die die Rahmenstruktur 1 verwendet, wird das Synchronsignal im Slot \num{0} in jedem vierten Subframe übertragen.
 
 \subsubsection{Secondary Synchronisation Signal (SSS)}
-Die für den sekundären Synchronisationssignal verwendete Sequenzen d(0),…,d(61) von zwei verknüpften Binärsequenzen der Länge 31. Die verknüpften Sequenzen werden mit einer Verschlüsselungssequenz aus dem ersten Synchronisationssignal verwurschtelt. Die Zuordnung der Sequenz zu den Resource-Elementen hängt von der Framestruktur ab. Bei einem Subframe des Framestrukturtyp 1 wird für das sekundäre Synchronisationssignal derselbe Antennenanschluss wie für das erstes verwendet~\cite[S.~183]{etsi2021136}.
+
+Die für den sekundären Synchronisationssignal verwendete Sequenzen \(\operatorname{d}(0),\dots,\operatorname{d}(61)\) von zwei verknüpften Binärsequenzen der Länge \num{31}. Die verknüpften Sequenzen werden mit einer Verschlüsselungssequenz aus dem ersten Synchronisationssignal kodiert. Die Zuordnung der Sequenz zu den Resource-Elementen hängt von der Framestruktur ab. Bei einem Subframe des Framestrukturtyp 1 wird für das sekundäre Synchronisationssignal derselbe Antennenanschluss wie für das erstes verwendet~\cite[S.~183]{etsi2021136}.
 
 \subsection{OFDM}
-Wie schon thematisiert wird bei LTE die OFDM Technik verwendet, in diesem Unterkapitell wird nun auf die Technik genauer eingegangen. Nochmal zu Wiederholung durch das Orthogonales Frequenzmultiplexverfahren OFDM Technik ist es möglich mehr Daten gleichzeitig zu übertragen dafür wird das Signal aufgeteilt und auf unterschiedlichen Frequenzbändern(engl.: \textit{subcarriers}) übertragen.
 
-Die Signalübertragung eines OFDM besteht aus drei Phasen: Preamble, Header und den Daten. Durch die Preamble wird Zeit Synchronisation, die Offset sowie die Kanalschätzung durchgeführt. Das Preamble besteht aus einer langen und kurzen Sequenz, die kurze ist zur Bestimmung der Zeit die lange ist für die restlichen Bestimmungen. Die kurze Sequenz besteht aus 10 periodischen Segmenten wo jedes die gleiche Abtastung von 16 Abtastungen besitzt. Die lange Sequenz besteht dagegen aus zwei OFDM-Symbolen. Hier folgen auf Schutzintervalle zwei FTT Intervalle.
+Wie schon thematisiert wird bei LTE die OFDM Technik verwendet, in diesem Unterkapitel wird nun auf die Technik genauer eingegangen. Nochmal zu Wiederholung durch das Orthogonales Frequenzmultiplexverfahren OFDM Technik ist es möglich mehr Daten gleichzeitig zu übertragen dafür wird das Signal aufgeteilt und auf unterschiedlichen Frequenzbändern (engl.\@ \textit{subcarriers}) übertragen.
 
-Der Header eines OFDM besteht aus 5 Feldern der Datenrate (4 Bits), einem Reservierten Bit (1 Bit), der Länge (12 Bits), einem Parität Bit (1 Bit) und dem Füllbits (6 Bits). Beim Datenrate Feld kann hier zwischen 16 Kombinationen gewählt werden. Das Längenfeld gibt Information über die tatsächliche Länge in Bytes der Daten.
+Die Signalübertragung eines OFDM besteht aus drei Phasen: Preamble, Header und den Daten. Durch die Preamble wird Zeit Synchronisation, die Offset sowie die Kanalschätzung durchgeführt. Das Preamble besteht aus einer langen und kurzen Sequenz, die kurze ist zur Bestimmung der Zeit die lange ist für die restlichen Bestimmungen. Die kurze Sequenz besteht aus \num{10} periodischen Segmenten wo jedes die gleiche Abtastung von \num{16} Abtastungen besitzt. Die lange Sequenz besteht dagegen aus zwei OFDM-Symbolen. Hier folgen auf Schutzintervalle zwei FTT Intervalle.
 
-Das Datenformat besteht aus vier Felder Service, Nachricht, den Füllbits und Pad. Die Aufgabe des Padfeldes ist es, die Länge der Daten so anzupassen, dass die Datenlänge ist ein ganzzahliges Vielfaches von N dbps. Die gesamten Daten Länge ergibt sich aus der folgender Gleichung:
+Der Header eines OFDM besteht aus \num{5} Feldern der Datenrate (\SI{4}{\bit}), einem Reservierten \si{\bit} (\SI{1}{\bit}), der Länge (\SI{12}{\bit}), einem Parität Bit (\SI{1}{\bit}) und dem Füllbits (\SI{6}{\bit}). Beim Datenrate Feld kann hier zwischen \num{16} Kombinationen gewählt werden. Das Längenfeld gibt Information über die tatsächliche Länge in Bytes der Daten.
+
+Das Datenformat besteht aus vier Felder Service, Nachricht, den Füllbits und Pad. Die Aufgabe des Pad-Feldes ist es, die Länge der Daten so anzupassen, dass die Datenlänge ist ein ganzzahliges Vielfaches von \(N\) dbps. Die gesamte Datenlänge ergibt sich aus der folgender Gleichung:
 \begin{equation}
-    N_{data}=N_{dbps}(Ceiling(\frac{16+8N_{Nachricht}}{N_{dbps}}))
+    N_\text{data}=N_\text{dbps}(Ceiling(\frac{16+8N_\text{Nachricht}}{N_\text{dbps}}))
 \end{equation}
-wobei $N_{Nachricht}$ die Länge der Nachricht entspricht, die auch im Header übergeben wird. 16 entspricht der Anzahl an Service Bytes und 6 entspricht der Anzahl an Füllbits Bits. Die Anzahl an Pad hängt von der Daten Länge ab und berechnet sich wie folgt:
+wobei \(N_\text{Nachricht}\) die Länge der Nachricht entspricht, die auch im Header übergeben wird. \num{16} entspricht der Anzahl an Service Bytes und \num{6} entspricht der Anzahl an Füllbits Bits. Die Anzahl an Pad hängt von der Daten Länge ab und berechnet sich wie folgt:
 \begin{equation}
-    N_{pad}=N_{data}-(16-8N_{Nachricht}+6)
+    N_\text{pad}=N_\text{data}-(16-8N_\text{Nachricht}+6)
 \end{equation}
-~\cite[S.49ff]{Liu2019}
+~\cite[S.~49ff]{Liu2019}
 
 \section{Software}\label{sct:software}
 
