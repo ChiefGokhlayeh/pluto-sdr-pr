@@ -32,7 +32,6 @@ try:
     def correlate(a: np.ndarray, b: np.ndarray, mode: str):
         return cupy_correlate(cupy_asarray(a), cupy_asarray(b), mode=mode).get()
 
-
 except Exception as e:
     LOGGER.warning("Failed to import CUPY! Fallback to SciPy.", exc_info=e)
 
