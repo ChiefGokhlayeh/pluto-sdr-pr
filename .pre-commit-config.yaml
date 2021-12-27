@@ -1,6 +1,6 @@
 repos:
     - repo: https://github.com/pre-commit/pre-commit-hooks
-      rev: v4.0.1
+      rev: v4.1.0
       hooks:
           - id: check-added-large-files
             exclude: |
@@ -16,7 +16,6 @@ repos:
           - id: detect-private-key
           - id: end-of-file-fixer
             exclude: '.*\.ipynb'
-          - id: forbid-new-submodules
           - id: trailing-whitespace
     - repo: https://github.com/pryorda/dockerfilelint-precommit-hooks
       rev: v0.1.0
