@@ -346,7 +346,7 @@ class SdriqSampleIO(SampleIO):
 
         return (
             pcm_bytes[: available_num_samples * 2].astype(np.float64)
-            / (2 ** self._pcm_sample_size - 1)
+            / (2**self._pcm_sample_size - 1)
         ).view(np.complex128)
 
     def seek(self, offset: int, whence: int = 0) -> int:
