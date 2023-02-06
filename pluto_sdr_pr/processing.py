@@ -79,7 +79,6 @@ def fast_ambiguity(
     reference_signal: np.ndarray,
     surveillance_signal: np.ndarray,
 ) -> np.ndarray:
-
     """Fast implementation of cross ambiguity function (CAF), using Fourier
     Transform of Lag Product approach.
 
