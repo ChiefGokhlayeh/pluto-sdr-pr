@@ -35,7 +35,7 @@ repos:
                 - prettier@2.3.2
                 - prettier-plugin-toml@0.3.1
     - repo: https://github.com/psf/black
-      rev: 23.1.0
+      rev: 23.3.0
       hooks:
           - id: black
             language_version: python3.9
