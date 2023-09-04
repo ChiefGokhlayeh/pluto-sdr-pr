@@ -6,7 +6,7 @@ jobs:
     doc_build:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v4
             - uses: ./.github/actions/latex
               with:
                   args: latexmk -cd -pdf -interaction=nonstopmode -file-line-error docu/report.tex
