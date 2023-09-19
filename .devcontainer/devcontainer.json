@@ -9,42 +9,44 @@
             // Update 'VARIANT' to pick a Python version: 3, 3.6, 3.7, 3.8, 3.9
             "VARIANT": "3",
             // Update 'MAMBAFORGE_VERSION' to pick a specific MAMBAFORGE version
-            "MAMBAFORGE_VERSION": "latest",
-        },
+            "MAMBAFORGE_VERSION": "latest"
+        }
     },
 
     "runArgs": ["--privileged"],
 
-    // Set *default* container specific settings.json values on container create.
-    "settings": {
-        "jupyter.notebookFileRoot": "${workspaceFolder}",
-        "python.formatting.provider": "black",
-        "python.languageServer": "Pylance",
-        "python.linting.enabled": true,
-        "python.linting.flake8Enabled": true,
-        "python.linting.pylintEnabled": false,
-        "python.pythonPath": "./.venv/bin/python",
-    },
+    "customizations": {
+        "vscode": {
+            // Set *default* container specific settings.json values on container create.
+            "settings": {
+                "jupyter.notebookFileRoot": "${workspaceFolder}",
+                "python.languageServer": "Pylance",
+                "python.pythonPath": "./.venv/bin/python"
+            },
 
-    // Add the IDs of extensions you want installed when the container is created.
-    "extensions": [
-        "bungcip.better-toml",
-        "davidanson.vscode-markdownlint",
-        "eamodio.gitlens",
-        "esbenp.prettier-vscode",
-        "james-yu.latex-workshop",
-        "ms-azuretools.vscode-docker",
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-toolsai.jupyter",
-        "njpwerner.autodocstring",
-        "streetsidesoftware.code-spell-checker-german",
-        "streetsidesoftware.code-spell-checker",
-    ],
+            // Add the IDs of extensions you want installed when the container is created.
+            "extensions": [
+                "bungcip.better-toml",
+                "davidanson.vscode-markdownlint",
+                "eamodio.gitlens",
+                "esbenp.prettier-vscode",
+                "james-yu.latex-workshop",
+                "ms-azuretools.vscode-docker",
+                "ms-python.black-formatter",
+                "ms-python.flake8",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-toolsai.jupyter",
+                "njpwerner.autodocstring",
+                "streetsidesoftware.code-spell-checker-german",
+                "streetsidesoftware.code-spell-checker"
+            ]
+        }
+    },
 
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "([ -d './.venv' ] && (mamba env update -p ./.venv --file environment.yml --prune) || (mamba env create -p ./.venv -f environment.yml)) && mamba run -p ./.venv pre-commit install && mamba run -p ./.venv nbstripout --install",
 
     // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-    "remoteUser": "vscode",
+    "remoteUser": "vscode"
 }

@@ -19,19 +19,16 @@ RUN "${MAMBAFORGE_PREFIX}/bin/mamba" init bash zsh
 
 USER root
 
-ARG CUDA_VERSION="11-4"
+RUN echo 'deb http://ftp.de.debian.org/debian/ stable main contrib non-free' > /etc/apt/sources.list \
+    && apt-get update \
+    && apt-get -y --no-install-recommends install \
+    nvidia-cuda-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update \
     && apt-get -y --no-install-recommends install \
     ffmpeg \
-    software-properties-common \
     vim \
-    && . /etc/os-release \
-    && add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/${ID}${VERSION_ID}/"$(uname -m)"/ /" \
-    && apt-key adv --fetch-keys "https://developer.download.nvidia.com/compute/cuda/repos/${ID}${VERSION_ID}/"$(uname -m)"/7fa2af80.pub" \
-    && add-apt-repository contrib \
-    && apt-get update \
-    && apt-get -y  --no-install-recommends install \
-    "cuda-toolkit-${CUDA_VERSION}" \
-    "cuda-tools-${CUDA_VERSION}" \
-    libcuda1 \
+    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
