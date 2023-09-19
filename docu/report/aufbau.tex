@@ -264,7 +264,7 @@ Zwar liefert eine direkte Implementierung der Gleichung~\ref{equ:cross_ambiguity
             \item Berechne die \(\mathbf{DFT} {\{ \cdot \}}\) des dezimierten Produktes.
         \end{enumerate}
 
-        Abbildung~\ref{fig:caf_fine_mode_schematics} zeigt ein Blockschaltbild des beschriebenen Algorithmus. Die Terme \(x_{r}(n)\) und \(x_{e}(n)\) bilden die Samples des Referenz- bzw. Echosignals, wobei das Echosignal zunächst komplex-konjugiert wird. \(z^{a}\) repräsentiert eine Totzeit um \(a\) Samples. Anschließend werden die Signale multipliziert, woraus sich das Verzögerungsprodukt ergibt. Das gemischte Ergebnis wird durch einen Tiefpassfilter mit einer Grenzfrequenz von \(\nicefrac{1}{L}\) geführt. Danach wird eine Dezimierung der Schrittgröße \(L\) angewendet\footnote{NumPy's \lstinline{decimate} führt sowohl Tiefpassfilterung als auch Dezimierung in einer Operation durch.}. Ziel dieser beiden Operationen ist es, den interessanten Frequenzbereich (gegeben durch \(f_{d,max}\)) auf die gesamte Breite des Spektrums aufzuspreizen. Damit werden die Punkte der nachfolgenden \(\mathbf{DFT} {\{ \cdot \}}\) auf den interessenten Frequenzbereich limitiert, statt sie über die gesamte Bandbreite aufzuteilen. Das Ergebnis der \(\mathbf{DFT} {\{ \cdot \}}\) repräsentiert eine Zeitscheibe der Range/Doppler Matrix. % chktex 35
+        Abbildung~\ref{fig:caf_fine_mode_schematics} zeigt ein Blockschaltbild des beschriebenen Algorithmus. Die Terme \(x_{r}(n)\) und \(x_{e}(n)\) bilden die Samples des Referenz- bzw. Echosignals, wobei das Echosignal zunächst komplex-konjugiert wird. \(z^{a}\) repräsentiert eine Totzeit um \(a\) Samples. Anschließend werden die Signale multipliziert, woraus sich das Verzögerungsprodukt ergibt. Das gemischte Ergebnis wird durch einen Tiefpassfilter mit einer Grenzfrequenz von \(\frac{1}{L}\) geführt. Danach wird eine Dezimierung der Schrittgröße \(L\) angewendet\footnote{NumPy's \lstinline{decimate} führt sowohl Tiefpassfilterung als auch Dezimierung in einer Operation durch.}. Ziel dieser beiden Operationen ist es, den interessanten Frequenzbereich (gegeben durch \(f_{d,max}\)) auf die gesamte Breite des Spektrums aufzuspreizen. Damit werden die Punkte der nachfolgenden \(\mathbf{DFT} {\{ \cdot \}}\) auf den interessenten Frequenzbereich limitiert, statt sie über die gesamte Bandbreite aufzuteilen. Das Ergebnis der \(\mathbf{DFT} {\{ \cdot \}}\) repräsentiert eine Zeitscheibe der Range/Doppler Matrix. % chktex 35
 
         Zur Überprüfung auf Korrektheit, wurden die Rechenergebnisse mit denen der Direkten Implementierung verglichen. Entscheidender Vorteil dieser Variante ist die deutlich schnellere Berechnung, dank Nutzung des effizienten \(\mathbf{FFT} {\{ \cdot \}}\) Algorithmus.
 
@@ -343,11 +343,11 @@ Zwar liefert eine direkte Implementierung der Gleichung~\ref{equ:cross_ambiguity
         \path (decD) edge [->] (dftD);
         \path (decN) edge [->] (dftN);
 
-        \node [function node, anchor=east, left=0.25cm of dec0.west] (lpf0) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
-        \node [function node, anchor=east, left=0.25cm of dec1.west] (lpf1) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
-        \node [function node, anchor=east, left=0.25cm of dec2.west] (lpf2) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
-        \node [function node, anchor=east, left=0.25cm of decD.west] (lpfD) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
-        \node [function node, anchor=east, left=0.25cm of decN.west] (lpfN) {\(\mathbf{LPF} {\{ \cdot, \nicefrac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dec0.west] (lpf0) {\(\mathbf{LPF} {\{ \cdot, \frac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dec1.west] (lpf1) {\(\mathbf{LPF} {\{ \cdot, \frac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of dec2.west] (lpf2) {\(\mathbf{LPF} {\{ \cdot, \frac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of decD.west] (lpfD) {\(\mathbf{LPF} {\{ \cdot, \frac{1}{L} \}}\)};
+        \node [function node, anchor=east, left=0.25cm of decN.west] (lpfN) {\(\mathbf{LPF} {\{ \cdot, \frac{1}{L} \}}\)};
 
         \path (lpf0) edge [->] (dec0);
         \path (lpf1) edge [->] (dec1);
