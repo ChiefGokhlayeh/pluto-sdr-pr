@@ -4,6 +4,7 @@
 [![pytest](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/pytest.yml/badge.svg)](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/pytest.yml)
 [![doc-build](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/doc-build.yml/badge.svg)](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/doc-build.yml)
 [![doc-lint](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/doc-lint.yml/badge.svg)](https://github.com/ChiefGokhlayeh/pluto-sdr-pr/actions/workflows/doc-lint.yml)
+[![development-status](https://img.shields.io/badge/development%20status-suspended-yellow)](https://github.com/ChiefGokhlayeh/pluto-sdr-pr#development)
 
 Student project aiming to implement [passive radar](https://en.wikipedia.org/wiki/Passive_radar) functionality, using cheap ~~RTL-SDR receivers~~ **Pluto-SDR receivers** and public **LTE-based 5G Broadcast** radio signals as illuminators of opportunity.
 
@@ -14,6 +15,8 @@ This project has an explorative character. The goal is to learn about signal pro
 Use the provided devcontainer image to create a ready-to-use NumPy environment. In vscode download the [Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension and re-open this workspace inside said development image.
 
 Most of the prototyping work happens in Jupyter notebooks. Once cured, code is refactored into reusable Python modules.
+
+**This project is suspended, as I currently don't have any capacity to work on it. I hope to revisit passive radar some day using my personal [Pluto+](https://github.com/plutoplus/plutoplus) and perhaps a different illuminator. The public LTE-based 5G Broadcast transmitter we were using has since exceeded its demonstration phase and has gone quiet.**
 
 ## Contributors
 
