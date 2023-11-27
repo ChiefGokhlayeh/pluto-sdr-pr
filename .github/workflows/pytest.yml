@@ -17,7 +17,7 @@ jobs:
                   path: ~/conda_pkgs_dir
                   key: ${{ runner.os }}-conda-${{ env.CACHE_NUMBER }}-${{hashFiles('environment.yml') }}
             - name: Set up Python environment
-              uses: conda-incubator/setup-miniconda@v2
+              uses: conda-incubator/setup-miniconda@v3
               with:
                   miniconda-version: "latest"
                   activate-environment: pluto-sdr-pr
