@@ -10,7 +10,7 @@ jobs:
             - uses: ./.github/actions/latex
               with:
                   args: latexmk -cd -pdf -interaction=nonstopmode -file-line-error docu/report.tex
-            - uses: actions/upload-artifact@v3
+            - uses: actions/upload-artifact@v4
               with:
                   name: Research Paper
                   path: docu/report.pdf
