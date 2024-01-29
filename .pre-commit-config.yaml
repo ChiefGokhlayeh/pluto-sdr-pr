@@ -29,11 +29,6 @@ repos:
       rev: v4.0.0-alpha.8
       hooks:
           - id: prettier
-            args:
-                - --config-precedence=file-override
-            additional_dependencies:
-                - prettier@3.0.3
-                - prettier-plugin-toml@1.0.0
     - repo: https://github.com/psf/black
       rev: 24.1.1
       hooks:
