@@ -6,6 +6,7 @@ symbols.
 Implementation based on 3GPP TS 36.211 version 16.4.0 Release 16 as described in
 ETSI TS 136 211 V16.4.0 (2021-02).
 """
+
 import collections
 from io import SEEK_CUR
 import logging
@@ -692,9 +693,7 @@ class MultiSignalStream:
             for input in self._inputs
         ]
 
-    def _synchronize_on_pss_and_sss(
-        self, **kwargs
-    ) -> Tuple[
+    def _synchronize_on_pss_and_sss(self, **kwargs) -> Tuple[
         int,
         List[CorrelationResult],
         Optional[List[CorrelationResult]],
